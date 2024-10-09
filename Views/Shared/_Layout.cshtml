@@ -1,0 +1,214 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Gestión de Campos Clínicos</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .sidebar {
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 300px;
+            background-color: #DFF5FF;
+            padding-top: 20px;
+            color: black;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+            .sidebar.show {
+                left: 0;
+            }
+
+            .sidebar .nav-link {
+                color: #000000;
+                margin-bottom: 10px;
+            }
+
+                .sidebar .nav-link:hover {
+                    background-color: #2b4b75;
+                    color: #ffffff;
+                }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .content {
+            transition: all 0.3s ease;
+        }
+
+            .content.shifted {
+                margin-left: 300px;
+            }
+
+        .navbar {
+            width: 100%;
+            background-color: #24324a;
+            color: #ffffff;
+        }
+
+        .navbar-brand {
+            color: #ffffff;
+        }
+
+        .navbar-nav .nav-link {
+            color: #ffffff !important;
+        }
+
+        .navbar .nav-item .nav-link:hover {
+            color: #cccccc !important;
+        }
+
+        footer {
+            position: relative;
+            margin-top: 20px;
+            padding: 10px 0;
+            width: 100%;
+            background: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar superior -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <button class="btn btn-dark me-2" id="menu-toggle">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <a class="navbar-brand" href="#">Gestión del Presupuesto de Campos Clínicos Universidad Central</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/Account/Login">Iniciar Sesión</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/Account/Register">Registrarse</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <!-- Botón para cerrar el sidebar -->
+        <span class="close-btn text-black" id="close-btn">&times;</span>
+        <div class="logo-container text-center py-4">
+            <img src="~/images/ucn_logo.jpg" alt="Logo Universidad Central" style="width: 80%;" />
+        </div>
+        <h4 class="text-black text-center">Gestion_Del_Presupuesto</h4>
+        <ul class="nav flex-column p-2">
+            <li class="nav-item">
+                <a class="nav-link" href="/">Inicio</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-controller="Auditoria" asp-action="Historial">Auditoria</a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="campoClinicoDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Campo Clínico
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="campoClinicoDropdown">
+                    <li><a class="dropdown-item" asp-controller="Campo_Clinico" asp-action="Index">Listado Campos Clínicos</a></li>
+                    <li><a class="dropdown-item" asp-controller="Campo_Clinico" asp-action="Create">Registrar Campo Clínico</a></li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-controller="Convenios" asp-action="Detalles">Convenios</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-controller="UFViewModel" asp-action="Index">UF A CLP</a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="DevengadosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Devengados
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="DevengadosDropdown">
+                    <li><a class="dropdown-item" asp-controller="Devengados" asp-action="Index">Ver Devengados</a></li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-controller="Facturacion" asp-action="Index">Facturación</a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="pagosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Pagos
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="pagosDropdown">
+                    <li><a class="dropdown-item" asp-controller="Pagos" asp-action="Index">Ver Pagos</a></li>
+                    <li><a class="dropdown-item" asp-controller="Pagos" asp-action="Create">Registrar Pago</a></li>
+                </ul>
+            </li>
+
+            <!-- Nueva Sección Consolidado Centro de Costo -->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="consolidadoDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Consolidado Centro de Costo
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="consolidadoDropdown">
+                    <li><a class="dropdown-item" asp-controller="Consolidado_CentroCosto" asp-action="Index">Ver Consolidado</a></li>
+                    <li><a class="dropdown-item" asp-controller="Consolidado_CentroCosto" asp-action="Create"> Registrar</a></li>
+                </ul>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="detalleGeneralDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Detalle General
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="detalleGeneralDropdown">
+                    <li><a class="dropdown-item" asp-controller="DetalleGeneral" asp-action="Index">Ver Detalle General</a></li>
+                    <li><a class="dropdown-item" asp-controller="DetalleGeneral" asp-action="Create">Registrar Detalle</a></li>
+                </ul>
+        </ul>
+    </div>
+
+    <!-- Contenido Principal -->
+    <div class="content" id="main-content">
+        <div class="container mt-4">
+            @RenderBody()
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center mt-4">
+        <p>&copy; 2024 - Gestión de Campos Clínicos Universidad Central</p>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Controlar la visibilidad del sidebar
+        document.getElementById("menu-toggle").addEventListener("click", function () {
+            var sidebar = document.getElementById("sidebar");
+            var content = document.getElementById("main-content");
+            sidebar.classList.toggle("show");
+            content.classList.toggle("shifted");
+        });
+
+        // Botón para cerrar el sidebar
+        document.getElementById("close-btn").addEventListener("click", function () {
+            var sidebar = document.getElementById("sidebar");
+            var content = document.getElementById("main-content");
+            sidebar.classList.remove("show");
+            content.classList.remove("shifted");
+        });
+    </script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

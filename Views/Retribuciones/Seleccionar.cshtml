@@ -1,0 +1,20 @@
+﻿@model Gestion_Del_Presupuesto.Models.RetribucionViewModel
+
+@{
+    ViewData["Title"] = "Seleccionar Retribuciones";
+}
+
+<h2>Seleccionar Retribuciones</h2>
+
+<form asp-action="SeleccionarRetribuciones">
+    <div class="form-group">
+        <label>Procesos de Retribución</label>
+        <select multiple class="form-control" asp-for="Seleccionados">
+            @foreach (var retribucion in ViewBag.ProcesosRetribucion)
+            {
+                <option value="@retribucion.Id_Retribucion">@retribucion.Nombre</option>
+            }
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Guardar Selección</button>
+</form>

@@ -1,0 +1,29 @@
+﻿@model Gestion_Del_Presupuesto.Models.UFViewModel
+
+@{
+    ViewData["Title"] = "Calcular UF A CLP";
+}
+
+<h2>Calcular UF</h2>
+
+<form asp-action="CalcularUF" method="post">
+    <div class="form-group">
+        <label for="MontoCLP">Monto en CLP:</label>
+        <input type="number" step="0.01" class="form-control" id="MontoCLP" name="MontoCLP" value="@Model.MontoCLP" required />
+    </div>
+
+    <div class="form-group">
+        <label for="TipoUF">Tipo de UF:</label>
+        <select class="form-control" id="TipoUF" name="TipoUF">
+            <option value="Real">UF Real</option>
+            <option value="Aproximada">UF Aproximada</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="CantidadEstudiantes">Cantidad de Estudiantes:</label>
+        <input type="number" class="form-control" id="CantidadEstudiantes" name="CantidadEstudiantes" value="@Model.CantidadEstudiantes" required />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Calcular</button>
+</form>

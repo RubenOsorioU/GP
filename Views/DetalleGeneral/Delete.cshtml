@@ -1,0 +1,36 @@
+﻿@model Gestion_Del_Presupuesto.Models.DetalleGeneralModel
+
+@{
+    ViewData["Title"] = "Eliminar Detalle General";
+}
+
+<h2>Eliminar Detalle General</h2>
+
+<h4>¿Está seguro de que desea eliminar el siguiente detalle?</h4>
+<hr />
+
+<dl class="row">
+    <dt class="col-sm-2">Contratos Instituciones</dt>
+    <dd class="col-sm-10">@Model.ContratosInstituciones</dd>
+
+    <dt class="col-sm-2">Tipo de Institución</dt>
+    <dd class="col-sm-10">@Model.TipoInstitucion</dd>
+
+    <dt class="col-sm-2">Nº Estudiantes</dt>
+    <dd class="col-sm-10">@Model.NumeroEstudiantes</dd>
+
+    <dt class="col-sm-2">Pago por Uso de CC $$</dt>
+    <dd class="col-sm-10">@Model.PagoUsoCC</dd>
+
+    <dt class="col-sm-2">Pago Apoyo a la Docencia</dt>
+    <dd class="col-sm-10">@Model.PagoApoyoDocencia</dd>
+
+    <dt class="col-sm-2">Total Gasto Estimado 2025</dt>
+    <dd class="col-sm-10">@Model.TotalGastoEstimado</dd>
+</dl>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Eliminar</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>

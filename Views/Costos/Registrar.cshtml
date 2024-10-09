@@ -1,0 +1,40 @@
+﻿@model Gestion_Del_Presupuesto.Models.Costo
+
+@{
+    ViewData["Title"] = "Registrar Costos";
+}
+
+<h2>Registrar Costos</h2>
+
+<form asp-action="GuardarCosto">
+    <div class="form-group">
+        <label>Tipo de Costo</label>
+        <select class="form-control" asp-for="Tipo">
+            <option value="Variable">Variable</option>
+            <option value="Fijo">Fijo</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Convenio Asociado</label>
+        <select class="form-control" asp-for="Id_Convenio">
+            @foreach (var convenio in ViewBag.Convenios)
+            {
+                <option value="@convenio.Id_Convenio">@convenio.Nombre</option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Monto del Costo</label>
+        <input class="form-control" asp-for="Monto" type="number" step="0.01" />
+    </div>
+    <div class="form-group">
+        <label>Fecha de Registro</label>
+        <input class="form-control" asp-for="Fecha" type="date" />
+    </div>
+    <div class="form-group">
+        <label>Descripción</label>
+        <textarea class="form-control" asp-for="Descripcion"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Guardar</button>
+</form>
+

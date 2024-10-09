@@ -1,0 +1,17 @@
+﻿@model Gestion_Del_Presupuesto.Models.UFViewModel
+
+@{
+    ViewData["Title"] = "Resultado UF";
+}
+
+<h2>Resultado del Cálculo de UF</h2>
+
+<div>
+    <p>Monto en CLP: @Model.MontoCLP</p>
+    <p>Tipo de UF seleccionada: @Model.TipoUF</p>
+    <p>Monto en UF: @Model.MontoUF</p>
+    <p>Fecha de cálculo: @Model.Fecha.ToString("dd/MM/yyyy HH:mm:ss")</p>
+    <p>Cantidad de Estudiantes: @Model.CantidadEstudiantes</p>
+</div>
+
+<a asp-action="Index" class="btn btn-secondary">Volver</a>

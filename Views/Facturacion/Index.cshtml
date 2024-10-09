@@ -1,0 +1,92 @@
+﻿@model Gestion_Del_Presupuesto.Models.FacturacionModel
+
+@{
+    ViewData["Title"] = "Detalles de Facturación";
+}
+
+<h2>Detalles de Facturación</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Campo</th>
+            <th>Valor</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Razón Social</td>
+            <td>@Model.RazonSocial</td>
+        </tr>
+        <tr>
+            <td>RUT</td>
+            <td>@Model.RUT</td>
+        </tr>
+        <tr>
+            <td>Giro</td>
+            <td>@Model.Giro</td>
+        </tr>
+        <tr>
+            <td>Dirección</td>
+            <td>@Model.Direccion</td>
+        </tr>
+        <tr>
+            <td>Teléfono</td>
+            <td>@Model.Telefono</td>
+        </tr>
+        <tr>
+            <td>Receptor de Documento</td>
+            <td>@Model.ReceptorDocumento</td>
+        </tr>
+        <tr>
+            <td>Cargo</td>
+            <td>@Model.Cargo</td>
+        </tr>
+        <tr>
+            <td>Teléfono del Receptor</td>
+            <td>@Model.TelefonoReceptor</td>
+        </tr>
+        <tr>
+            <td>Correo Electrónico</td>
+            <td>@Model.CorreoElectronico</td>
+        </tr>
+        <tr>
+            <td>Sede</td>
+            <td>@Model.Sede</td>
+        </tr>
+        <tr>
+            <td>Carrera</td>
+            <td>@Model.Carrera</td>
+        </tr>
+        <tr>
+            <td>Nivel de Formación</td>
+            <td>@Model.NivelFormacion</td>
+        </tr>
+        <tr>
+            <td>Institución</td>
+            <td>@Model.Institucion</td>
+        </tr>
+        <tr>
+            <td>Tiempo de Práctica</td>
+            <td>@Model.TiempoPractica</td>
+        </tr>
+        <tr>
+            <td>Número de Tiempo</td>
+            <td>@Model.NumeroTiempo</td>
+        </tr>
+        <tr>
+            <td>Número de Alumnos</td>
+            <td>@Model.NumeroAlumnos</td>
+        </tr>
+        <tr>
+            <td>Valor 3 UF</td>
+            <td>@Model.ValorUF</td>
+        </tr>
+        <tr>
+            <td>Subtotal</td>
+            <td>@Model.Subtotal</td>
+        </tr>
+    </tbody>
+</table>
+
+<a href="/" class="btn btn-secondary">Volver</a>

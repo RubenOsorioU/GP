@@ -1,0 +1,38 @@
+﻿@model Gestion_Del_Presupuesto.Models.Convenio
+
+<h2>Detalles de Convenio</h2>
+
+<div>
+    <h4>Convenio</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Id_Convenio)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Id_Convenio)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Institucion)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Institucion)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.TipoConvenio)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.TipoConvenio)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Estado)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Estado)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id_Convenio" class="btn btn-warning">Editar</a> |
+    <a asp-action="Index" class="btn btn-secondary">Atrás a la lista</a>
+</div>
