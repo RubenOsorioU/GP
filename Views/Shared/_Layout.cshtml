@@ -111,9 +111,9 @@
         <!-- Botón para cerrar el sidebar -->
         <span class="close-btn text-black" id="close-btn">&times;</span>
         <div class="logo-container text-center py-4">
-            <img src="~/images/ucn_logo.jpg" alt="Logo Universidad Central" style="width: 80%;" />
+            <img src="~/images/ucn_logo.png" alt="Logo Universidad Central" style="width: 60%;" />
         </div>
-        <h4 class="text-black text-center">Gestion_Del_Presupuesto</h4>
+        
         <ul class="nav flex-column p-2">
             <li class="nav-item">
                 <a class="nav-link" href="/">Inicio</a>
@@ -144,8 +144,13 @@
                     <li><a class="dropdown-item" asp-controller="Devengados" asp-action="Index">Ver Devengados</a></li>
                 </ul>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" asp-controller="Facturacion" asp-action="Index">Facturación</a>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="pagosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Facturación
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="FacturacionDropdown">
+                    <li><a class="nav-link" asp-controller="Facturacion" asp-action="Index">Facturación</a></li>
+                </ul>
             </li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="pagosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">

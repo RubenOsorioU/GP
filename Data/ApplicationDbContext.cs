@@ -21,6 +21,8 @@ namespace Gestion_Del_Presupuesto.Data
         public DbSet<Rol> Rol { get; set; }
         public DbSet<Usuario> Usuario { get; set; }
         public DbSet<Devengado> Devengados { get; set; }
+        public DbSet<Costo> Costo { get; set; }
+        public DbSet<FacturacionModel> Facturacion { get; set; }
 
 
         // Configurar relaciones entre entidades
@@ -56,7 +58,6 @@ namespace Gestion_Del_Presupuesto.Data
                 .HasForeignKey(p => p.Id_Convenio)
                 .OnDelete(DeleteBehavior.Cascade);
         }
-        public DbSet<Gestion_Del_Presupuesto.Models.Costo> Costo { get; set; } = default!;
-        public DbSet<Gestion_Del_Presupuesto.Models.FacturacionModel> Facturacion { get; set; } = default!;
+
     }
 }
