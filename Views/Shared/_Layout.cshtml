@@ -125,14 +125,13 @@
                 <a class="nav-link dropdown-toggle" href="#" id="campoClinicoDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     Campo Clínico
                 </a>
-                <ul class="dropdown-menu" aria-labelledby="campoClinicoDropdown">
+                <ul class="dropdown-menu" aria-labelledby="campoClinicoDropdown">                   
                     <li><a class="dropdown-item" asp-controller="Campo_Clinico" asp-action="Index">Listado Campos Clínicos</a></li>
                     <li><a class="dropdown-item" asp-controller="Campo_Clinico" asp-action="Create">Registrar Campo Clínico</a></li>
+                    <li><a class="nav-link" asp-controller="Convenios" asp-action="Index">Listado Convenios Y retribuciones</a></li>
                 </ul>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" asp-controller="Convenios" asp-action="Detalles">Convenios</a>
-            </li>
+            
             <li class="nav-item">
                 <a class="nav-link" asp-controller="UFViewModel" asp-action="Index">UF A CLP</a>
             </li>
@@ -172,14 +171,6 @@
                     <li><a class="dropdown-item" asp-controller="Consolidado_CentroCosto" asp-action="Create"> Registrar</a></li>
                 </ul>
             </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="detalleGeneralDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Detalle General
-                </a>
-                <ul class="dropdown-menu" aria-labelledby="detalleGeneralDropdown">
-                    <li><a class="dropdown-item" asp-controller="DetalleGeneral" asp-action="Index">Ver Detalle General</a></li>
-                    <li><a class="dropdown-item" asp-controller="DetalleGeneral" asp-action="Create">Registrar Detalle</a></li>
-                </ul>
         </ul>
     </div>
 

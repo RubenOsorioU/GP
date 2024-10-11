@@ -1,4 +1,4 @@
-﻿@model Gestion_Del_Presupuesto.Models.Convenio
+﻿@model Gestion_Del_Presupuesto.Models.ConveniosModel
 
 <h2>Detalles de Convenio</h2>
 
@@ -7,22 +7,22 @@
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Id_Convenio)
+            @Html.DisplayNameFor(model => model.Id_Convenios)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Id_Convenio)
+            @Html.DisplayFor(model => model.Id_Convenios)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Institucion)
+            @Html.DisplayNameFor(model => model.ContratosInstituciones)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Institucion)
+            @Html.DisplayFor(model => model.ContratosInstituciones)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.TipoConvenio)
+            @Html.DisplayNameFor(model => model.Categoria)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.TipoConvenio)
+            @Html.DisplayFor(model => model.Categoria)
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Estado)
@@ -33,6 +33,6 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id_Convenio" class="btn btn-warning">Editar</a> |
+    <a asp-action="Edit" asp-route-id="@Model.Id_Convenios" class="btn btn-warning">Editar</a> |
     <a asp-action="Index" class="btn btn-secondary">Atrás a la lista</a>
 </div>

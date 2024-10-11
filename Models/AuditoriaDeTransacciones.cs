@@ -19,7 +19,7 @@ namespace Gestion_Del_Presupuesto.Models
         public virtual ICollection<Estudiante> Estudiantes { get; set; }
 
         // Relación con Convenio
-        public virtual ICollection<Convenio> Convenios { get; set; }
+        public virtual ICollection<ConveniosModel> Convenios { get; set; }
     }
 }
 

@@ -1,4 +1,4 @@
-﻿@model Gestion_Del_Presupuesto.Models.DetalleGeneralModel
+﻿@model Gestion_Del_Presupuesto.Models.ConveniosModel
 
 @{
     ViewData["Title"] = "Editar Detalle General";
@@ -10,13 +10,13 @@
 
 <form asp-action="Edit" method="post">
     <div class="form-group">
-        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="Id_Convenios" />
         <label for="ContratosInstituciones">Contratos Instituciones:</label>
         <select class="form-control" id="ContratosInstituciones" name="ContratosInstituciones">
             <option value="">Seleccione una institución</option>
-            @if (!string.IsNullOrWhiteSpace(Model.TipoInstitucion) && institucionesPorTipo.ContainsKey(Model.TipoInstitucion))
+            @if (!string.IsNullOrWhiteSpace(Model.Categoria) && institucionesPorTipo.ContainsKey(Model.Categoria))
             {
-                @foreach (var institucion in institucionesPorTipo[Model.TipoInstitucion])
+                @foreach (var institucion in institucionesPorTipo[Model.Categoria])
 
                 {
                     @if (institucion == Model.ContratosInstituciones)
@@ -41,7 +41,7 @@
             <option value="">Seleccione un tipo</option>
             @foreach (var tipo in institucionesPorTipo.Keys)
             {
-                @if (tipo == Model.TipoInstitucion)
+                @if (tipo == Model.Categoria)
 
                 {
                     <option value="@tipo" selected="selected">@tipo</option>

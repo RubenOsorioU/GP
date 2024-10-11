@@ -10,7 +10,7 @@ namespace Gestion_Del_Presupuesto.Data
 
         // Definir las tablas para cada modelo
         public DbSet<Campo_Clinico> Campo_Clinicos { get; set; }
-        public DbSet<Convenio> Convenios { get; set; }
+        public DbSet<ConveniosModel> Convenios { get; set; }
         public DbSet<Estudiante> Estudiantes { get; set; }
         public DbSet<Historial_Actividad> Historial_Actividad { get; set; }
         public DbSet<Institucion_Salud> InstitucionesSalud { get; set; }

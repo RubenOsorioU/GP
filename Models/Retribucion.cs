@@ -18,7 +18,7 @@ namespace Gestion_Del_Presupuesto.Models
         public int Id_Convenio { get; set; }
 
         // Propiedades de navegación
-        public virtual Convenio Convenio { get; set; }
+        public virtual ConveniosModel Convenio { get; set; }
         public virtual ICollection<Pago> Pagos { get; set; }
 
         // Relación uno a uno con Solicitud_Retribucion

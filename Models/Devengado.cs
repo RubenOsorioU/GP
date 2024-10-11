@@ -19,7 +19,7 @@ namespace Gestion_Del_Presupuesto.Models
         
         // Relación con Convenio
         public int ConvenioId { get; set; }
-        public virtual Convenio Convenio { get; set; }
+        public virtual ConveniosModel Convenio { get; set; }
 
         public decimal MontoComprometido { get; set; }
         public decimal PagosRealizados { get; set; }

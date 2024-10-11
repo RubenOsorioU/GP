@@ -1,4 +1,4 @@
-﻿@model Gestion_Del_Presupuesto.Models.DetalleGeneralModel
+﻿@model Gestion_Del_Presupuesto.Models.ConveniosModel
 
 @{
     ViewData["Title"] = "Eliminar Detalle General";
@@ -14,7 +14,7 @@
     <dd class="col-sm-10">@Model.ContratosInstituciones</dd>
 
     <dt class="col-sm-2">Tipo de Institución</dt>
-    <dd class="col-sm-10">@Model.TipoInstitucion</dd>
+    <dd class="col-sm-10">@Model.Categoria</dd>
 
     <dt class="col-sm-2">Nº Estudiantes</dt>
     <dd class="col-sm-10">@Model.NumeroEstudiantes</dd>
@@ -30,7 +30,7 @@
 </dl>
 
 <form asp-action="Delete" method="post">
-    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="Id_Convenios" />
     <button type="submit" class="btn btn-danger">Eliminar</button>
     <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
 </form>

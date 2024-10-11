@@ -1,23 +1,23 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Gestion_Del_Presupuesto.Models
 {
-    public class DetalleGeneralModel
+    public class ConveniosModel
     {
         [Key]
-        public int Id { get; set; }
+        public int Id_Convenios { get; set; }  // Clave primaria del convenio
 
         [Required]
         [Display(Name = "Contratos Instituciones")]
-        public string ContratosInstituciones { get; set; }
+        public string ContratosInstituciones { get; set; }  // Nombre de la institución (Hospital Barros Luco, etc.)
 
         [Required]
         [Display(Name = "Tipo de Institución")]
-        public string TipoInstitucion { get; set; }
+        public string Categoria { get; set; }  // Categoría a la que pertenece (Hospitales_Clinicas, Atencion_primaria, etc.)
 
         [Display(Name = "Nº Estudiantes")]
-        public int? NumeroEstudiantes { get; set; }
+        public int? NumeroEstudiantes { get; set; }  // Número de estudiantes vinculados al convenio
 
         [Display(Name = "Pago por Uso de CC $$")]
         public decimal? PagoUsoCC { get; set; }
@@ -48,7 +48,7 @@ namespace Gestion_Del_Presupuesto.Models
         public bool OtrosGastosRetribucionSelected { get; set; }
 
         [Display(Name = "Total Gasto estimado 2025")]
-        public decimal? TotalGastoEstimado { get; set; }
+        public decimal? TotalGastoEstimado { get; set; }  // Suma de todos los pagos esperados
 
         [Display(Name = "Deuda 2020, 2021, 2022, 2023")]
         public decimal? DeudaAnteriores { get; set; }
@@ -73,5 +73,13 @@ namespace Gestion_Del_Presupuesto.Models
 
         [Display(Name = "Saldo Estimado x pagar 2025")]
         public decimal? SaldoEstimadoPagar { get; set; }
+
+        // Lista de retribuciones asociadas al convenio
+        [Display(Name = "Retribuciones")]
+        public ICollection<Retribucion> Retribuciones { get; set; }
+
+        // Estado del convenio
+        [Display(Name = "Estado del Convenio")]
+        public string Estado { get; set; }
     }
 }

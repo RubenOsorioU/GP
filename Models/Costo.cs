@@ -21,7 +21,7 @@ namespace Gestion_Del_Presupuesto.Models
         public int Id_Convenio { get; set; }
 
         [ForeignKey("Id_Convenio")]
-        public virtual Convenio Convenio { get; set; }
+        public virtual ConveniosModel Convenio { get; set; }
 
         // Descripción adicional del costo
         public string Descripcion { get; set; }
