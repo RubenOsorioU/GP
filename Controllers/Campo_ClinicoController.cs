@@ -19,9 +19,10 @@ namespace Gestion_Del_Presupuesto.Controllers
             _context = context;
         }
 
-        // GET: Campo_Clinico
+        // GET: Campo_Clinico/Index
         public async Task<IActionResult> Index()
         {
+            // Muestra la lista de todos los campos clínicos en la base de datos
             return View(await _context.Campo_Clinicos.ToListAsync());
         }
 
@@ -46,22 +47,26 @@ namespace Gestion_Del_Presupuesto.Controllers
         // GET: Campo_Clinico/Create
         public IActionResult Create()
         {
+            // Muestra el formulario para crear un nuevo campo clínico
             return View();
         }
 
         // POST: Campo_Clinico/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id_Campo_Clinico,Nombre,Ubicacion,Tipo")] Campo_Clinico campo_Clinico)
+        public async Task<IActionResult> Create([Bind("Nombre,Tipo,Sede")] Campo_Clinico campo_Clinico)
         {
             if (ModelState.IsValid)
             {
+                // Agrega el nuevo campo clínico a la base de datos
                 _context.Add(campo_Clinico);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();  // Guarda los cambios
+
+                // Redirige a la vista Index después de crear el nuevo registro
                 return RedirectToAction(nameof(Index));
             }
+
+            // Si hay errores en el modelo, vuelve a la vista Create
             return View(campo_Clinico);
         }
 
@@ -82,11 +87,9 @@ namespace Gestion_Del_Presupuesto.Controllers
         }
 
         // POST: Campo_Clinico/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id_Campo_Clinico,Nombre,Ubicacion,Tipo")] Campo_Clinico campo_Clinico)
+        public async Task<IActionResult> Edit(int id, [Bind("Nombre,Tipo,Sede")] Campo_Clinico campo_Clinico)
         {
             if (id != campo_Clinico.Id_Campo_Clinico)
             {
@@ -97,8 +100,9 @@ namespace Gestion_Del_Presupuesto.Controllers
             {
                 try
                 {
+                    // Actualiza el campo clínico en la base de datos
                     _context.Update(campo_Clinico);
-                    await _context.SaveChangesAsync();
+                    await _context.SaveChangesAsync();  // Guarda los cambios
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -111,9 +115,9 @@ namespace Gestion_Del_Presupuesto.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index));  // Redirige al index después de editar
             }
-            return View(campo_Clinico);
+            return View(campo_Clinico);  // Si hay errores, muestra la vista de edición de nuevo
         }
 
         // GET: Campo_Clinico/Delete/5
@@ -142,15 +146,16 @@ namespace Gestion_Del_Presupuesto.Controllers
             var campo_Clinico = await _context.Campo_Clinicos.FindAsync(id);
             if (campo_Clinico != null)
             {
-                _context.Campo_Clinicos.Remove(campo_Clinico);
+                _context.Campo_Clinicos.Remove(campo_Clinico);  // Elimina el registro de la base de datos
             }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            await _context.SaveChangesAsync();  // Guarda los cambios
+            return RedirectToAction(nameof(Index));  // Redirige al index después de eliminar
         }
 
         private bool Campo_ClinicoExists(int id)
         {
+            // Verifica si un campo clínico existe en la base de datos
             return _context.Campo_Clinicos.Any(e => e.Id_Campo_Clinico == id);
         }
     }

@@ -19,7 +19,8 @@
     <thead>
         <tr>
             <th>Convenio</th>
-            <th>Monto Comprometido</th>
+           
+            <th>Gasto Comprometido</th>
             <th>Pagos Realizados</th>
             <th>Saldo Pendiente</th>
         </tr>
@@ -28,7 +29,7 @@
         @foreach (var devengado in Model.Devengados)
         {
             <tr>
-                <td>@devengado.MontoComprometido</td>
+                <td>@devengado.GastoComprometido</td>
                 <td>@devengado.PagosRealizados</td>
                 <td>@devengado.SaldoPendiente</td>
             </tr>

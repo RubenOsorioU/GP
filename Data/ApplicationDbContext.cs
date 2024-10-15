@@ -15,7 +15,7 @@ namespace Gestion_Del_Presupuesto.Data
         public DbSet<Historial_Actividad> Historial_Actividad { get; set; }
         public DbSet<Institucion_Salud> InstitucionesSalud { get; set; }
         public DbSet<Pago> Pagos { get; set; }
-        public DbSet<Consolidado_CentroCostoModel> Presupuestos { get; set; }
+        public DbSet<PresupuestoModel> Presupuestos { get; set; }
         public DbSet<Retribucion> Retribuciones { get; set; }
         public DbSet<Solicitud_Retribucion> SolicitudesRetribucion { get; set; }
         public DbSet<Rol> Rol { get; set; }
@@ -24,6 +24,7 @@ namespace Gestion_Del_Presupuesto.Data
         public DbSet<Costo> Costo { get; set; }
         public DbSet<FacturacionModel> Facturacion { get; set; }
 
+        public DbSet<PlanillasModel> Planillas { get; set; }
 
         // Configurar relaciones entre entidades
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -57,6 +58,14 @@ namespace Gestion_Del_Presupuesto.Data
                 .WithMany(r => r.Pagos)
                 .HasForeignKey(p => p.Id_Convenio)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Estudiante>()
+                .HasOne(e => e.Planilla)
+                .WithOne(p => p.Estudiante)
+                .HasForeignKey<PlanillasModel>(p => p.Id_Estudiante)
+                .OnDelete(DeleteBehavior.Cascade);
+
+
         }
 
     }

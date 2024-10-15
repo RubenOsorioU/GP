@@ -10,11 +10,15 @@ namespace Gestion_Del_Presupuesto.Models
         public string Nombre { get; set; }
         public string Carrera { get; set; }
 
+        public int Id_Convenio { get; set; }
+
+        public PlanillasModel Planilla { get; set; }
+
         // Relación muchos a muchos con Campo_Clinico
         public virtual ICollection<Campo_Clinico> Campo_Clinicos { get; set; }
 
-        // Relación opcional con Convenio
-        public int? Id_Convenio { get; set; }
-        public virtual ConveniosModel Convenio { get; set; }
+        public virtual ICollection <ConveniosModel> Convenio { get; set; }
+
+        public virtual ICollection<PlanillasModel> Planillas { get; set; }
     }
 }

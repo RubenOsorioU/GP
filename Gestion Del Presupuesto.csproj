@@ -8,18 +8,26 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Views\Cambio_Moneda\**" />
+    <Content Remove="Views\Cambio_Moneda\**" />
+    <EmbeddedResource Remove="Views\Cambio_Moneda\**" />
+    <None Remove="Views\Cambio_Moneda\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EPPlus" Version="7.4.1" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.67" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.5" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.6" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.8" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\Cambio_Moneda\" />
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

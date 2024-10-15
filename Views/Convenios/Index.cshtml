@@ -90,7 +90,7 @@
             @foreach (var item in grupo)
             {
                 <tr>
-                    <td>@item.Id_Convenios</td>
+                    <td>@item.Id_Convenio</td>
                     <td>@item.ContratosInstituciones</td>
                     <td>@item.NumeroEstudiantes</td>
                     <td>@item.PagoUsoCC?.ToString("C")</td>
@@ -110,8 +110,8 @@
                     <td>@item.TotalFacturado?.ToString("C")</td>
                     <td>@item.SaldoEstimadoPagar?.ToString("C")</td>
                     <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id_Convenios" class="btn btn-primary btn-sm">Editar</a>
-                        <a asp-action="Delete" asp-route-id="@item.Id_Convenios" class="btn btn-danger btn-sm">Eliminar</a>
+                        <a asp-action="Edit" asp-route-id="@item.Id_Convenio" class="btn btn-primary btn-sm">Editar</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id_Convenio" class="btn btn-danger btn-sm">Eliminar</a>
                     </td>
                 </tr>
             }

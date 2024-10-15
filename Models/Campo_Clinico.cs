@@ -8,14 +8,15 @@ namespace Gestion_Del_Presupuesto.Models
     {
         [Key]
         public int Id_Campo_Clinico { get; set; }
-        public string Nombre { get; set; }
-        public string Ubicacion { get; set; }
-        public string Tipo { get; set; }
+        public required string Nombre { get; set; }
+        public required string Tipo { get; set; }
+
+        public required string Sede { get; set; }
 
         // Relación muchos a muchos con Estudiante
-        public virtual ICollection<Estudiante> Estudiantes { get; set; }
+        public virtual ICollection <Estudiante> Estudiantes { get; set; }
 
         // Relación con Convenio
-        public virtual ICollection<ConveniosModel> Convenios { get; set; }
+        public virtual ICollection <ConveniosModel> Convenios { get; set; }
     }
 }

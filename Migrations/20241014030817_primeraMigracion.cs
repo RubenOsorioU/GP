@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gestion_Del_Presupuesto.Migrations
 {
     /// <inheritdoc />
-    public partial class ModeloEntidadGestionPresupuesto : Migration
+    public partial class primeraMigracion : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -20,12 +20,27 @@ namespace Gestion_Del_Presupuesto.Migrations
                     Id_Campo_Clinico = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Nombre = table.Column<string>(type: "text", nullable: false),
-                    Ubicacion = table.Column<string>(type: "text", nullable: false),
-                    Tipo = table.Column<string>(type: "text", nullable: false)
+                    Tipo = table.Column<string>(type: "text", nullable: false),
+                    Sede = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Campo_Clinicos", x => x.Id_Campo_Clinico);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Estudiantes",
+                columns: table => new
+                {
+                    Id_Estudiante = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Nombre = table.Column<string>(type: "text", nullable: false),
+                    Carrera = table.Column<string>(type: "text", nullable: false),
+                    Id_Convenio = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Estudiantes", x => x.Id_Estudiante);
                 });
 
             migrationBuilder.CreateTable(
@@ -136,22 +151,92 @@ namespace Gestion_Del_Presupuesto.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Campo_ClinicoEstudiante",
+                columns: table => new
+                {
+                    Campo_ClinicosId_Campo_Clinico = table.Column<int>(type: "integer", nullable: false),
+                    EstudiantesId_Estudiante = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Campo_ClinicoEstudiante", x => new { x.Campo_ClinicosId_Campo_Clinico, x.EstudiantesId_Estudiante });
+                    table.ForeignKey(
+                        name: "FK_Campo_ClinicoEstudiante_Campo_Clinicos_Campo_ClinicosId_Cam~",
+                        column: x => x.Campo_ClinicosId_Campo_Clinico,
+                        principalTable: "Campo_Clinicos",
+                        principalColumn: "Id_Campo_Clinico",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Campo_ClinicoEstudiante_Estudiantes_EstudiantesId_Estudiante",
+                        column: x => x.EstudiantesId_Estudiante,
+                        principalTable: "Estudiantes",
+                        principalColumn: "Id_Estudiante",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Planillas",
+                columns: table => new
+                {
+                    Id_Planillas = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Nombre_Planilla = table.Column<string>(type: "text", nullable: false),
+                    Rut = table.Column<int>(type: "integer", nullable: false),
+                    Fecha_Inicio = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Fecha_Termino = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Institución = table.Column<string>(type: "text", nullable: false),
+                    CuantasSemanas = table.Column<double>(type: "double precision", nullable: false),
+                    ValorUfContrato = table.Column<int>(type: "integer", nullable: false),
+                    TotalCosto = table.Column<int>(type: "integer", nullable: false),
+                    Id_Estudiante = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Planillas", x => x.Id_Planillas);
+                    table.ForeignKey(
+                        name: "FK_Planillas_Estudiantes_Id_Estudiante",
+                        column: x => x.Id_Estudiante,
+                        principalTable: "Estudiantes",
+                        principalColumn: "Id_Estudiante",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Convenios",
                 columns: table => new
                 {
                     Id_Convenio = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Nombre = table.Column<string>(type: "text", nullable: false),
-                    Fecha = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Institucion = table.Column<string>(type: "text", nullable: false),
-                    TipoConvenio = table.Column<string>(type: "text", nullable: false),
+                    ContratosInstituciones = table.Column<string>(type: "text", nullable: false),
+                    Categoria = table.Column<string>(type: "text", nullable: false),
+                    NumeroEstudiantes = table.Column<int>(type: "integer", nullable: true),
+                    PagoUsoCC = table.Column<decimal>(type: "numeric", nullable: true),
+                    PagoUsoCCSelected = table.Column<bool>(type: "boolean", nullable: false),
+                    PagoApoyoDocencia = table.Column<decimal>(type: "numeric", nullable: true),
+                    PagoApoyoDocenciaSelected = table.Column<bool>(type: "boolean", nullable: false),
+                    PagoRRHH = table.Column<decimal>(type: "numeric", nullable: true),
+                    PagoRRHHSelected = table.Column<bool>(type: "boolean", nullable: false),
+                    Capacitacion = table.Column<decimal>(type: "numeric", nullable: true),
+                    CapacitacionSelected = table.Column<bool>(type: "boolean", nullable: false),
+                    ObrasMenores = table.Column<decimal>(type: "numeric", nullable: true),
+                    ObrasMenoresSelected = table.Column<bool>(type: "boolean", nullable: false),
+                    ObrasMayores = table.Column<decimal>(type: "numeric", nullable: true),
+                    ObrasMayoresSelected = table.Column<bool>(type: "boolean", nullable: false),
+                    OtrosGastosRetribucion = table.Column<decimal>(type: "numeric", nullable: true),
+                    OtrosGastosRetribucionSelected = table.Column<bool>(type: "boolean", nullable: false),
+                    TotalGastoEstimado = table.Column<decimal>(type: "numeric", nullable: true),
+                    DeudaAnteriores = table.Column<decimal>(type: "numeric", nullable: true),
+                    Deuda2024 = table.Column<decimal>(type: "numeric", nullable: true),
+                    TotalDeuda = table.Column<decimal>(type: "numeric", nullable: true),
+                    FacturadoAnteriores = table.Column<decimal>(type: "numeric", nullable: true),
+                    Facturado2024 = table.Column<decimal>(type: "numeric", nullable: true),
+                    Facturado2025 = table.Column<decimal>(type: "numeric", nullable: true),
+                    TotalFacturado = table.Column<decimal>(type: "numeric", nullable: true),
+                    SaldoEstimadoPagar = table.Column<decimal>(type: "numeric", nullable: true),
                     Estado = table.Column<string>(type: "text", nullable: false),
-                    Id_Presupuesto = table.Column<int>(type: "integer", nullable: false),
-                    Id_Institucion_Salud = table.Column<int>(type: "integer", nullable: false),
-                    Id_Centro_Costo = table.Column<int>(type: "integer", nullable: false),
-                    PresupuestoId_PresupuestoXCentroCosto = table.Column<int>(type: "integer", nullable: false),
-                    Institucion_SaludId_Institucion_Salud = table.Column<int>(type: "integer", nullable: false),
-                    Campo_ClinicoId_Campo_Clinico = table.Column<int>(type: "integer", nullable: true)
+                    Campo_ClinicoId_Campo_Clinico = table.Column<int>(type: "integer", nullable: true),
+                    EstudianteId_Estudiante = table.Column<int>(type: "integer", nullable: true),
+                    Institucion_SaludId_Institucion_Salud = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -162,17 +247,15 @@ namespace Gestion_Del_Presupuesto.Migrations
                         principalTable: "Campo_Clinicos",
                         principalColumn: "Id_Campo_Clinico");
                     table.ForeignKey(
+                        name: "FK_Convenios_Estudiantes_EstudianteId_Estudiante",
+                        column: x => x.EstudianteId_Estudiante,
+                        principalTable: "Estudiantes",
+                        principalColumn: "Id_Estudiante");
+                    table.ForeignKey(
                         name: "FK_Convenios_InstitucionesSalud_Institucion_SaludId_Institucio~",
                         column: x => x.Institucion_SaludId_Institucion_Salud,
                         principalTable: "InstitucionesSalud",
-                        principalColumn: "Id_Institucion_Salud",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Convenios_Presupuestos_PresupuestoId_PresupuestoXCentroCosto",
-                        column: x => x.PresupuestoId_PresupuestoXCentroCosto,
-                        principalTable: "Presupuestos",
-                        principalColumn: "Id_PresupuestoXCentroCosto",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id_Institucion_Salud");
                 });
 
             migrationBuilder.CreateTable(
@@ -193,6 +276,54 @@ namespace Gestion_Del_Presupuesto.Migrations
                         column: x => x.Id_Usuario,
                         principalTable: "Usuario",
                         principalColumn: "Id_Usuario",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EstudiantePlanillasModel",
+                columns: table => new
+                {
+                    EstudiantesId_Estudiante = table.Column<int>(type: "integer", nullable: false),
+                    PlanillasId_Planillas = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EstudiantePlanillasModel", x => new { x.EstudiantesId_Estudiante, x.PlanillasId_Planillas });
+                    table.ForeignKey(
+                        name: "FK_EstudiantePlanillasModel_Estudiantes_EstudiantesId_Estudian~",
+                        column: x => x.EstudiantesId_Estudiante,
+                        principalTable: "Estudiantes",
+                        principalColumn: "Id_Estudiante",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_EstudiantePlanillasModel_Planillas_PlanillasId_Planillas",
+                        column: x => x.PlanillasId_Planillas,
+                        principalTable: "Planillas",
+                        principalColumn: "Id_Planillas",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ConveniosModelPlanillasModel",
+                columns: table => new
+                {
+                    ConveniosId_Convenio = table.Column<int>(type: "integer", nullable: false),
+                    PlanillasId_Planillas = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ConveniosModelPlanillasModel", x => new { x.ConveniosId_Convenio, x.PlanillasId_Planillas });
+                    table.ForeignKey(
+                        name: "FK_ConveniosModelPlanillasModel_Convenios_ConveniosId_Convenio",
+                        column: x => x.ConveniosId_Convenio,
+                        principalTable: "Convenios",
+                        principalColumn: "Id_Convenio",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ConveniosModelPlanillasModel_Planillas_PlanillasId_Planillas",
+                        column: x => x.PlanillasId_Planillas,
+                        principalTable: "Planillas",
+                        principalColumn: "Id_Planillas",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -226,12 +357,11 @@ namespace Gestion_Del_Presupuesto.Migrations
                     Id_Devengado = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Fecha = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Monto = table.Column<decimal>(type: "numeric", nullable: false),
-                    Descripcion = table.Column<string>(type: "text", nullable: false),
-                    ConvenioId = table.Column<int>(type: "integer", nullable: false),
-                    MontoComprometido = table.Column<decimal>(type: "numeric", nullable: false),
+                    GastoComprometido = table.Column<decimal>(type: "numeric", nullable: false),
                     PagosRealizados = table.Column<decimal>(type: "numeric", nullable: false),
                     SaldoPendiente = table.Column<decimal>(type: "numeric", nullable: false),
+                    Descripcion = table.Column<string>(type: "text", nullable: false),
+                    ConvenioId = table.Column<int>(type: "integer", nullable: false),
                     DevengadoId_Devengado = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
@@ -248,28 +378,6 @@ namespace Gestion_Del_Presupuesto.Migrations
                         column: x => x.DevengadoId_Devengado,
                         principalTable: "Devengados",
                         principalColumn: "Id_Devengado");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Estudiantes",
-                columns: table => new
-                {
-                    Id_Estudiante = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Nombre = table.Column<string>(type: "text", nullable: false),
-                    Carrera = table.Column<string>(type: "text", nullable: false),
-                    Id_Convenio = table.Column<int>(type: "integer", nullable: true),
-                    ConvenioId_Convenio = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Estudiantes", x => x.Id_Estudiante);
-                    table.ForeignKey(
-                        name: "FK_Estudiantes_Convenios_ConvenioId_Convenio",
-                        column: x => x.ConvenioId_Convenio,
-                        principalTable: "Convenios",
-                        principalColumn: "Id_Convenio",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -293,30 +401,6 @@ namespace Gestion_Del_Presupuesto.Migrations
                         column: x => x.ConvenioId_Convenio,
                         principalTable: "Convenios",
                         principalColumn: "Id_Convenio",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Campo_ClinicoEstudiante",
-                columns: table => new
-                {
-                    Campo_ClinicosId_Campo_Clinico = table.Column<int>(type: "integer", nullable: false),
-                    EstudiantesId_Estudiante = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Campo_ClinicoEstudiante", x => new { x.Campo_ClinicosId_Campo_Clinico, x.EstudiantesId_Estudiante });
-                    table.ForeignKey(
-                        name: "FK_Campo_ClinicoEstudiante_Campo_Clinicos_Campo_ClinicosId_Cam~",
-                        column: x => x.Campo_ClinicosId_Campo_Clinico,
-                        principalTable: "Campo_Clinicos",
-                        principalColumn: "Id_Campo_Clinico",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Campo_ClinicoEstudiante_Estudiantes_EstudiantesId_Estudiante",
-                        column: x => x.EstudiantesId_Estudiante,
-                        principalTable: "Estudiantes",
-                        principalColumn: "Id_Estudiante",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -364,17 +448,11 @@ namespace Gestion_Del_Presupuesto.Migrations
                     Estado = table.Column<string>(type: "text", nullable: false),
                     Id_Retribucion = table.Column<int>(type: "integer", nullable: false),
                     Id_Convenio = table.Column<int>(type: "integer", nullable: false),
-                    RetribucionId_Retribucion = table.Column<int>(type: "integer", nullable: false),
-                    ConvenioId_Convenio = table.Column<int>(type: "integer", nullable: true)
+                    RetribucionId_Retribucion = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Pagos", x => x.Id_Pago);
-                    table.ForeignKey(
-                        name: "FK_Pagos_Convenios_ConvenioId_Convenio",
-                        column: x => x.ConvenioId_Convenio,
-                        principalTable: "Convenios",
-                        principalColumn: "Id_Convenio");
                     table.ForeignKey(
                         name: "FK_Pagos_Retribuciones_Id_Convenio",
                         column: x => x.Id_Convenio,
@@ -400,14 +478,19 @@ namespace Gestion_Del_Presupuesto.Migrations
                 column: "Campo_ClinicoId_Campo_Clinico");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Convenios_EstudianteId_Estudiante",
+                table: "Convenios",
+                column: "EstudianteId_Estudiante");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Convenios_Institucion_SaludId_Institucion_Salud",
                 table: "Convenios",
                 column: "Institucion_SaludId_Institucion_Salud");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Convenios_PresupuestoId_PresupuestoXCentroCosto",
-                table: "Convenios",
-                column: "PresupuestoId_PresupuestoXCentroCosto");
+                name: "IX_ConveniosModelPlanillasModel_PlanillasId_Planillas",
+                table: "ConveniosModelPlanillasModel",
+                column: "PlanillasId_Planillas");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Costo_Id_Convenio",
@@ -425,19 +508,14 @@ namespace Gestion_Del_Presupuesto.Migrations
                 column: "DevengadoId_Devengado");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Estudiantes_ConvenioId_Convenio",
-                table: "Estudiantes",
-                column: "ConvenioId_Convenio");
+                name: "IX_EstudiantePlanillasModel_PlanillasId_Planillas",
+                table: "EstudiantePlanillasModel",
+                column: "PlanillasId_Planillas");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Historial_Actividad_Id_Usuario",
                 table: "Historial_Actividad",
                 column: "Id_Usuario");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Pagos_ConvenioId_Convenio",
-                table: "Pagos",
-                column: "ConvenioId_Convenio");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Pagos_Id_Convenio",
@@ -448,6 +526,12 @@ namespace Gestion_Del_Presupuesto.Migrations
                 name: "IX_Pagos_RetribucionId_Retribucion",
                 table: "Pagos",
                 column: "RetribucionId_Retribucion");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Planillas_Id_Estudiante",
+                table: "Planillas",
+                column: "Id_Estudiante",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Retribuciones_Id_Convenio",
@@ -473,10 +557,16 @@ namespace Gestion_Del_Presupuesto.Migrations
                 name: "Campo_ClinicoEstudiante");
 
             migrationBuilder.DropTable(
+                name: "ConveniosModelPlanillasModel");
+
+            migrationBuilder.DropTable(
                 name: "Costo");
 
             migrationBuilder.DropTable(
                 name: "Devengados");
+
+            migrationBuilder.DropTable(
+                name: "EstudiantePlanillasModel");
 
             migrationBuilder.DropTable(
                 name: "Facturacion");
@@ -488,10 +578,13 @@ namespace Gestion_Del_Presupuesto.Migrations
                 name: "Pagos");
 
             migrationBuilder.DropTable(
+                name: "Presupuestos");
+
+            migrationBuilder.DropTable(
                 name: "Rol");
 
             migrationBuilder.DropTable(
-                name: "Estudiantes");
+                name: "Planillas");
 
             migrationBuilder.DropTable(
                 name: "Usuario");
@@ -509,10 +602,10 @@ namespace Gestion_Del_Presupuesto.Migrations
                 name: "Campo_Clinicos");
 
             migrationBuilder.DropTable(
-                name: "InstitucionesSalud");
+                name: "Estudiantes");
 
             migrationBuilder.DropTable(
-                name: "Presupuestos");
+                name: "InstitucionesSalud");
         }
     }
 }

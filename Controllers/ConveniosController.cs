@@ -29,7 +29,7 @@ namespace Gestion_Del_Presupuesto.Controllers
         {
             if (ModelState.IsValid)
             {
-                model.Id_Convenios = convenios.Count + 1;
+                model.Id_Convenio = convenios.Count + 1;
                 convenios.Add(model);
                 return RedirectToAction(nameof(Index));
             }

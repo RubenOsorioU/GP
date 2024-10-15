@@ -5,23 +5,25 @@ using System.Linq;
 
 namespace Gestion_Del_Presupuesto.Controllers
 {
-    public class Consolidado_CentroCostoController : Controller
+    public class PresupuestoController : Controller
     {
-        private static List<Consolidado_CentroCostoModel> presupuestos = new List<Consolidado_CentroCostoModel>();
+        private static List<PresupuestoModel> presupuestos = new List<PresupuestoModel>();
 
         // Lista de sedes y carreras por sede
         private static Dictionary<string, List<string>> carrerasPorSede = new Dictionary<string, List<string>>()
         {
-            { "Coquimbo", new List<string> { "Enfermería", "Tecnología Médica", "Terapia Ocupacional" } },
-            { "Santiago", new List<string> { "Psicología", "Kinesiología", "Enfermería" } }
+            { "Santiago", new List<string> { "Enfermería", "Tecnología Médica", "Terapia Ocupacional", "Nutricion y Dietetica", "Psicologia", "Kinesiologia" } },
+            { "La Serena", new List<string> { "Enfermeria","Terapia Ocupacional","Nutricion y Dietetica","Psicologia","Kinesiologia","Obstetricia y Puericultura" } }
         };
 
         private static List<string> formasRetribucion = new List<string>
         {
-            "Costo $ / MM",
-            "RRHH x retribución",
-            "Capacitación x retribución",
+            "Pago por Uso de CC $$",
             "Pago Apoyo a la Docencia",
+            "Pago en RRHH  ",
+            "Capacitacion ",
+            "Obras Menores",
+            "Obras Mayores",
             "Otros Gastos x retribución"
         };
 
@@ -50,12 +52,12 @@ namespace Gestion_Del_Presupuesto.Controllers
         {
             ViewBag.CarrerasPorSede = carrerasPorSede;
             ViewBag.FormasRetribucion = formasRetribucion;
-            return View(new Consolidado_CentroCostoModel { Anio = System.DateTime.Now.Year });
+            return View(new PresupuestoModel { Anio = System.DateTime.Now.Year });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Consolidado_CentroCostoModel model, List<string> FormasRetribucionSeleccionadas)
+        public IActionResult Create(PresupuestoModel model, List<string> FormasRetribucionSeleccionadas)
         {
             if (ModelState.IsValid)
             {

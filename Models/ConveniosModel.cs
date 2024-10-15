@@ -6,7 +6,7 @@ namespace Gestion_Del_Presupuesto.Models
     public class ConveniosModel
     {
         [Key]
-        public int Id_Convenios { get; set; }  // Clave primaria del convenio
+        public int Id_Convenio { get; set; }  // Clave primaria del convenio
 
         [Required]
         [Display(Name = "Contratos Instituciones")]
@@ -74,12 +74,10 @@ namespace Gestion_Del_Presupuesto.Models
         [Display(Name = "Saldo Estimado x pagar 2025")]
         public decimal? SaldoEstimadoPagar { get; set; }
 
-        // Lista de retribuciones asociadas al convenio
-        [Display(Name = "Retribuciones")]
-        public ICollection<Retribucion> Retribuciones { get; set; }
-
-        // Estado del convenio
         [Display(Name = "Estado del Convenio")]
         public string Estado { get; set; }
+        [Display(Name = "Retribuciones")]
+        public ICollection<Retribucion> Retribuciones { get; set; }
+        public virtual ICollection<PlanillasModel> Planillas { get; set; }
     }
 }

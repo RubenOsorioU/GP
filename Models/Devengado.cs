@@ -10,8 +10,9 @@ namespace Gestion_Del_Presupuesto.Models
 
         public DateTime Fecha { get; set; }
 
-        [Required]
-        public decimal Monto { get; set; }
+        public decimal GastoComprometido { get; set; }
+        public decimal PagosRealizados { get; set; }
+        public decimal SaldoPendiente { get; set; }
 
         public string Descripcion { get; set; }
 
@@ -21,9 +22,7 @@ namespace Gestion_Del_Presupuesto.Models
         public int ConvenioId { get; set; }
         public virtual ConveniosModel Convenio { get; set; }
 
-        public decimal MontoComprometido { get; set; }
-        public decimal PagosRealizados { get; set; }
-        public decimal SaldoPendiente { get; set; }
+
         public IEnumerable<Devengado> Devengados { get; set; }
     }
 }

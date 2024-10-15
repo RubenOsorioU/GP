@@ -1,14 +1,17 @@
 ﻿@model IEnumerable<Gestion_Del_Presupuesto.Models.Campo_Clinico>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Lista de Campos Clínicos";
 }
 
-<h1>Crear Campo Clinico</h1>
+<h1>Lista de Campos Clínicos</h1>
 
-<p>
-    <a asp-action="Create">Registrar Nuevo Campo Clinico</a>
-</p>
+<!-- Botón para registrar un nuevo campo clínico -->
+<form asp-action="Create" method="get">
+    <button type="submit" class="btn btn-primary">Registrar Campo Clínico</button>
+</form>
+
+<!-- Tabla que lista los campos clínicos existentes -->
 <table class="table">
     <thead>
         <tr>
@@ -16,33 +19,35 @@
                 @Html.DisplayNameFor(model => model.Nombre)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Ubicacion)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.Tipo)
             </th>
-            <th></th>
+            <th>
+                @Html.DisplayNameFor(model => model.Sede)
+            </th>
+            <th>Acciones</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Nombre)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Ubicacion)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Tipo)
-            </td>
-            <td>
-                <a asp-action="Create" asp-route-id="@item.Id_Campo_Clinico">Crear</a>
-                <a asp-action="Edit" asp-route-id="@item.Id_Campo_Clinico">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id_Campo_Clinico">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id_Campo_Clinico">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nombre)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.Tipo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Sede)
+                </td>
+                <td>
+                    <!-- Enlaces para editar, ver detalles o eliminar un campo clínico -->
+                    <a asp-action="Edit" asp-route-id="@item.Id_Campo_Clinico" class="btn btn-warning btn-sm">Editar</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id_Campo_Clinico" class="btn btn-info btn-sm">Detalles</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id_Campo_Clinico" class="btn btn-danger btn-sm">Eliminar</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

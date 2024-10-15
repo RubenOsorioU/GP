@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Gestion_Del_Presupuesto.Models
 {
-    public class Consolidado_CentroCostoModel
+    public class PresupuestoModel
     {
         [Key]
         public int Id_PresupuestoXCentroCosto { get; set; }
