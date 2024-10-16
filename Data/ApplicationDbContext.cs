@@ -25,7 +25,6 @@ namespace Gestion_Del_Presupuesto.Data
         public DbSet<FacturacionModel> Facturacion { get; set; }
 
         public DbSet<PlanillasModel> Planillas { get; set; }
-
         // Configurar relaciones entre entidades
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

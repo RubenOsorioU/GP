@@ -93,84 +93,6 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.ToTable("Campo_Clinicos");
                 });
 
-            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Consolidado_CentroCostoModel", b =>
-                {
-                    b.Property<int>("Id_PresupuestoXCentroCosto")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id_PresupuestoXCentroCosto"));
-
-                    b.Property<int>("Anio")
-                        .HasColumnType("integer");
-
-                    b.Property<decimal>("CapacitacionRetribucion")
-                        .HasColumnType("numeric");
-
-                    b.Property<string>("Carrera")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("CentroCosto")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Convenio")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<decimal>("CostoMM")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal?>("DeudaAnioActual")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal?>("DeudaMorosa")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal?>("FacturadoAnioActual")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal?>("FacturadoAniosAnteriores")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal?>("FacturadoCorresponde2024")
-                        .HasColumnType("numeric");
-
-                    b.Property<List<string>>("FormasRetribucionSeleccionadas")
-                        .IsRequired()
-                        .HasColumnType("text[]");
-
-                    b.Property<decimal>("OtrosGastosRetribucion")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("PagoApoyoDocencia")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("RRHHRetribucion")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal?>("SaldoEstimadoPagarAnioActual")
-                        .HasColumnType("numeric");
-
-                    b.Property<string>("Sede")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<decimal?>("TotalDeuda")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal?>("TotalFacturadoPagado")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("TotalGastoEstimado")
-                        .HasColumnType("numeric");
-
-                    b.HasKey("Id_PresupuestoXCentroCosto");
-
-                    b.ToTable("Presupuestos");
-                });
-
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.ConveniosModel", b =>
                 {
                     b.Property<int>("Id_Convenio")
@@ -595,6 +517,84 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .IsUnique();
 
                     b.ToTable("Planillas");
+                });
+
+            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.PresupuestoModel", b =>
+                {
+                    b.Property<int>("Id_PresupuestoXCentroCosto")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id_PresupuestoXCentroCosto"));
+
+                    b.Property<int>("Anio")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("CapacitacionRetribucion")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("Carrera")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("CentroCosto")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Convenio")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("CostoMM")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("DeudaAnioActual")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("DeudaMorosa")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("FacturadoAnioActual")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("FacturadoAniosAnteriores")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("FacturadoCorresponde2024")
+                        .HasColumnType("numeric");
+
+                    b.Property<List<string>>("FormasRetribucionSeleccionadas")
+                        .IsRequired()
+                        .HasColumnType("text[]");
+
+                    b.Property<decimal>("OtrosGastosRetribucion")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("PagoApoyoDocencia")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("RRHHRetribucion")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("SaldoEstimadoPagarAnioActual")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("Sede")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal?>("TotalDeuda")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("TotalFacturadoPagado")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("TotalGastoEstimado")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("Id_PresupuestoXCentroCosto");
+
+                    b.ToTable("Presupuestos");
                 });
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Retribucion", b =>

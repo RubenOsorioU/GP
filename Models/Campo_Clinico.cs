@@ -10,7 +10,6 @@ namespace Gestion_Del_Presupuesto.Models
         public int Id_Campo_Clinico { get; set; }
         public required string Nombre { get; set; }
         public required string Tipo { get; set; }
-
         public required string Sede { get; set; }
 
         // Relación muchos a muchos con Estudiante
