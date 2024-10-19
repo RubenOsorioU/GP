@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gestion_Del_Presupuesto.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241016052758_BdGestionPresupuesto1")]
-    partial class BdGestionPresupuesto1
+    [Migration("20241019012000_AgregoUFtablaRuben")]
+    partial class AgregoUFtablaRuben
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -650,9 +650,6 @@ namespace Gestion_Del_Presupuesto.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id_Rol"));
 
-                    b.Property<int>("Id_Usuario")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("text");
@@ -663,7 +660,7 @@ namespace Gestion_Del_Presupuesto.Migrations
 
                     b.HasKey("Id_Rol");
 
-                    b.ToTable("Rol");
+                    b.ToTable("Roles");
                 });
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Solicitud_Retribucion", b =>
@@ -702,6 +699,62 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.ToTable("SolicitudesRetribucion");
                 });
 
+            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.UFData", b =>
+                {
+                    b.Property<int>("Id_UFData")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id_UFData"));
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal>("UFValue")
+                        .HasColumnType("numeric");
+
+                    b.Property<int?>("UFViewModelId_UF")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id_UFData");
+
+                    b.HasIndex("UFViewModelId_UF");
+
+                    b.ToTable("UFData");
+                });
+
+            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.UFViewModel", b =>
+                {
+                    b.Property<int>("Id_UF")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id_UF"));
+
+                    b.Property<decimal>("MontoUF")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("Resultado")
+                        .HasColumnType("numeric");
+
+                    b.Property<DateTime>("SelectedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("SelectedMonth")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("SelectedYear")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("UFValueForDate")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("Id_UF");
+
+                    b.ToTable("UFViewModel");
+                });
+
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Usuario", b =>
                 {
                     b.Property<int>("Id_Usuario")
@@ -714,17 +767,18 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("Id_Rol")
+                        .HasColumnType("integer");
 
-                    b.Property<string>("Rol")
+                    b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id_Usuario");
 
-                    b.ToTable("Usuario");
+                    b.HasIndex("Id_Rol");
+
+                    b.ToTable("Usuarios");
                 });
 
             modelBuilder.Entity("Campo_ClinicoEstudiante", b =>
@@ -884,6 +938,24 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.Navigation("Convenio");
                 });
 
+            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.UFData", b =>
+                {
+                    b.HasOne("Gestion_Del_Presupuesto.Models.UFViewModel", null)
+                        .WithMany("UFValues")
+                        .HasForeignKey("UFViewModelId_UF");
+                });
+
+            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Usuario", b =>
+                {
+                    b.HasOne("Gestion_Del_Presupuesto.Models.Rol", "Rol")
+                        .WithMany("Usuarios")
+                        .HasForeignKey("Id_Rol")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Rol");
+                });
+
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Campo_Clinico", b =>
                 {
                     b.Navigation("Convenios");
@@ -917,10 +989,20 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.Navigation("Pagos");
                 });
 
+            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Rol", b =>
+                {
+                    b.Navigation("Usuarios");
+                });
+
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Solicitud_Retribucion", b =>
                 {
                     b.Navigation("Retribucion")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.UFViewModel", b =>
+                {
+                    b.Navigation("UFValues");
                 });
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Usuario", b =>

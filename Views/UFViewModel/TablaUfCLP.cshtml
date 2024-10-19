@@ -1,0 +1,42 @@
+﻿@model UFViewModel
+
+<hr />
+
+<!-- Tabla de UF por Meses organizada como en la imagen -->
+<h3>Tabla de UF por Días y Meses</h3>
+<div class="table-responsive">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Dia</th>
+                @foreach (var month in System.Globalization.CultureInfo.GetCultureInfo("es-ES").DateTimeFormat.MonthNames.Where(m => !string.IsNullOrEmpty(m)))
+                {
+                    <th>@month</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @for (int day = 1; day <= 31; day++)  // Iterar sobre los días del mes
+            {
+                <tr>
+                    <td>@day</td>  <!-- Día del mes -->
+                    @foreach (var month in System.Globalization.CultureInfo.GetCultureInfo("es-ES").DateTimeFormat.MonthNames.Where(m => !string.IsNullOrEmpty(m)))
+                    {
+                        var ufValue = Model.UFValues.FirstOrDefault(uf => uf.Date.Day == day && uf.Date.ToString("MMMM", new System.Globalization.CultureInfo("es-ES")) == month && uf.Date.Year == Model.SelectedYear);
+
+                        if (ufValue != null)
+                        {
+                            <td>@ufValue.UFValue.ToString("N2")</td>  <!-- Mostrar valor de la UF -->
+                        }
+                        else
+                        {
+                            <td>-</td>  <!-- Si no hay valor de la UF para ese día/mes -->
+                        }
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<hr />

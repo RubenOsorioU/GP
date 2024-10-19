@@ -8,6 +8,7 @@ namespace Gestion_Del_Presupuesto.Models
         [Key]
         public int Id_Devengado { get; set; }
 
+
         public DateTime Fecha { get; set; }
 
         public decimal GastoComprometido { get; set; }

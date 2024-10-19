@@ -18,11 +18,13 @@ namespace Gestion_Del_Presupuesto.Data
         public DbSet<PresupuestoModel> Presupuestos { get; set; }
         public DbSet<Retribucion> Retribuciones { get; set; }
         public DbSet<Solicitud_Retribucion> SolicitudesRetribucion { get; set; }
-        public DbSet<Rol> Rol { get; set; }
-        public DbSet<Usuario> Usuario { get; set; }
+        public DbSet<Rol> Roles { get; set; }
+        public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Devengado> Devengados { get; set; }
         public DbSet<Costo> Costo { get; set; }
         public DbSet<FacturacionModel> Facturacion { get; set; }
+        
+        public DbSet<UFViewModel> UFViewModel { get; set; }
 
         public DbSet<PlanillasModel> Planillas { get; set; }
         // Configurar relaciones entre entidades
@@ -63,6 +65,12 @@ namespace Gestion_Del_Presupuesto.Data
                 .WithOne(p => p.Estudiante)
                 .HasForeignKey<PlanillasModel>(p => p.Id_Estudiante)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Rol>()
+               .HasMany(r => r.Usuarios)
+               .WithOne(u => u.Rol)
+               .HasForeignKey(u => u.Id_Rol)
+               .OnDelete(DeleteBehavior.Cascade);
 
 
         }

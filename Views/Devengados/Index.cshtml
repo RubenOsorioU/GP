@@ -3,15 +3,23 @@
 <h2>Generar Devengados</h2>
 
 <form asp-action="Index" method="get">
-    <div class="form-group">
-        <label>Fecha de Inicio</label>
-        <input class="form-control" asp-for="FechaInicio" type="date" />
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="FechaInicio">Fecha de Inicio</label>
+                <input class="form-control" style="width: 100%;" asp-for="FechaInicio" type="date" />
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="FechaFin">Fecha de Fin</label>
+                <input class="form-control" style="width: 100%;" asp-for="FechaFin" type="date" />
+            </div>
+        </div>
+        <div class="col-md-4 align-self-end">
+            <button type="submit" class="btn btn-primary">Filtrar</button>
+        </div>
     </div>
-    <div class="form-group">
-        <label>Fecha de Fin</label>
-        <input class="form-control" asp-for="FechaFin" type="date" />
-    </div>
-    <button type="submit" class="btn btn-primary">Filtrar</button>
 </form>
 
 <h3>Resultados</h3>
@@ -19,7 +27,6 @@
     <thead>
         <tr>
             <th>Convenio</th>
-           
             <th>Gasto Comprometido</th>
             <th>Pagos Realizados</th>
             <th>Saldo Pendiente</th>
@@ -29,6 +36,7 @@
         @foreach (var devengado in Model.Devengados)
         {
             <tr>
+                <td>@devengado.Convenio</td>
                 <td>@devengado.GastoComprometido</td>
                 <td>@devengado.PagosRealizados</td>
                 <td>@devengado.SaldoPendiente</td>
@@ -36,4 +44,3 @@
         }
     </tbody>
 </table>
-

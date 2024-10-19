@@ -1,0 +1,19 @@
+﻿@model Gestion_Del_Presupuesto.Models.LoginViewModel
+
+@{
+    ViewData["Title"] = "Iniciar Sesión";
+}
+
+<h2>Iniciar Sesión</h2>
+
+<form asp-action="Login">
+    <div class="form-group">
+        <label>Nombre de Usuario</label>
+        <input class="form-control" asp-for="NombreUsuario" />
+    </div>
+    <div class="form-group">
+        <label>Contraseña</label>
+        <input class="form-control" asp-for="Contraseña" type="password" />
+    </div>
+    <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
+</form>

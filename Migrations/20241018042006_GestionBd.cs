@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gestion_Del_Presupuesto.Migrations
 {
     /// <inheritdoc />
-    public partial class BdGestionPresupuesto1 : Migration
+    public partial class GestionBd : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -121,33 +121,17 @@ namespace Gestion_Del_Presupuesto.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Rol",
+                name: "Roles",
                 columns: table => new
                 {
                     Id_Rol = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Nombre = table.Column<string>(type: "text", nullable: false),
-                    Permisos = table.Column<string>(type: "text", nullable: false),
-                    Id_Usuario = table.Column<int>(type: "integer", nullable: false)
+                    Permisos = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Rol", x => x.Id_Rol);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Usuario",
-                columns: table => new
-                {
-                    Id_Usuario = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Nombre = table.Column<string>(type: "text", nullable: false),
-                    Contraseña = table.Column<string>(type: "text", nullable: false),
-                    Rol = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Usuario", x => x.Id_Usuario);
+                    table.PrimaryKey("PK_Roles", x => x.Id_Rol);
                 });
 
             migrationBuilder.CreateTable(
@@ -259,23 +243,23 @@ namespace Gestion_Del_Presupuesto.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Historial_Actividad",
+                name: "Usuarios",
                 columns: table => new
                 {
-                    Id_Historial_Actividad = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Fecha = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Accion = table.Column<string>(type: "text", nullable: false),
                     Id_Usuario = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Nombre = table.Column<string>(type: "text", nullable: false),
+                    Contraseña = table.Column<string>(type: "text", nullable: false),
+                    Id_Rol = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Historial_Actividad", x => x.Id_Historial_Actividad);
+                    table.PrimaryKey("PK_Usuarios", x => x.Id_Usuario);
                     table.ForeignKey(
-                        name: "FK_Historial_Actividad_Usuario_Id_Usuario",
-                        column: x => x.Id_Usuario,
-                        principalTable: "Usuario",
-                        principalColumn: "Id_Usuario",
+                        name: "FK_Usuarios_Roles_Id_Rol",
+                        column: x => x.Id_Rol,
+                        principalTable: "Roles",
+                        principalColumn: "Id_Rol",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -401,6 +385,27 @@ namespace Gestion_Del_Presupuesto.Migrations
                         column: x => x.ConvenioId_Convenio,
                         principalTable: "Convenios",
                         principalColumn: "Id_Convenio",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Historial_Actividad",
+                columns: table => new
+                {
+                    Id_Historial_Actividad = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Fecha = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Accion = table.Column<string>(type: "text", nullable: false),
+                    Id_Usuario = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Historial_Actividad", x => x.Id_Historial_Actividad);
+                    table.ForeignKey(
+                        name: "FK_Historial_Actividad_Usuarios_Id_Usuario",
+                        column: x => x.Id_Usuario,
+                        principalTable: "Usuarios",
+                        principalColumn: "Id_Usuario",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -548,6 +553,11 @@ namespace Gestion_Del_Presupuesto.Migrations
                 name: "IX_SolicitudesRetribucion_ConvenioId_Convenio",
                 table: "SolicitudesRetribucion",
                 column: "ConvenioId_Convenio");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Usuarios_Id_Rol",
+                table: "Usuarios",
+                column: "Id_Rol");
         }
 
         /// <inheritdoc />
@@ -581,16 +591,16 @@ namespace Gestion_Del_Presupuesto.Migrations
                 name: "Presupuestos");
 
             migrationBuilder.DropTable(
-                name: "Rol");
-
-            migrationBuilder.DropTable(
                 name: "Planillas");
 
             migrationBuilder.DropTable(
-                name: "Usuario");
+                name: "Usuarios");
 
             migrationBuilder.DropTable(
                 name: "Retribuciones");
+
+            migrationBuilder.DropTable(
+                name: "Roles");
 
             migrationBuilder.DropTable(
                 name: "SolicitudesRetribucion");

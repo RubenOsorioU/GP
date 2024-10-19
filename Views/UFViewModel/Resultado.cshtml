@@ -1,16 +1,20 @@
 ﻿@model Gestion_Del_Presupuesto.Models.UFViewModel
 
 @{
-    ViewData["Title"] = "Resultado UF";
+    ViewData["Title"] = "Resultado";
 }
 
-<h2>Resultado del Cálculo de UF</h2>
+<h2>Resultado de la Conversión</h2>
 
-<div>
-    <p>Monto en CLP: @Model.MontoCLP</p>
-    <p>Tipo de UF seleccionada: @Model.TipoUF</p>
-    <p>Monto en UF: @Model.MontoUF</p>
-    <p>Fecha de cálculo: @Model.Fecha.ToString("dd/MM/yyyy HH:mm:ss")</p>
-</div>
+@if (Model != null)
+{
+    <p><strong>Cantidad de UF:</strong> @Model.MontoUF</p>
+    <p><strong>Valor de la UF en la Fecha Seleccionada:</strong> @Model.UFValueForDate</p>
+    <p><strong>Resultado (Monto en CLP):</strong> @Model.Resultado</p>
+}
+else
+{
+    <p>No se pudo obtener el resultado de la conversión. Inténtalo de nuevo.</p>
+}
 
-<a asp-action="Index" class="btn btn-secondary">Volver</a>
+<a href="@Url.Action("Index", "UFViewModel")" class="btn btn-secondary">Volver a calcular</a>

@@ -48,7 +48,7 @@ namespace Gestion_Del_Presupuesto.Controllers
         // GET: Historial_Actividad/Create
         public IActionResult Create()
         {
-            ViewData["Id_Usuario"] = new SelectList(_context.Usuario, "Id_Usuario", "Id_Usuario");
+            ViewData["Id_Usuario"] = new SelectList(_context.Usuarios, "Id_Usuario", "Id_Usuario");
             return View();
         }
 
@@ -65,7 +65,7 @@ namespace Gestion_Del_Presupuesto.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["Id_Usuario"] = new SelectList(_context.Usuario, "Id_Usuario", "Id_Usuario", historial_Actividad.Id_Usuario);
+            ViewData["Id_Usuario"] = new SelectList(_context.Usuarios, "Id_Usuario", "Id_Usuario", historial_Actividad.Id_Usuario);
             return View(historial_Actividad);
         }
 
@@ -82,7 +82,7 @@ namespace Gestion_Del_Presupuesto.Controllers
             {
                 return NotFound();
             }
-            ViewData["Id_Usuario"] = new SelectList(_context.Usuario, "Id_Usuario", "Id_Usuario", historial_Actividad.Id_Usuario);
+            ViewData["Id_Usuario"] = new SelectList(_context.Usuarios, "Id_Usuario", "Id_Usuario", historial_Actividad.Id_Usuario);
             return View(historial_Actividad);
         }
 
@@ -118,7 +118,7 @@ namespace Gestion_Del_Presupuesto.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["Id_Usuario"] = new SelectList(_context.Usuario, "Id_Usuario", "Id_Usuario", historial_Actividad.Id_Usuario);
+            ViewData["Id_Usuario"] = new SelectList(_context.Usuarios, "Id_Usuario", "Id_Usuario", historial_Actividad.Id_Usuario);
             return View(historial_Actividad);
         }
 

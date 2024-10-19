@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Gestion_Del_Presupuesto.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gestion_Del_Presupuesto.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241018042006_GestionBd")]
+    partial class GestionBd
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -696,101 +699,6 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.ToTable("SolicitudesRetribucion");
                 });
 
-            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.UFData", b =>
-                {
-                    b.Property<int>("Id_UFData")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id_UFData"));
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<decimal>("UFValue")
-                        .HasColumnType("numeric");
-
-                    b.Property<int?>("UFViewModelId_UF")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id_UFData");
-
-                    b.HasIndex("UFViewModelId_UF");
-
-                    b.ToTable("UFData");
-                });
-
-            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.UFViewModel", b =>
-                {
-                    b.Property<int>("Id_UF")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id_UF"));
-
-                    b.Property<double>("Abr")
-                        .HasColumnType("double precision");
-
-                    b.Property<double>("Ago")
-                        .HasColumnType("double precision");
-
-                    b.Property<int>("Dia")
-                        .HasColumnType("integer");
-
-                    b.Property<double>("Dic")
-                        .HasColumnType("double precision");
-
-                    b.Property<double>("Ene")
-                        .HasColumnType("double precision");
-
-                    b.Property<double>("Feb")
-                        .HasColumnType("double precision");
-
-                    b.Property<double>("Jul")
-                        .HasColumnType("double precision");
-
-                    b.Property<double>("Jun")
-                        .HasColumnType("double precision");
-
-                    b.Property<double>("Mar")
-                        .HasColumnType("double precision");
-
-                    b.Property<double>("May")
-                        .HasColumnType("double precision");
-
-                    b.Property<decimal>("MontoUF")
-                        .HasColumnType("numeric");
-
-                    b.Property<double>("Nov")
-                        .HasColumnType("double precision");
-
-                    b.Property<double>("Oct")
-                        .HasColumnType("double precision");
-
-                    b.Property<decimal>("Resultado")
-                        .HasColumnType("numeric");
-
-                    b.Property<DateTime>("SelectedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("SelectedMonth")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("SelectedYear")
-                        .HasColumnType("integer");
-
-                    b.Property<double>("Sep")
-                        .HasColumnType("double precision");
-
-                    b.Property<decimal>("UFValueForDate")
-                        .HasColumnType("numeric");
-
-                    b.HasKey("Id_UF");
-
-                    b.ToTable("UFViewModel");
-                });
-
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Usuario", b =>
                 {
                     b.Property<int>("Id_Usuario")
@@ -974,13 +882,6 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.Navigation("Convenio");
                 });
 
-            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.UFData", b =>
-                {
-                    b.HasOne("Gestion_Del_Presupuesto.Models.UFViewModel", null)
-                        .WithMany("UFValues")
-                        .HasForeignKey("UFViewModelId_UF");
-                });
-
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Usuario", b =>
                 {
                     b.HasOne("Gestion_Del_Presupuesto.Models.Rol", "Rol")
@@ -1034,11 +935,6 @@ namespace Gestion_Del_Presupuesto.Migrations
                 {
                     b.Navigation("Retribucion")
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.UFViewModel", b =>
-                {
-                    b.Navigation("UFValues");
                 });
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Usuario", b =>
