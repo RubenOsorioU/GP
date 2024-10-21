@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using Gestion_Del_Presupuesto.Data;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace Gestion_Del_Presupuesto.Controllers
 {
@@ -14,28 +15,38 @@ namespace Gestion_Del_Presupuesto.Controllers
         {
             _context = context;
         }
-
-        public IActionResult Index(int? selectedYear, int? selectedDay, string selectedMonth)
+        public async Task<IActionResult> Index(DateTime SelectedDate)
         {
-            UF2023 uf2023 = new UF2023();
-            UF2024 uf2024 = new UF2024();
+            return View();
+        }
+        public async Task<IActionResult> BuscarUF(DateTime SelectedDate)
+        {
 
-            if (selectedYear == 2023)
+            //string url = $"https://mindicador.cl/api/uf/{SelectedDate.Year.ToString()}-{SelectedDate.Month.ToString()}-{SelectedDate.Day.ToString()}}";
+            string url = $"https://si3.bcentral.cl/SieteRestWS/SieteRestWS.ashx?user=Ruben1Ulloa@gmail.com&pass=Benchi12&function=GetSeries&timeseries=F073.UFF.PRE.Z.D&firstdate={SelectedDate.ToString("yyyy-MM-dd")}&lastdate={SelectedDate.ToString("yyyy-MM-dd")}";
+
+            using (HttpClient client = new HttpClient())
             {
-                uf2023 = _context.UF2023.FirstOrDefault(u => u.Dia == selectedDay) ?? new UF2023();
+                HttpResponseMessage response = await client.GetAsync(url);
+                if (response.IsSuccessStatusCode)
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    IndicadorEconomico indicador = JsonConvert.DeserializeObject<IndicadorEconomico>(jsonResponse);
+                    var valorUF = indicador.Series.Obs.FirstOrDefault()?.Value;
+                    var fechaUF = indicador.Series.Obs.FirstOrDefault()?.IndexDateString;
+                    ViewBag.ValorUF = valorUF;
+                    ViewBag.FechaUF = fechaUF;
+                   
+                }
+                else
+                {
+                    ViewBag.Error = "Error al obtener el valor de la UF";
+                }
             }
-            else if (selectedYear == 2024)
-            {
-                uf2024 = _context.UF2024.FirstOrDefault(u => u.Dia == selectedDay) ?? new UF2024();
-            }
 
-            var viewModel = new UFCombinedViewModel
-            {
-                UF2023 = uf2023,
-                UF2024 = uf2024
-            };
-
-            return View(viewModel);
+            return View("index");
         }
     }
 }
+
+

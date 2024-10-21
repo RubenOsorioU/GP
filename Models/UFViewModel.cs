@@ -10,9 +10,8 @@ namespace Gestion_Del_Presupuesto.Models
         public int Id_ConbinedUF { get; set; }
             public UF2023 UF2023 { get; set; }
             public UF2024 UF2024 { get; set; }
-            public string SelectedMonth { get; set; }
-            public string SelectedYear { get; set; }
-            public int SelectedDay { get; set; }
+        public DateTime SelectedDate { get; set; } = DateTime.Now;
+
     }
 
     public class UFData
