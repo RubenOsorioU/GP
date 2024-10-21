@@ -25,8 +25,9 @@ namespace Gestion_Del_Presupuesto.Models
         
         public int  TotalCosto { get; set; }
         public int Id_Estudiante {  get; set; }
-        public Estudiante Estudiante { get; set; }
-        public virtual ICollection<Estudiante> Estudiantes { get; set; }
+
+        public virtual Estudiante Estudiante { get; set; }
+
 
         public virtual ICollection<ConveniosModel> Convenios { get; set; }
     }

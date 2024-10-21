@@ -1,132 +1,173 @@
-﻿@model UFViewModel
+﻿@model Gestion_Del_Presupuesto.Models.UFCombinedViewModel
 
-<h2>UF 2024</h2>
-
-<!-- Filtro de selección de año -->
-<form method="get">
-    <div class="form-row d-flex align-items-center">
-        <div class="form-group col-md-3">
-            <label for="selectedYear">Seleccionar Año:</label>
-            <select id="selectedYear" name="selectedYear" class="form-control" style="width: auto;" onchange="this.form.submit()">
-                @for (int year = 2020; year <= DateTime.Now.Year + 5; year++)
-                {
-                    <option value="@year" selected="@(year == DateTime.Now.Year ? "selected" : null)">@year</option>
-
-                }
-            </select>
-        </div>
-    </div>
-</form>
-
-<!-- Formulario para calcular UF por estudiante -->
-<h3>Calcular UF por Estudiante</h3>
-<form id="ufCalculatorForm" class="mt-3" onsubmit="event.preventDefault(); agregarFila();">
+<h2>Buscar Valor de UF por Fecha</h2>
+<form method="get" asp-action="Index">
     <div class="form-row">
         <div class="form-group col-md-3">
-            <label for="ufDate">Seleccionar Fecha:</label>
-            <input type="date" id="ufDate" name="ufDate" class="form-control" required />
-        </div>
-
-        <div class="form-group col-md-3">
-            <label for="valorUFEstudiante">Valor UF por Estudiante:</label>
-            <input type="number" id="valorUFEstudiante" name="valorUFEstudiante" class="form-control" step="0.01" min="0" required />
-        </div>
-
-        <div class="form-group col-md-2 d-flex align-items-end">
-            <button type="submit" class="btn btn-success">Agregar</button>
-        </div>
+        <label for="selectedYear">Año:</label>
+        <select id="selectedYear" name="selectedYear" class="form-control">
+            <option value="2023">2023</option>
+            <option value="2024">2024</option>
+        </select>
     </div>
+    <div class="form-group col-md-3">
+        <label for="selectedDay">Día:</label>
+        <input type="number" id="selectedDay" name="selectedDay" class="form-control" min="1" max="31" required />
+    </div>
+    <div class="form-group">
+        <label for="selectedMonth">Mes:</label>
+        <select id="selectedMonth" name="selectedMonth" class="form-control">
+            <option value="Ene">Enero</option>
+            <option value="Feb">Febrero</option>
+            <option value="Mar">Marzo</option>
+            <option value="Abr">Abril</option>
+            <option value="May">Mayo</option>
+            <option value="Jun">Junio</option>
+            <option value="Jul">Julio</option>
+            <option value="Ago">Agosto</option>
+            <option value="Sep">Septiembre</option>
+            <option value="Oct">Octubre</option>
+            <option value="Nov">Noviembre</option>
+            <option value="Dic">Diciembre</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Buscar Valor UF</button>
 </form>
 
-<!-- Tabla de resultados -->
-<h4>Resultados Calculados</h4>
-<div class="table-responsive">
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Fecha solicitada</th>
-                <th>Valor UF Ese Día</th>
-                <th>Valor UF por Estudiante</th>
-                <th>Resultado UF por Estudiante (CLP)</th>
-            </tr>
-        </thead>
-        <tbody id="resultadosTabla">
-            <!-- Las filas se agregarán aquí -->
-        </tbody>
-    </table>
-</div>
-<hr />
+@if (Model != null)
+{
+    <h2>Resultado de la Búsqueda</h2>
 
-<!-- Tabla de UF por Meses organizada como en la imagen -->
-<h3>Tabla de UF por Días y Meses</h3>
-<div class="table-responsive">
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Dia</th>
-                @foreach (var month in System.Globalization.CultureInfo.GetCultureInfo("es-ES").DateTimeFormat.MonthNames.Where(m => !string.IsNullOrEmpty(m)))
-                {
-                    <th>@month</th>
-                }
-            </tr>
-        </thead>
-        <tbody>
-            @for (int day = 1; day <= 31; day++)  // Iterar sobre los días del mes
-            {
-                <tr>
-                    <td>@day</td>  <!-- Día del mes -->
-                    @foreach (var month in System.Globalization.CultureInfo.GetCultureInfo("es-ES").DateTimeFormat.MonthNames.Where(m => !string.IsNullOrEmpty(m)))
-                    {
-                        var ufValue = Model.UFValues.FirstOrDefault(uf => uf.Date.Day == day && uf.Date.ToString("MMMM", new System.Globalization.CultureInfo("es-ES")) == month && uf.Date.Year == Model.SelectedYear);
+    @* Determinamos el valor de UF basado en el año, mes y día seleccionados *@
+    string valorUF = "";
+    int selectedDay = Model.SelectedDay; // Asignamos el día seleccionado
 
-                        if (ufValue != null)
-                        {
-                            <td>@ufValue.UFValue.ToString("N2")</td>  <!-- Mostrar valor de la UF -->
-                        }
-                        else
-                        {
-                            <td>-</td>  <!-- Si no hay valor de la UF para ese día/mes -->
-                        }
-                    }
-                </tr>
-            }
-        </tbody>
-    </table>
-</div>
-
-<hr />
-<script>
-    // Función para calcular el resultado y agregar una fila a la tabla
-    function agregarFila() {
-        const selectedDate = document.getElementById('ufDate').value;
-        const valorUFEstudiante = parseFloat(document.getElementById('valorUFEstudiante').value);
-
-        if (!selectedDate || isNaN(valorUFEstudiante)) {
-            alert("Por favor, selecciona una fecha válida y un valor UF por estudiante.");
-            return;
-        }
-
-        // Buscar el valor de la UF correspondiente a la fecha seleccionada
-        const ufData = @Html.Raw(Json.Serialize(Model.UFValues));
-        const fechaSeleccionada = new Date(selectedDate);
-        const valorUF = ufData.find(uf => new Date(uf.Date).getTime() === fechaSeleccionada.getTime());
-
-        if (!valorUF) {
-            alert("No se encontró valor de UF para la fecha seleccionada.");
-            return;
-        }
-
-        const resultadoCLP = valorUFEstudiante * valorUF.UFValue;
-
-        // Crear una nueva fila con los resultados
-        const nuevaFila = `<tr>
-            <td>${fechaSeleccionada.toLocaleDateString()}</td>
-            <td>${valorUF.UFValue.toFixed(2)}</td>
-            <td>${valorUFEstudiante.toFixed(2)}</td>
-            <td>${resultadoCLP.toFixed(2)}</td>
-        </tr>`;
-
-        // Agregar la nueva fila a la tabla
-        document.getElementById('resultadosTabla').innerHTML += nuevaFila;
+    if (Model.SelectedYear == "2023" && Model.UF2023 != null)
+    {
+        valorUF = Model.SelectedMonth switch
+        {
+            "Ene" => Model.UF2023?.Ene.ToString(),
+            "Feb" => Model.UF2023?.Feb.ToString(),
+            "Mar" => Model.UF2023?.Mar.ToString(),
+            "Abr" => Model.UF2023?.Abr.ToString(),
+            "May" => Model.UF2023?.May.ToString(),
+            "Jun" => Model.UF2023?.Jun.ToString(),
+            "Jul" => Model.UF2023?.Jul.ToString(),
+            "Ago" => Model.UF2023?.Ago.ToString(),
+            "Sep" => Model.UF2023?.Sep.ToString(),
+            "Oct" => Model.UF2023?.Oct.ToString(),
+            "Nov" => Model.UF2023?.Nov.ToString(),
+            "Dic" => Model.UF2023?.Dic.ToString(),
+            _ => "Mes no válido"
+        };
     }
-</script>
+    else if (Model.SelectedYear == "2024" && Model.UF2024 != null)
+    {
+        valorUF = Model.SelectedMonth switch
+        {
+            "Ene" => Model.UF2024?.Ene.ToString(),
+            "Feb" => Model.UF2024?.Feb.ToString(),
+            "Mar" => Model.UF2024?.Mar.ToString(),
+            "Abr" => Model.UF2024?.Abr.ToString(),
+            "May" => Model.UF2024?.May.ToString(),
+            "Jun" => Model.UF2024?.Jun.ToString(),
+            "Jul" => Model.UF2024?.Jul.ToString(),
+            "Ago" => Model.UF2024?.Ago.ToString(),
+            "Sep" => Model.UF2024?.Sep.ToString(),
+            "Oct" => Model.UF2024?.Oct.ToString(),
+            "Nov" => Model.UF2024?.Nov.ToString(),
+            "Dic" => Model.UF2024?.Dic.ToString(),
+            _ => "Mes no válido"
+        };
+    }
+
+    @* Mostramos el valor en un cuadro si se encontró *@
+    if (!string.IsNullOrEmpty(valorUF))
+    {
+        <div class="alert alert-success">
+            <strong>Valor UF:</strong> @valorUF
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning">
+            No se encontró un valor de UF para la fecha seleccionada.
+        </div>
+    }
+}
+
+<h2>UF 2023</h2>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Día</th>
+            <th>Enero</th>
+            <th>Febrero</th>
+            <th>Marzo</th>
+            <th>Abril</th>
+            <th>Mayo</th>
+            <th>Junio</th>
+            <th>Julio</th>
+            <th>Agosto</th>
+            <th>Septiembre</th>
+            <th>Octubre</th>
+            <th>Noviembre</th>
+            <th>Diciembre</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>@Model.UF2023?.Dia</td>
+            <td>@Model.UF2023?.Ene</td>
+            <td>@Model.UF2023?.Feb</td>
+            <td>@Model.UF2023?.Mar</td>
+            <td>@Model.UF2023?.Abr</td>
+            <td>@Model.UF2023?.May</td>
+            <td>@Model.UF2023?.Jun</td>
+            <td>@Model.UF2023?.Jul</td>
+            <td>@Model.UF2023?.Ago</td>
+            <td>@Model.UF2023?.Sep</td>
+            <td>@Model.UF2023?.Oct</td>
+            <td>@Model.UF2023?.Nov</td>
+            <td>@Model.UF2023?.Dic</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>UF 2024</h2>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Día</th>
+            <th>Enero</th>
+            <th>Febrero</th>
+            <th>Marzo</th>
+            <th>Abril</th>
+            <th>Mayo</th>
+            <th>Junio</th>
+            <th>Julio</th>
+            <th>Agosto</th>
+            <th>Septiembre</th>
+            <th>Octubre</th>
+            <th>Noviembre</th>
+            <th>Diciembre</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>@Model.UF2024?.Dia</td>
+            <td>@Model.UF2024?.Ene</td>
+            <td>@Model.UF2024?.Feb</td>
+            <td>@Model.UF2024?.Mar</td>
+            <td>@Model.UF2024?.Abr</td>
+            <td>@Model.UF2024?.May</td>
+            <td>@Model.UF2024?.Jun</td>
+            <td>@Model.UF2024?.Jul</td>
+            <td>@Model.UF2024?.Ago</td>
+            <td>@Model.UF2024?.Sep</td>
+            <td>@Model.UF2024?.Oct</td>
+            <td>@Model.UF2024?.Nov</td>
+            <td>@Model.UF2024?.Dic</td>
+        </tr>
+    </tbody>
+</table>

@@ -1,4 +1,4 @@
-﻿@model Gestion_Del_Presupuesto.Models.UFViewModel
+﻿@model Gestion_Del_Presupuesto.Models.UFCombinedViewModel
 
 @{
     ViewData["Title"] = "Ingreso y Conversión de UF";
@@ -6,10 +6,4 @@
 
 <h2>Ingreso y Conversión de UF</h2>
 
-<form asp-action="ConvertirUF">
-    <div class="form-group">
-        <label>Valor en UF</label>
-        <input class="form-control" asp-for="MontoUF" />
-    </div>
-    <button type="submit" class="btn btn-primary">Convertir a CLP</button>
-</form>
+

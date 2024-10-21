@@ -24,7 +24,9 @@ namespace Gestion_Del_Presupuesto.Data
         public DbSet<Costo> Costo { get; set; }
         public DbSet<FacturacionModel> Facturacion { get; set; }
         
-        public DbSet<UFViewModel> UFViewModel { get; set; }
+        public DbSet<UF2023> UF2023 {  get; set; }
+        public DbSet<UF2024> UF2024 {  get; set; }
+        public DbSet<UFCombinedViewModel> UFViewModel { get; set; }
 
         public DbSet<PlanillasModel> Planillas { get; set; }
         // Configurar relaciones entre entidades

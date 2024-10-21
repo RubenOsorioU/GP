@@ -7,6 +7,9 @@ using Gestion_Del_Presupuesto.Data;
 using Gestion_Del_Presupuesto.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using CsvHelper;
+using System.Globalization;
+using Microsoft.CodeAnalysis.Elfie.Serialization;
 
 namespace Gestion_Del_Presupuesto.Controllers
 {
@@ -22,7 +25,7 @@ namespace Gestion_Del_Presupuesto.Controllers
         // GET: Planillas
         public async Task<IActionResult> Index()
         {
-            var planillas = await _context.Planillas.ToListAsync();
+            var planillas = await _context.Planillas.Include(p => p.Estudiante).ToListAsync();
             return View(planillas);
         }
 
@@ -34,7 +37,7 @@ namespace Gestion_Del_Presupuesto.Controllers
                 return NotFound();
             }
 
-            var planilla = await _context.Planillas.FirstOrDefaultAsync(m => m.Id_Planillas == id);
+            var planilla = await _context.Planillas.Include(p => p.Estudiante).FirstOrDefaultAsync(m => m.Id_Planillas == id);
             if (planilla == null)
             {
                 return NotFound();
@@ -71,7 +74,7 @@ namespace Gestion_Del_Presupuesto.Controllers
                 return NotFound();
             }
 
-            var planilla = await _context.Planillas.FindAsync(id);
+            var planilla = await _context.Planillas.Include(p => p.Estudiante).FirstOrDefaultAsync(p => p.Id_Planillas == id);
             if (planilla == null)
             {
                 return NotFound();
@@ -120,7 +123,7 @@ namespace Gestion_Del_Presupuesto.Controllers
                 return NotFound();
             }
 
-            var planilla = await _context.Planillas.FirstOrDefaultAsync(m => m.Id_Planillas == id);
+            var planilla = await _context.Planillas.Include(p => p.Estudiante).FirstOrDefaultAsync(m => m.Id_Planillas == id);
             if (planilla == null)
             {
                 return NotFound();
@@ -162,17 +165,36 @@ namespace Gestion_Del_Presupuesto.Controllers
                 return View();
             }
 
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "uploads", file.FileName);
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
+            if (!Directory.Exists(uploadsFolder))
+            {
+                Directory.CreateDirectory(uploadsFolder);
+            }
+
+            var filePath = Path.Combine(uploadsFolder, file.FileName);
 
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 await file.CopyToAsync(stream);
             }
 
-            // Lógica para leer el archivo y agregar los datos a la tabla
-            // Aquí puedes agregar código para leer el archivo Excel o CSV y guardar los datos
+            // Lógica para leer el archivo CSV y agregar los datos a la base de datos
+            using (var reader = new StreamReader(filePath))
+            using (var csv = new CsvHelper.CsvReader(reader, CultureInfo.InvariantCulture))
+            {
+                try
+                {
+                    var records = csv.GetRecords<PlanillasModel>().ToList();
+                    _context.Planillas.AddRange(records);
+                    await _context.SaveChangesAsync();
+                    ViewBag.Message = "Archivo subido y procesado correctamente.";
+                }
+                catch (Exception ex)
+                {
+                    ViewBag.Message = $"Error procesando el archivo: {ex.Message}";
+                }
+            }
 
-            ViewBag.Message = "Archivo subido y procesado correctamente.";
             return RedirectToAction(nameof(Index));
         }
     }

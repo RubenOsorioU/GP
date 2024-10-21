@@ -55,6 +55,6 @@ app.UseAuthorization();   // Habilitar autorización
 // Configurar las rutas predeterminadas de la aplicación
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}");//Cambiar Home Por Login
 
 app.Run();

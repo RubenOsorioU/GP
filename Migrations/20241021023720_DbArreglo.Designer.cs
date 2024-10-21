@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gestion_Del_Presupuesto.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241019012000_AgregoUFtablaRuben")]
-    partial class AgregoUFtablaRuben
+    [Migration("20241021023720_DbArreglo")]
+    partial class DbArreglo
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,21 +54,6 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.HasIndex("PlanillasId_Planillas");
 
                     b.ToTable("ConveniosModelPlanillasModel");
-                });
-
-            modelBuilder.Entity("EstudiantePlanillasModel", b =>
-                {
-                    b.Property<int>("EstudiantesId_Estudiante")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("PlanillasId_Planillas")
-                        .HasColumnType("integer");
-
-                    b.HasKey("EstudiantesId_Estudiante", "PlanillasId_Planillas");
-
-                    b.HasIndex("PlanillasId_Planillas");
-
-                    b.ToTable("EstudiantePlanillasModel");
                 });
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Campo_Clinico", b =>
@@ -699,39 +684,51 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.ToTable("SolicitudesRetribucion");
                 });
 
-            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.UFData", b =>
+            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.UF2023", b =>
                 {
-                    b.Property<int>("Id_UFData")
+                    b.Property<int>("Id_UF_2023")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id_UFData"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id_UF_2023"));
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<decimal>("UFValue")
+                    b.Property<decimal>("Abr")
                         .HasColumnType("numeric");
 
-                    b.Property<int?>("UFViewModelId_UF")
+                    b.Property<decimal>("Ago")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("Dia")
                         .HasColumnType("integer");
 
-                    b.HasKey("Id_UFData");
+                    b.Property<decimal>("Dic")
+                        .HasColumnType("numeric");
 
-                    b.HasIndex("UFViewModelId_UF");
+                    b.Property<decimal>("Ene")
+                        .HasColumnType("numeric");
 
-                    b.ToTable("UFData");
-                });
+                    b.Property<decimal>("Feb")
+                        .HasColumnType("numeric");
 
-            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.UFViewModel", b =>
-                {
-                    b.Property<int>("Id_UF")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                    b.Property<decimal>("Jul")
+                        .HasColumnType("numeric");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id_UF"));
+                    b.Property<decimal>("Jun")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("Mar")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("May")
+                        .HasColumnType("numeric");
 
                     b.Property<decimal>("MontoUF")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("Nov")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("Oct")
                         .HasColumnType("numeric");
 
                     b.Property<decimal>("Resultado")
@@ -746,6 +743,185 @@ namespace Gestion_Del_Presupuesto.Migrations
 
                     b.Property<int>("SelectedYear")
                         .HasColumnType("integer");
+
+                    b.Property<decimal>("Sep")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("UFValueForDate")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("Id_UF_2023");
+
+                    b.ToTable("UF2023");
+                });
+
+            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.UF2024", b =>
+                {
+                    b.Property<int>("Id_UF_2024")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id_UF_2024"));
+
+                    b.Property<decimal>("Abr")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("Ago")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("Dia")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Dic")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("Ene")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("Feb")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("Jul")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("Jun")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("Mar")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("May")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("MontoUF")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("Nov")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("Oct")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("Resultado")
+                        .HasColumnType("numeric");
+
+                    b.Property<DateTime>("SelectedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("SelectedMonth")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("SelectedYear")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Sep")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("UFValueForDate")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("Id_UF_2024");
+
+                    b.ToTable("UF2024");
+                });
+
+            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.UFData", b =>
+                {
+                    b.Property<int>("Id_UFData")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id_UFData"));
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("UF2023Id_UF_2023")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("UF2024Id_UF_2024")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("UFValue")
+                        .HasColumnType("numeric");
+
+                    b.Property<int?>("UFViewModelId_UF")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id_UFData");
+
+                    b.HasIndex("UF2023Id_UF_2023");
+
+                    b.HasIndex("UF2024Id_UF_2024");
+
+                    b.HasIndex("UFViewModelId_UF");
+
+                    b.ToTable("UFData");
+                });
+
+            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.UFViewModel", b =>
+                {
+                    b.Property<int>("Id_UF")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id_UF"));
+
+                    b.Property<decimal>("Abr")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("Ago")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("Dia")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Dic")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("Ene")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("Feb")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("Jul")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("Jun")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("Mar")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("May")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("MontoUF")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("Nov")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("Oct")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("Resultado")
+                        .HasColumnType("numeric");
+
+                    b.Property<DateTime>("SelectedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("SelectedMonth")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("SelectedYear")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Sep")
+                        .HasColumnType("numeric");
 
                     b.Property<decimal>("UFValueForDate")
                         .HasColumnType("numeric");
@@ -801,21 +977,6 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.HasOne("Gestion_Del_Presupuesto.Models.ConveniosModel", null)
                         .WithMany()
                         .HasForeignKey("ConveniosId_Convenio")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Gestion_Del_Presupuesto.Models.PlanillasModel", null)
-                        .WithMany()
-                        .HasForeignKey("PlanillasId_Planillas")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("EstudiantePlanillasModel", b =>
-                {
-                    b.HasOne("Gestion_Del_Presupuesto.Models.Estudiante", null)
-                        .WithMany()
-                        .HasForeignKey("EstudiantesId_Estudiante")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -940,6 +1101,14 @@ namespace Gestion_Del_Presupuesto.Migrations
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.UFData", b =>
                 {
+                    b.HasOne("Gestion_Del_Presupuesto.Models.UF2023", null)
+                        .WithMany("UFValues")
+                        .HasForeignKey("UF2023Id_UF_2023");
+
+                    b.HasOne("Gestion_Del_Presupuesto.Models.UF2024", null)
+                        .WithMany("UFValues")
+                        .HasForeignKey("UF2024Id_UF_2024");
+
                     b.HasOne("Gestion_Del_Presupuesto.Models.UFViewModel", null)
                         .WithMany("UFValues")
                         .HasForeignKey("UFViewModelId_UF");
@@ -998,6 +1167,16 @@ namespace Gestion_Del_Presupuesto.Migrations
                 {
                     b.Navigation("Retribucion")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.UF2023", b =>
+                {
+                    b.Navigation("UFValues");
+                });
+
+            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.UF2024", b =>
+                {
+                    b.Navigation("UFValues");
                 });
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.UFViewModel", b =>

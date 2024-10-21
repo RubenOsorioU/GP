@@ -1,5 +1,7 @@
 ﻿@model IEnumerable<Gestion_Del_Presupuesto.Models.Campo_Clinico>
 
+@using Gestion_Del_Presupuesto.Models
+
 @{
     ViewData["Title"] = "Lista de Campos Clínicos";
 }
@@ -7,31 +9,53 @@
 <h1>Lista de Campos Clínicos</h1>
 
 <p>
-    <a asp-action="Create" class="btn btn-primary">Crear Nuevo Campo Clínico</a>
+    <!-- Botón para abrir el modal -->
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createCampoClinicoModal">
+        Crear Nuevo Campo Clínico
+    </button>
 </p>
 
 <table class="table">
     <thead>
         <tr>
-            <th>@Html.DisplayNameFor(model => model.Nombre)</th>
-            <th>@Html.DisplayNameFor(model => model.Tipo)</th>
-            <th>@Html.DisplayNameFor(model => model.Sede)</th>
+            @if (Model != null && Model.Any())
+            {
+                <th>@Html.DisplayNameFor(model => model.First().Nombre)</th>
+                <th>@Html.DisplayNameFor(model => model.First().Tipo)</th>
+                <th>@Html.DisplayNameFor(model => model.First().Sede)</th>
+            }
+            else
+            {
+                <th>Nombre</th>
+                <th>Tipo</th>
+                <th>Sede</th>
+            }
             <th>Acciones</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @if (Model != null && Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.Nombre)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Tipo)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Sede)</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id_Campo_Clinico" class="btn btn-warning">Editar</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id_Campo_Clinico" class="btn btn-info">Detalles</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id_Campo_Clinico" class="btn btn-danger">Eliminar</a>
+                    </td>
+                </tr>
+            }
+        }
+        else
         {
             <tr>
-                <td>@Html.DisplayFor(modelItem => item.Nombre)</td>
-                <td>@Html.DisplayFor(modelItem => item.Tipo)</td>
-                <td>@Html.DisplayFor(modelItem => item.Sede)</td>               
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id_Campo_Clinico" class="btn btn-warning">Editar</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id_Campo_Clinico" class="btn btn-info">Detalles</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id_Campo_Clinico" class="btn btn-danger">Eliminar</a>
-                </td>
+                <td colspan="4" class="text-center">No hay campos clínicos disponibles.</td>
             </tr>
         }
     </tbody>
 </table>
+

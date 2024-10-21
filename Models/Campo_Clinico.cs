@@ -13,6 +13,7 @@ namespace Gestion_Del_Presupuesto.Models
         public required string Sede { get; set; }
 
         // Relación muchos a muchos con Estudiante
+    
         public virtual ICollection <Estudiante> Estudiantes { get; set; }
 
         // Relación con Convenio
