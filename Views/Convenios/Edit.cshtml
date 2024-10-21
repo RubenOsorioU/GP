@@ -1,0 +1,103 @@
+﻿@model Gestion_Del_Presupuesto.Models.ConveniosModel
+
+@{
+    ViewData["Title"] = "Editar Detalle General";
+
+    var institucionesPorTipo = ViewBag.InstitucionesPorTipo as Dictionary<string, List<string>>;
+}
+
+<h2>Editar Detalle General</h2>
+
+<form asp-action="Edit" method="post">
+    <div class="form-group">
+        <input type="hidden" asp-for="Id_Convenio" />
+        <label for="ContratosInstituciones">Contratos Instituciones:</label>
+        <select class="form-control" id="ContratosInstituciones" name="ContratosInstituciones">
+            <option value="">Seleccione una institución</option>
+            @if (!string.IsNullOrWhiteSpace(Model.Categoria) && institucionesPorTipo.ContainsKey(Model.Categoria))
+            {
+                @foreach (var institucion in institucionesPorTipo[Model.Categoria])
+
+                {
+                    @if (institucion == Model.ContratosInstituciones)
+
+                    {
+                        <option value="@institucion" selected="selected">@institucion</option>
+                    }
+
+                    else
+
+                    {
+                        <option value="@institucion">@institucion</option>
+                    }
+                }
+            }
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="TipoInstitucion">Tipo de Institución:</label>
+        <select class="form-control" id="TipoInstitucion" name="TipoInstitucion" onchange="actualizarInstituciones()">
+            <option value="">Seleccione un tipo</option>
+            @foreach (var tipo in institucionesPorTipo.Keys)
+            {
+                @if (tipo == Model.Categoria)
+
+                {
+                    <option value="@tipo" selected="selected">@tipo</option>
+                }
+
+                else
+
+                {
+                    <option value="@tipo">@tipo</option>
+                }
+            }
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="NumeroEstudiantes">Nº Estudiantes:</label>
+        <input type="number" class="form-control" id="NumeroEstudiantes" name="NumeroEstudiantes" value="@Model.NumeroEstudiantes" />
+    </div>
+
+    <div id="retribuciones" class="form-group">
+        <label>Selecciona las categorías de retribuciones:</label><br />
+        <input type="checkbox" id="retribucionPagoUsoCC" name="PagoUsoCC" @(Model.PagoUsoCC > 0 ? "checked" : "") value="Pago por Uso de CC">
+        <label for="retribucionPagoUsoCC"> Pago por Uso de CC $$</label><br />
+
+        <input type="checkbox" id="retribucionPagoApoyoDocencia" name="PagoApoyoDocencia" @(Model.PagoApoyoDocencia > 0 ? "checked" : "") value="Pago Apoyo a la Docencia">
+        <label for="retribucionPagoApoyoDocencia"> Pago Apoyo a la Docencia</label><br />
+
+        <input type="checkbox" id="retribucionPagoRRHH" name="PagoRRHH" @(Model.PagoRRHH > 0 ? "checked" : "") value="Pago en RRHH">
+        <label for="retribucionPagoRRHH"> Pago en RRHH</label><br />
+
+        <input type="checkbox" id="retribucionCapacitacion" name="Capacitacion" @(Model.Capacitacion > 0 ? "checked" : "") value="Capacitación">
+        <label for="retribucionCapacitacion"> Capacitación</label><br />
+
+        <input type="checkbox" id="retribucionObrasMenores" name="ObrasMenores" @(Model.ObrasMenores > 0 ? "checked" : "") value="Obras Menores">
+        <label for="retribucionObrasMenores"> Obras Menores</label><br />
+    </div>
+
+    <button type="submit" class="btn btn-success">Guardar Cambios</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>
+
+<script>
+    function actualizarInstituciones() {
+        var tipoSeleccionado = document.getElementById("TipoInstitucion").value;
+        var institucionesPorTipo = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(institucionesPorTipo));
+
+        var selectInstitucion = document.getElementById("ContratosInstituciones");
+        selectInstitucion.innerHTML = "<option value=''>Seleccione una institución</option>";
+
+        if (institucionesPorTipo[tipoSeleccionado]) {
+            institucionesPorTipo[tipoSeleccionado].forEach(function (institucion) {
+                var option = document.createElement("option");
+                option.value = institucion;
+                option.text = institucion;
+                selectInstitucion.appendChild(option);
+            });
+        }
+    }
+</script>

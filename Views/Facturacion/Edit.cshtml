@@ -1,0 +1,57 @@
+﻿@model Gestion_Del_Presupuesto.Models.FacturacionModel
+
+@{
+    ViewData["Title"] = "Editar Facturación";
+}
+
+<h2>Editar Facturación</h2>
+
+<form asp-action="Edit">
+    <div class="form-group">
+        <input type="hidden" asp-for="Id_Facturacion" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="RazonSocial"></label>
+        <input type="text" asp-for="RazonSocial" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="RUT"></label>
+        <input type="text" asp-for="RUT" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Giro"></label>
+        <input type="text" asp-for="Giro" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Direccion"></label>
+        <input type="text" asp-for="Direccion" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Telefono"></label>
+        <input type="text" asp-for="Telefono" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="ReceptorDocumento"></label>
+        <input type="text" asp-for="ReceptorDocumento" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Cargo"></label>
+        <input type="text" asp-for="Cargo" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="TelefonoReceptor"></label>
+        <input type="text" asp-for="TelefonoReceptor" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="CorreoElectronico"></label>
+        <input type="email" asp-for="CorreoElectronico" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Sede"></label>
+        <input type="text" asp-for="Sede" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+    <a asp-action="Index" class="btn btn-secondary">Volver</a>
+</form>
