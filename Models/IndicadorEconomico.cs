@@ -6,6 +6,8 @@
     public class IndicadorEconomico
     {
         public int Codigo { get; set; }
+
+        public DateTime? SelectedDate {get; set; }
         public string Descripcion { get; set; }
         public SeriesData Series { get; set; }
         public List<object> SeriesInfos { get; set; }

@@ -8,101 +8,133 @@ namespace Gestion_Del_Presupuesto.Controllers
 {
     public class RetribucionController : Controller
     {
-        // Declarar el campo privado para el contexto
         private readonly ApplicationDbContext _context;
 
-        // Constructor con inyección de dependencias
         public RetribucionController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: RetribucionController
-        public ActionResult Index()
+        // Listar todas las retribuciones
+        public async Task<IActionResult> Index()
+        {
+            var retribuciones = await _context.Retribuciones.ToListAsync();
+            return View(retribuciones);
+        }
+
+        // GET: Crear retribución
+        public IActionResult Create()
         {
             return View();
         }
 
-        // GET: RetribucionController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: RetribucionController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: RetribucionController/Create
+        // POST: Crear retribución
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<IActionResult> Create(RetribucionModel retribucion)
         {
-            try
+            if (ModelState.IsValid)
             {
+                _context.Add(retribucion);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            catch
-            {
-                return View();
-            }
+            return View(retribucion);
         }
 
-        // GET: RetribucionController/Edit/5
-        public ActionResult Edit(int id)
+        // GET: Editar retribución
+        public async Task<IActionResult> Edit(int? id)
         {
-            return View();
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var retribucion = await _context.Retribuciones.FindAsync(id);
+            if (retribucion == null)
+            {
+                return NotFound();
+            }
+            return View(retribucion);
         }
 
-        // POST: RetribucionController/Edit/5
+        // POST: Editar retribución
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<IActionResult> Edit(int id, RetribucionModel retribucion)
         {
-            try
+            if (id != retribucion.Id_Retribucion)
             {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(retribucion);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!RetribucionExists(retribucion.Id_Retribucion))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
-            catch
-            {
-                return View();
-            }
+            return View(retribucion);
         }
 
-        // GET: RetribucionController/Delete/5
-        public ActionResult Delete(int id)
+        // GET: Eliminar retribución
+        public async Task<IActionResult> Delete(int? id)
         {
-            return View();
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var retribucion = await _context.Retribuciones
+                .FirstOrDefaultAsync(m => m.Id_Retribucion == id);
+            if (retribucion == null)
+            {
+                return NotFound();
+            }
+
+            return View(retribucion);
         }
 
-        // POST: RetribucionController/Delete/5
-        [HttpPost]
+        // POST: Confirmar eliminación de retribución
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            var retribucion = await _context.Retribuciones.FindAsync(id);
+            _context.Retribuciones.Remove(retribucion);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
-        // Acción para seleccionar retribuciones
+        // Verificar si existe una retribución
+        private bool RetribucionExists(int id)
+        {
+            return _context.Retribuciones.Any(e => e.Id_Retribucion == id);
+        }
+
+        // Acción para seleccionar retribuciones y pasar a ViewBag
         public IActionResult SeleccionarRetribuciones()
         {
-            // Consultar la lista de retribuciones desde la base de datos
             var retribuciones = _context.Retribuciones.Select(r => new
             {
                 Id_Retribucion = r.Id_Retribucion,
-                Nombre = r.Nombre
+                TipoRetribucion = r.Tipo_Retribucion
             }).ToList();
 
-            // Pasar la lista a ViewBag
             ViewBag.ProcesosRetribucion = retribuciones;
 
             return View();

@@ -1,0 +1,35 @@
+﻿@model IEnumerable<ConvenioModel>
+
+<h1>Convenios</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Nombre</th>
+            <th>Tipo</th>
+            <th>Sede</th>
+            <th>Acciones</th> <!-- Mantén esta columna solo si tienes acciones como Editar o Eliminar -->
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var convenio in Model)
+        {
+            <tr>
+                <td>@convenio.Id_Convenio</td>
+                <td>@convenio.Nombre</td>
+                <td>@convenio.Tipo</td>
+                <td>@convenio.Sede</td>
+                <td>
+                    <!-- Botones de acción como Editar o Eliminar -->
+                    <a asp-action="Edit" asp-route-id="@convenio.Id_Convenio" class="btn btn-primary btn-sm">Editar</a>
+                    <a asp-action="Delete" asp-route-id="@convenio.Id_Convenio" class="btn btn-danger btn-sm">Eliminar</a>
+                    <a asp-action="Details" asp-route-id="@convenio.Id_Convenio" class="btn btn-info btn-sm">Detalles</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+<a class="btn btn-primary" asp-action="Create">Registrar convenio</a>

@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gestion_Del_Presupuesto.Migrations
 {
     /// <inheritdoc />
-    public partial class DbArreglo : Migration
+    public partial class Bd1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -152,13 +152,7 @@ namespace Gestion_Del_Presupuesto.Migrations
                     Sep = table.Column<decimal>(type: "numeric", nullable: false),
                     Oct = table.Column<decimal>(type: "numeric", nullable: false),
                     Nov = table.Column<decimal>(type: "numeric", nullable: false),
-                    Dic = table.Column<decimal>(type: "numeric", nullable: false),
-                    SelectedYear = table.Column<int>(type: "integer", nullable: false),
-                    SelectedMonth = table.Column<string>(type: "text", nullable: false),
-                    SelectedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UFValueForDate = table.Column<decimal>(type: "numeric", nullable: false),
-                    MontoUF = table.Column<decimal>(type: "numeric", nullable: false),
-                    Resultado = table.Column<decimal>(type: "numeric", nullable: false)
+                    Dic = table.Column<decimal>(type: "numeric", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -183,48 +177,11 @@ namespace Gestion_Del_Presupuesto.Migrations
                     Sep = table.Column<decimal>(type: "numeric", nullable: false),
                     Oct = table.Column<decimal>(type: "numeric", nullable: false),
                     Nov = table.Column<decimal>(type: "numeric", nullable: false),
-                    Dic = table.Column<decimal>(type: "numeric", nullable: false),
-                    SelectedYear = table.Column<int>(type: "integer", nullable: false),
-                    SelectedMonth = table.Column<string>(type: "text", nullable: false),
-                    SelectedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UFValueForDate = table.Column<decimal>(type: "numeric", nullable: false),
-                    MontoUF = table.Column<decimal>(type: "numeric", nullable: false),
-                    Resultado = table.Column<decimal>(type: "numeric", nullable: false)
+                    Dic = table.Column<decimal>(type: "numeric", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UF2024", x => x.Id_UF_2024);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UFViewModel",
-                columns: table => new
-                {
-                    Id_UF = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Dia = table.Column<int>(type: "integer", nullable: false),
-                    Ene = table.Column<decimal>(type: "numeric", nullable: false),
-                    Feb = table.Column<decimal>(type: "numeric", nullable: false),
-                    Mar = table.Column<decimal>(type: "numeric", nullable: false),
-                    Abr = table.Column<decimal>(type: "numeric", nullable: false),
-                    May = table.Column<decimal>(type: "numeric", nullable: false),
-                    Jun = table.Column<decimal>(type: "numeric", nullable: false),
-                    Jul = table.Column<decimal>(type: "numeric", nullable: false),
-                    Ago = table.Column<decimal>(type: "numeric", nullable: false),
-                    Sep = table.Column<decimal>(type: "numeric", nullable: false),
-                    Oct = table.Column<decimal>(type: "numeric", nullable: false),
-                    Nov = table.Column<decimal>(type: "numeric", nullable: false),
-                    Dic = table.Column<decimal>(type: "numeric", nullable: false),
-                    SelectedYear = table.Column<int>(type: "integer", nullable: false),
-                    SelectedMonth = table.Column<string>(type: "text", nullable: false),
-                    SelectedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UFValueForDate = table.Column<decimal>(type: "numeric", nullable: false),
-                    MontoUF = table.Column<decimal>(type: "numeric", nullable: false),
-                    Resultado = table.Column<decimal>(type: "numeric", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UFViewModel", x => x.Id_UF);
                 });
 
             migrationBuilder.CreateTable(
@@ -257,7 +214,7 @@ namespace Gestion_Del_Presupuesto.Migrations
                 {
                     Id_Planillas = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Nombre_Planilla = table.Column<string>(type: "text", nullable: false),
+                    Nombre = table.Column<string>(type: "text", nullable: false),
                     Rut = table.Column<int>(type: "integer", nullable: false),
                     Fecha_Inicio = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Fecha_Termino = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -357,35 +314,30 @@ namespace Gestion_Del_Presupuesto.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UFData",
+                name: "UFViewModel",
                 columns: table => new
                 {
-                    Id_UFData = table.Column<int>(type: "integer", nullable: false)
+                    Id_ConbinedUF = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UFValue = table.Column<decimal>(type: "numeric", nullable: false),
-                    UF2023Id_UF_2023 = table.Column<int>(type: "integer", nullable: true),
-                    UF2024Id_UF_2024 = table.Column<int>(type: "integer", nullable: true),
-                    UFViewModelId_UF = table.Column<int>(type: "integer", nullable: true)
+                    UF2023Id_UF_2023 = table.Column<int>(type: "integer", nullable: false),
+                    UF2024Id_UF_2024 = table.Column<int>(type: "integer", nullable: false),
+                    SelectedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UFData", x => x.Id_UFData);
+                    table.PrimaryKey("PK_UFViewModel", x => x.Id_ConbinedUF);
                     table.ForeignKey(
-                        name: "FK_UFData_UF2023_UF2023Id_UF_2023",
+                        name: "FK_UFViewModel_UF2023_UF2023Id_UF_2023",
                         column: x => x.UF2023Id_UF_2023,
                         principalTable: "UF2023",
-                        principalColumn: "Id_UF_2023");
+                        principalColumn: "Id_UF_2023",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UFData_UF2024_UF2024Id_UF_2024",
+                        name: "FK_UFViewModel_UF2024_UF2024Id_UF_2024",
                         column: x => x.UF2024Id_UF_2024,
                         principalTable: "UF2024",
-                        principalColumn: "Id_UF_2024");
-                    table.ForeignKey(
-                        name: "FK_UFData_UFViewModel_UFViewModelId_UF",
-                        column: x => x.UFViewModelId_UF,
-                        principalTable: "UFViewModel",
-                        principalColumn: "Id_UF");
+                        principalColumn: "Id_UF_2024",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -651,19 +603,14 @@ namespace Gestion_Del_Presupuesto.Migrations
                 column: "ConvenioId_Convenio");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UFData_UF2023Id_UF_2023",
-                table: "UFData",
+                name: "IX_UFViewModel_UF2023Id_UF_2023",
+                table: "UFViewModel",
                 column: "UF2023Id_UF_2023");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UFData_UF2024Id_UF_2024",
-                table: "UFData",
+                name: "IX_UFViewModel_UF2024Id_UF_2024",
+                table: "UFViewModel",
                 column: "UF2024Id_UF_2024");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UFData_UFViewModelId_UF",
-                table: "UFData",
-                column: "UFViewModelId_UF");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Usuarios_Id_Rol",
@@ -699,7 +646,7 @@ namespace Gestion_Del_Presupuesto.Migrations
                 name: "Presupuestos");
 
             migrationBuilder.DropTable(
-                name: "UFData");
+                name: "UFViewModel");
 
             migrationBuilder.DropTable(
                 name: "Planillas");
@@ -715,9 +662,6 @@ namespace Gestion_Del_Presupuesto.Migrations
 
             migrationBuilder.DropTable(
                 name: "UF2024");
-
-            migrationBuilder.DropTable(
-                name: "UFViewModel");
 
             migrationBuilder.DropTable(
                 name: "Roles");

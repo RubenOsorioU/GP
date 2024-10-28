@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Gestion_Del_Presupuesto.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gestion_Del_Presupuesto.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241024011821_RetribucionUpdate")]
+    partial class RetribucionUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -46,9 +49,6 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("Rut_CentrodeSalud")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id_CentroSalud");
 
                     b.HasIndex("ConvenioId");
@@ -72,13 +72,13 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("Duracion_meses")
+                        .HasColumnType("integer");
+
                     b.Property<int?>("EstudianteId_Estudiante")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("Fecha_Inicio")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("Fecha_Termino")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int?>("Institucion_SaludId_Institucion_Salud")
@@ -88,9 +88,6 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<bool>("RenovacionAutomatica")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("Sede")
                         .IsRequired()
                         .HasColumnType("text");
@@ -98,9 +95,6 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.Property<string>("Tipo")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<double>("ValorUF")
-                        .HasColumnType("double precision");
 
                     b.HasKey("Id_Convenio");
 

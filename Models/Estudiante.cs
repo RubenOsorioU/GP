@@ -12,12 +12,7 @@ namespace Gestion_Del_Presupuesto.Models
 
         public int Id_Convenio { get; set; }
 
-        
-
-        // Relación muchos a muchos con Campo_Clinico
-        public virtual ICollection<Campo_Clinico> Campo_Clinicos { get; set; }
-
-        public virtual ICollection <ConveniosModel> Convenio { get; set; }
+        public virtual ICollection <ConvenioModel> Convenio { get; set; }
 
         public virtual PlanillasModel Planilla { get; set; }
     }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Gestion_Del_Presupuesto.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gestion_Del_Presupuesto.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241025160952_AgregoActualizaciónPoraños")]
+    partial class AgregoActualizaciónPoraños
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,9 +48,6 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<int>("Rut_CentrodeSalud")
-                        .HasColumnType("integer");
 
                     b.HasKey("Id_CentroSalud");
 
@@ -98,9 +98,6 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.Property<string>("Tipo")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<double>("ValorUF")
-                        .HasColumnType("double precision");
 
                     b.HasKey("Id_Convenio");
 

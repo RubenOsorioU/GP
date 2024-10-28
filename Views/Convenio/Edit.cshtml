@@ -1,0 +1,74 @@
+﻿@model Gestion_Del_Presupuesto.Models.ConvenioModel
+
+<h2>Editar Convenio</h2>
+
+<form asp-action="Edit" method="post">
+    <div class="form-group">
+        <label asp-for="Nombre" class="control-label"></label>
+        <input asp-for="Nombre" class="form-control" />
+        <span asp-validation-for="Nombre" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Tipo" class="control-label"></label>
+        <select asp-for="Tipo" class="form-control">
+            <option value="">Selecciona un Tipo</option>
+            <option value="HOSPITALES / CLINICAS">HOSPITALES / CLINICAS</option>
+            <option value="Hogares / C.Educacionales">Hogares / C.Educacionales</option>
+            <option value="Atención Primaria">Atención Primaria</option>
+            <!-- Agrega otras opciones según tu necesidad -->
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Sede" class="control-label"></label>
+        <select asp-for="Sede" class="form-control">
+            <option value="">Selecciona una Sede</option>
+            <option value="Santiago">Santiago</option>
+            <option value="Coquimbo">Coquimbo</option>
+            <option value="Ambas">Ambas</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Fecha_Inicio" class="control-label"></label>
+        <input asp-for="Fecha_Inicio" class="form-control" type="date" />
+        <span asp-validation-for="Fecha_Inicio" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Fecha_Termino" class="control-label"></label>
+        <input asp-for="Fecha_Termino" class="form-control" type="date" />
+        <span asp-validation-for="Fecha_Termino" class="text-danger"></span>
+    </div>
+
+    <div class="form-group form-check">
+        <input asp-for="RenovacionAutomatica" class="form-check-input" type="checkbox" />
+        <label asp-for="RenovacionAutomatica" class="form-check-label">Renovación Automática</label>
+    </div>
+
+    <h4>Retribuciones</h4>
+    <div id="retribucionesContainer">
+        @for (int i = 0; i < Model.Retribuciones.Count; i++)
+        {
+            <div class="form-group">
+                <label>Tipo de Retribución</label>
+                <input asp-for="@Model.Retribuciones[i].Tipo_Retribucion" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label>Valor UF</label>
+                <input asp-for="@Model.Retribuciones[i].Monto" class="form-control" />
+            </div>
+            <input type="hidden" asp-for="@Model.Retribuciones[i].Id_Retribucion" />
+        }
+    </div>
+
+    <button type="submit" class="btn btn-primary">Guardar</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -9,7 +9,7 @@ namespace Gestion_Del_Presupuesto.Models
         public int Id_Devengado { get; set; }
 
 
-        public DateTime Fecha { get; set; }
+        public DateTime Fecha { get; set; } = DateTime.Now;
 
         public decimal GastoComprometido { get; set; }
         public decimal PagosRealizados { get; set; }
@@ -21,7 +21,7 @@ namespace Gestion_Del_Presupuesto.Models
         
         // Relación con Convenio
         public int ConvenioId { get; set; }
-        public virtual ConveniosModel Convenio { get; set; }
+        public virtual ConvenioModel Convenio { get; set; }
 
 
         public IEnumerable<Devengado> Devengados { get; set; }

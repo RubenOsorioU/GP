@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gestion_Del_Presupuesto.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241021023720_DbArreglo")]
-    partial class DbArreglo
+    [Migration("20241023190734_ArregloatributoConvenio")]
+    partial class ArregloatributoConvenio
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -26,43 +26,63 @@ namespace Gestion_Del_Presupuesto.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Campo_ClinicoEstudiante", b =>
+            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.CentroSaludModel", b =>
                 {
-                    b.Property<int>("Campo_ClinicosId_Campo_Clinico")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("EstudiantesId_Estudiante")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Campo_ClinicosId_Campo_Clinico", "EstudiantesId_Estudiante");
-
-                    b.HasIndex("EstudiantesId_Estudiante");
-
-                    b.ToTable("Campo_ClinicoEstudiante");
-                });
-
-            modelBuilder.Entity("ConveniosModelPlanillasModel", b =>
-                {
-                    b.Property<int>("ConveniosId_Convenio")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("PlanillasId_Planillas")
-                        .HasColumnType("integer");
-
-                    b.HasKey("ConveniosId_Convenio", "PlanillasId_Planillas");
-
-                    b.HasIndex("PlanillasId_Planillas");
-
-                    b.ToTable("ConveniosModelPlanillasModel");
-                });
-
-            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Campo_Clinico", b =>
-                {
-                    b.Property<int>("Id_Campo_Clinico")
+                    b.Property<int>("Id_CentroSalud")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id_Campo_Clinico"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id_CentroSalud"));
+
+                    b.Property<string>("Contacto")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("ConvenioId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Direccion")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id_CentroSalud");
+
+                    b.HasIndex("ConvenioId");
+
+                    b.ToTable("CentroSaludModel");
+                });
+
+            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.ConvenioModel", b =>
+                {
+                    b.Property<int>("Id_Convenio")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id_Convenio"));
+
+                    b.Property<string>("ContactoPrincipal")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Direccion")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Duracion_meses")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("EstudianteId_Estudiante")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("Fecha_Inicio")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("Institucion_SaludId_Institucion_Salud")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
@@ -76,115 +96,7 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.HasKey("Id_Campo_Clinico");
-
-                    b.ToTable("Campo_Clinicos");
-                });
-
-            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.ConveniosModel", b =>
-                {
-                    b.Property<int>("Id_Convenio")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id_Convenio"));
-
-                    b.Property<int?>("Campo_ClinicoId_Campo_Clinico")
-                        .HasColumnType("integer");
-
-                    b.Property<decimal?>("Capacitacion")
-                        .HasColumnType("numeric");
-
-                    b.Property<bool>("CapacitacionSelected")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Categoria")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ContratosInstituciones")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<decimal?>("Deuda2024")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal?>("DeudaAnteriores")
-                        .HasColumnType("numeric");
-
-                    b.Property<string>("Estado")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int?>("EstudianteId_Estudiante")
-                        .HasColumnType("integer");
-
-                    b.Property<decimal?>("Facturado2024")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal?>("Facturado2025")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal?>("FacturadoAnteriores")
-                        .HasColumnType("numeric");
-
-                    b.Property<int?>("Institucion_SaludId_Institucion_Salud")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("NumeroEstudiantes")
-                        .HasColumnType("integer");
-
-                    b.Property<decimal?>("ObrasMayores")
-                        .HasColumnType("numeric");
-
-                    b.Property<bool>("ObrasMayoresSelected")
-                        .HasColumnType("boolean");
-
-                    b.Property<decimal?>("ObrasMenores")
-                        .HasColumnType("numeric");
-
-                    b.Property<bool>("ObrasMenoresSelected")
-                        .HasColumnType("boolean");
-
-                    b.Property<decimal?>("OtrosGastosRetribucion")
-                        .HasColumnType("numeric");
-
-                    b.Property<bool>("OtrosGastosRetribucionSelected")
-                        .HasColumnType("boolean");
-
-                    b.Property<decimal?>("PagoApoyoDocencia")
-                        .HasColumnType("numeric");
-
-                    b.Property<bool>("PagoApoyoDocenciaSelected")
-                        .HasColumnType("boolean");
-
-                    b.Property<decimal?>("PagoRRHH")
-                        .HasColumnType("numeric");
-
-                    b.Property<bool>("PagoRRHHSelected")
-                        .HasColumnType("boolean");
-
-                    b.Property<decimal?>("PagoUsoCC")
-                        .HasColumnType("numeric");
-
-                    b.Property<bool>("PagoUsoCCSelected")
-                        .HasColumnType("boolean");
-
-                    b.Property<decimal?>("SaldoEstimadoPagar")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal?>("TotalDeuda")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal?>("TotalFacturado")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal?>("TotalGastoEstimado")
-                        .HasColumnType("numeric");
-
                     b.HasKey("Id_Convenio");
-
-                    b.HasIndex("Campo_ClinicoId_Campo_Clinico");
 
                     b.HasIndex("EstudianteId_Estudiante");
 
@@ -427,6 +339,9 @@ namespace Gestion_Del_Presupuesto.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id_Pago"));
 
+                    b.Property<int>("ConvenioId_Retribucion")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Estado")
                         .IsRequired()
                         .HasColumnType("text");
@@ -455,7 +370,7 @@ namespace Gestion_Del_Presupuesto.Migrations
 
                     b.HasKey("Id_Pago");
 
-                    b.HasIndex("Id_Convenio");
+                    b.HasIndex("ConvenioId_Retribucion");
 
                     b.HasIndex("RetribucionId_Retribucion");
 
@@ -486,7 +401,7 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Nombre_Planilla")
+                    b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -585,7 +500,7 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.ToTable("Presupuestos");
                 });
 
-            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Retribucion", b =>
+            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.RetribucionModel", b =>
                 {
                     b.Property<int>("Id_Retribucion")
                         .ValueGeneratedOnAdd()
@@ -593,36 +508,22 @@ namespace Gestion_Del_Presupuesto.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id_Retribucion"));
 
-                    b.Property<string>("Descripcion")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("Fecha")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("Id_Convenio")
+                    b.Property<int>("ConvenioId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("Id_Solicitud_Retribucion")
+                    b.Property<int>("ConveniosId_Convenio")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<decimal>("Monto")
+                        .HasColumnType("numeric");
 
                     b.Property<string>("Tipo")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<float>("Valor")
-                        .HasColumnType("real");
-
                     b.HasKey("Id_Retribucion");
 
-                    b.HasIndex("Id_Convenio");
-
-                    b.HasIndex("Id_Solicitud_Retribucion")
-                        .IsUnique();
+                    b.HasIndex("ConveniosId_Convenio");
 
                     b.ToTable("Retribuciones");
                 });
@@ -673,6 +574,9 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.Property<int>("Id_Convenio")
                         .HasColumnType("integer");
 
+                    b.Property<int>("RetribucionId_Retribucion")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Solicitante")
                         .IsRequired()
                         .HasColumnType("text");
@@ -681,254 +585,9 @@ namespace Gestion_Del_Presupuesto.Migrations
 
                     b.HasIndex("ConvenioId_Convenio");
 
+                    b.HasIndex("RetribucionId_Retribucion");
+
                     b.ToTable("SolicitudesRetribucion");
-                });
-
-            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.UF2023", b =>
-                {
-                    b.Property<int>("Id_UF_2023")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id_UF_2023"));
-
-                    b.Property<decimal>("Abr")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("Ago")
-                        .HasColumnType("numeric");
-
-                    b.Property<int>("Dia")
-                        .HasColumnType("integer");
-
-                    b.Property<decimal>("Dic")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("Ene")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("Feb")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("Jul")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("Jun")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("Mar")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("May")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("MontoUF")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("Nov")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("Oct")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("Resultado")
-                        .HasColumnType("numeric");
-
-                    b.Property<DateTime>("SelectedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("SelectedMonth")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("SelectedYear")
-                        .HasColumnType("integer");
-
-                    b.Property<decimal>("Sep")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("UFValueForDate")
-                        .HasColumnType("numeric");
-
-                    b.HasKey("Id_UF_2023");
-
-                    b.ToTable("UF2023");
-                });
-
-            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.UF2024", b =>
-                {
-                    b.Property<int>("Id_UF_2024")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id_UF_2024"));
-
-                    b.Property<decimal>("Abr")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("Ago")
-                        .HasColumnType("numeric");
-
-                    b.Property<int>("Dia")
-                        .HasColumnType("integer");
-
-                    b.Property<decimal>("Dic")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("Ene")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("Feb")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("Jul")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("Jun")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("Mar")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("May")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("MontoUF")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("Nov")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("Oct")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("Resultado")
-                        .HasColumnType("numeric");
-
-                    b.Property<DateTime>("SelectedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("SelectedMonth")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("SelectedYear")
-                        .HasColumnType("integer");
-
-                    b.Property<decimal>("Sep")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("UFValueForDate")
-                        .HasColumnType("numeric");
-
-                    b.HasKey("Id_UF_2024");
-
-                    b.ToTable("UF2024");
-                });
-
-            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.UFData", b =>
-                {
-                    b.Property<int>("Id_UFData")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id_UFData"));
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int?>("UF2023Id_UF_2023")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("UF2024Id_UF_2024")
-                        .HasColumnType("integer");
-
-                    b.Property<decimal>("UFValue")
-                        .HasColumnType("numeric");
-
-                    b.Property<int?>("UFViewModelId_UF")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id_UFData");
-
-                    b.HasIndex("UF2023Id_UF_2023");
-
-                    b.HasIndex("UF2024Id_UF_2024");
-
-                    b.HasIndex("UFViewModelId_UF");
-
-                    b.ToTable("UFData");
-                });
-
-            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.UFViewModel", b =>
-                {
-                    b.Property<int>("Id_UF")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id_UF"));
-
-                    b.Property<decimal>("Abr")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("Ago")
-                        .HasColumnType("numeric");
-
-                    b.Property<int>("Dia")
-                        .HasColumnType("integer");
-
-                    b.Property<decimal>("Dic")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("Ene")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("Feb")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("Jul")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("Jun")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("Mar")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("May")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("MontoUF")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("Nov")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("Oct")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("Resultado")
-                        .HasColumnType("numeric");
-
-                    b.Property<DateTime>("SelectedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("SelectedMonth")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("SelectedYear")
-                        .HasColumnType("integer");
-
-                    b.Property<decimal>("Sep")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("UFValueForDate")
-                        .HasColumnType("numeric");
-
-                    b.HasKey("Id_UF");
-
-                    b.ToTable("UFViewModel");
                 });
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Usuario", b =>
@@ -957,42 +616,19 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.ToTable("Usuarios");
                 });
 
-            modelBuilder.Entity("Campo_ClinicoEstudiante", b =>
+            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.CentroSaludModel", b =>
                 {
-                    b.HasOne("Gestion_Del_Presupuesto.Models.Campo_Clinico", null)
-                        .WithMany()
-                        .HasForeignKey("Campo_ClinicosId_Campo_Clinico")
+                    b.HasOne("Gestion_Del_Presupuesto.Models.ConvenioModel", "Convenio")
+                        .WithMany("CentrosDeSalud")
+                        .HasForeignKey("ConvenioId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Gestion_Del_Presupuesto.Models.Estudiante", null)
-                        .WithMany()
-                        .HasForeignKey("EstudiantesId_Estudiante")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Convenio");
                 });
 
-            modelBuilder.Entity("ConveniosModelPlanillasModel", b =>
+            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.ConvenioModel", b =>
                 {
-                    b.HasOne("Gestion_Del_Presupuesto.Models.ConveniosModel", null)
-                        .WithMany()
-                        .HasForeignKey("ConveniosId_Convenio")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Gestion_Del_Presupuesto.Models.PlanillasModel", null)
-                        .WithMany()
-                        .HasForeignKey("PlanillasId_Planillas")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.ConveniosModel", b =>
-                {
-                    b.HasOne("Gestion_Del_Presupuesto.Models.Campo_Clinico", null)
-                        .WithMany("Convenios")
-                        .HasForeignKey("Campo_ClinicoId_Campo_Clinico");
-
                     b.HasOne("Gestion_Del_Presupuesto.Models.Estudiante", null)
                         .WithMany("Convenio")
                         .HasForeignKey("EstudianteId_Estudiante");
@@ -1004,7 +640,7 @@ namespace Gestion_Del_Presupuesto.Migrations
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Costo", b =>
                 {
-                    b.HasOne("Gestion_Del_Presupuesto.Models.ConveniosModel", "Convenio")
+                    b.HasOne("Gestion_Del_Presupuesto.Models.ConvenioModel", "Convenio")
                         .WithMany()
                         .HasForeignKey("Id_Convenio")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1015,7 +651,7 @@ namespace Gestion_Del_Presupuesto.Migrations
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Devengado", b =>
                 {
-                    b.HasOne("Gestion_Del_Presupuesto.Models.ConveniosModel", "Convenio")
+                    b.HasOne("Gestion_Del_Presupuesto.Models.ConvenioModel", "Convenio")
                         .WithMany()
                         .HasForeignKey("ConvenioId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1041,13 +677,13 @@ namespace Gestion_Del_Presupuesto.Migrations
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Pago", b =>
                 {
-                    b.HasOne("Gestion_Del_Presupuesto.Models.Retribucion", "Convenio")
-                        .WithMany("Pagos")
-                        .HasForeignKey("Id_Convenio")
+                    b.HasOne("Gestion_Del_Presupuesto.Models.RetribucionModel", "Convenio")
+                        .WithMany()
+                        .HasForeignKey("ConvenioId_Retribucion")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Gestion_Del_Presupuesto.Models.Retribucion", "Retribucion")
+                    b.HasOne("Gestion_Del_Presupuesto.Models.RetribucionModel", "Retribucion")
                         .WithMany()
                         .HasForeignKey("RetribucionId_Retribucion")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1069,49 +705,34 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.Navigation("Estudiante");
                 });
 
-            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Retribucion", b =>
+            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.RetribucionModel", b =>
                 {
-                    b.HasOne("Gestion_Del_Presupuesto.Models.ConveniosModel", "Convenio")
+                    b.HasOne("Gestion_Del_Presupuesto.Models.ConvenioModel", "Convenios")
                         .WithMany("Retribuciones")
-                        .HasForeignKey("Id_Convenio")
+                        .HasForeignKey("ConveniosId_Convenio")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Gestion_Del_Presupuesto.Models.Solicitud_Retribucion", "Solicitud_Retribucion")
-                        .WithOne("Retribucion")
-                        .HasForeignKey("Gestion_Del_Presupuesto.Models.Retribucion", "Id_Solicitud_Retribucion")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Convenio");
-
-                    b.Navigation("Solicitud_Retribucion");
+                    b.Navigation("Convenios");
                 });
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Solicitud_Retribucion", b =>
                 {
-                    b.HasOne("Gestion_Del_Presupuesto.Models.ConveniosModel", "Convenio")
+                    b.HasOne("Gestion_Del_Presupuesto.Models.ConvenioModel", "Convenio")
                         .WithMany()
                         .HasForeignKey("ConvenioId_Convenio")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Gestion_Del_Presupuesto.Models.RetribucionModel", "Retribucion")
+                        .WithMany()
+                        .HasForeignKey("RetribucionId_Retribucion")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Convenio");
-                });
 
-            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.UFData", b =>
-                {
-                    b.HasOne("Gestion_Del_Presupuesto.Models.UF2023", null)
-                        .WithMany("UFValues")
-                        .HasForeignKey("UF2023Id_UF_2023");
-
-                    b.HasOne("Gestion_Del_Presupuesto.Models.UF2024", null)
-                        .WithMany("UFValues")
-                        .HasForeignKey("UF2024Id_UF_2024");
-
-                    b.HasOne("Gestion_Del_Presupuesto.Models.UFViewModel", null)
-                        .WithMany("UFValues")
-                        .HasForeignKey("UFViewModelId_UF");
+                    b.Navigation("Retribucion");
                 });
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Usuario", b =>
@@ -1125,13 +746,10 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.Navigation("Rol");
                 });
 
-            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Campo_Clinico", b =>
+            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.ConvenioModel", b =>
                 {
-                    b.Navigation("Convenios");
-                });
+                    b.Navigation("CentrosDeSalud");
 
-            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.ConveniosModel", b =>
-                {
                     b.Navigation("Retribuciones");
                 });
 
@@ -1153,35 +771,9 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.Navigation("Convenios");
                 });
 
-            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Retribucion", b =>
-                {
-                    b.Navigation("Pagos");
-                });
-
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Rol", b =>
                 {
                     b.Navigation("Usuarios");
-                });
-
-            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Solicitud_Retribucion", b =>
-                {
-                    b.Navigation("Retribucion")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.UF2023", b =>
-                {
-                    b.Navigation("UFValues");
-                });
-
-            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.UF2024", b =>
-                {
-                    b.Navigation("UFValues");
-                });
-
-            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.UFViewModel", b =>
-                {
-                    b.Navigation("UFValues");
                 });
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Usuario", b =>

@@ -1,0 +1,203 @@
+﻿@model Gestion_Del_Presupuesto.Models.ConvenioModel
+
+<div class="container">
+    <form asp-action="Create" method="post">
+        <div class="row">
+            <!-- Columna para la sección de la izquierda (Registrar Convenio) -->
+            <div class="col-md-4">
+                <!-- Sede -->
+                <div class="form-group mb-4">
+                    <label asp-for="Sede"></label>
+                    <select asp-for="Sede" class="form-control" placeholder="Seleccione la sede donde se establecerá el convenio">
+                        <option value="">Selecciona una Sede</option>
+                        @foreach (var sede in ViewBag.Sedes)
+                        {
+                            <option value="@sede">@sede</option>
+                        }
+                    </select>
+                </div>
+
+                <!-- Tipo de Convenio -->
+                <div class="form-group mb-4">
+                    <label asp-for="Tipo"></label>
+                    <select asp-for="Tipo" class="form-control">
+                        <option value="">Selecciona un Tipo</option>
+                        <option value="HOSPITALES / CLINICAS">HOSPITALES / CLINICAS</option>
+                        <option value="ATENCION PRIMARIA">ATENCION PRIMARIA</option>
+                        <option value="Hogares / C.Educacionales">Hogares / C.Educacionales</option>
+                        <option value="LAB/IMAGEN/OFTA">LAB IMAGEN OFTA</option>
+                        <option value="CENTROS Y FUNDACIONES">CENTROS Y FUNDACIONES</option>
+                        <option value="CASINOS">CASINOS</option>
+                    </select>
+                </div>
+
+                <!-- Nombre del Convenio -->
+                <div class="form-group mb-4">
+                    <label asp-for="Nombre"></label>
+                    <input asp-for="Nombre" class="form-control" />
+                </div>
+                <div class="form-group mb-4">
+                    <label asp-for="Direccion"></label>
+                    <input asp-for="Direccion" class="form-control" />
+                </div>
+                <div class="form-group mb-4">
+                    <label asp-for="ContactoPrincipal"></label>
+                    <input asp-for="ContactoPrincipal" class="form-control" />
+                </div>
+
+                <!-- Fecha de Inicio -->
+                <div class="form-group mb-4">
+                    <label asp-for="Fecha_Inicio"></label>
+                    <input asp-for="Fecha_Inicio" type="date" class="form-control" />
+                </div>
+                <div class="form-group mb-4">
+                    <label asp-for="Fecha_Termino"></label>
+                    <input asp-for="Fecha_Termino" type="date" class="form-control" />
+                </div>
+
+                <!-- Botón para Renovación Automática -->
+                <div class="form-group mb-4">
+                    <input type="checkbox" asp-for="RenovacionAutomatica" /> Renovable automáticamente por períodos iguales o sucesivos de un año
+                </div>
+            </div>
+
+            <!-- Columna para la sección de la derecha (Retribuciones) -->
+            <div class="col-md-6 ms-1">
+                <h4 class="mb-3 text-center">Retribuciones</h4>
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div id="retribucionesContainer">
+                            <div class="form-group retribucion-item">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="Retribuciones">Tipo de Retribución</label>
+                                        <select name="Retribuciones[0].Tipo" class="form-control">
+                                            <option value="">Selecciona una retribución</option>
+                                            <option value="Pago por Uso de CC $$">Pago por Uso de CC $$</option>
+                                            <option value="Pago Apoyo a la Docencia">Pago Apoyo a la Docencia</option>
+                                            <option value="Pago en RRHH">Pago en RRHH</option>
+                                            <option value="Capacitacion">Capacitación</option>
+                                            <option value="Obras Menores">Obras Menores</option>
+                                            <option value="Obras Mayores">Obras Mayores</option>
+                                            <option value="Otros Gastos x retribucion">Otros Gastos x retribución</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="RetribucionesValorUF">Valor UF</label>
+                                        <input type="number" name="Retribuciones[0].ValorUF" class="form-control" placeholder="Valor UF" />
+                                    </div>
+                                    <div class="col-md-2 d-flex align-items-end">
+                                        <button type="button" class="btn btn-danger btn-sm" onclick="eliminarElemento(this)">Eliminar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-secondary mt-3" onclick="agregarRetribucion()">Agregar otra retribución</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenedor para Centros de Salud Asociados -->
+        <div class="container mt-4">
+            <div class="row">
+                <div class="col-md-12">
+                    <h4 class="mb-3">Centros de Salud Asociados</h4>
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div id="centrosSaludContainer">
+                                <!-- Elemento de ejemplo para los centros de salud -->
+                                <div class="form-group centro-item mt-3">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <input name="CentrosSalud[0].Nombre" placeholder="Nombre del Centro de Salud" class="form-control mb-2" />
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input name="CentrosSalud[0].Direccion" placeholder="Dirección del Centro de Salud" class="form-control mb-2" />
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input name="CentrosSalud[0].Contacto" placeholder="Contacto del Centro de Salud" class="form-control mb-2" />
+                                        </div>
+                                        <div class="col-md-12 text-end">
+                                            <button type="button" class="btn btn-danger btn-sm mt-2" onclick="eliminarElemento(this)">Eliminar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-secondary mt-3" onclick="agregarCentroSalud()">Agregar Centro</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botón para Guardar (al final de todo) -->
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <button type="submit" class="btn btn-primary btn-lg mt-4">Guardar</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    var contadorRetribuciones = 1;
+    function agregarRetribucion() {
+        var container = document.getElementById('retribucionesContainer');
+        var newRetribucion = `
+                    <div class="form-group retribucion-item mt-6">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="Retribuciones">Tipo de Retribución</label>
+                                <select name="Retribuciones[${contadorRetribuciones}].Tipo" class="form-control">
+                                    <option value="">Selecciona una retribución</option>
+                                    <option value="Pago por Uso de CC $$">Pago por Uso de CC $$</option>
+                                    <option value="Pago Apoyo a la Docencia">Pago Apoyo a la Docencia</option>
+                                    <option value="Pago en RRHH">Pago en RRHH</option>
+                                    <option value="Capacitacion">Capacitación</option>
+                                    <option value="Obras Menores">Obras Menores</option>
+                                    <option value="Obras Mayores">Obras Mayores</option>
+                                    <option value="Otros Gastos x retribucion">Otros Gastos x retribución</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="RetribucionesValorUF">Valor UF</label>
+                                <input type="number" name="Retribuciones[${contadorRetribuciones}].ValorUF" class="form-control" placeholder="Valor UF" />
+                            </div>
+                            <div class="col-md-2 d-flex align-items-end">
+                                <button type="button" class="btn btn-danger btn-sm" onclick="eliminarElemento(this)">Eliminar</button>
+                            </div>
+                        </div>
+                    </div>`;
+        container.insertAdjacentHTML('beforeend', newRetribucion);
+        contadorRetribuciones++;
+    }
+
+    var contadorCentros = 1;
+    function agregarCentroSalud() {
+        var container = document.getElementById('centrosSaludContainer');
+        var newCentro = `
+            <div class="form-group centro-item mt-3">
+                <div class="row align-items-center">
+                    <div class="col-md-4">
+                        <input name="CentrosSalud[0].Nombre" placeholder="Nombre del Centro de Salud" class="form-control mb-2" />
+                    </div>
+                    <div class="col-md-4">
+                        <input name="CentrosSalud[0].Direccion" placeholder="Dirección del Centro de Salud" class="form-control mb-2" />
+                    </div>
+                    <div class="col-md-4">
+                        <input name="CentrosSalud[0].Contacto" placeholder="Contacto del Centro de Salud" class="form-control mb-2" />
+                    </div>
+                    <div class="col-md-12 text-end">
+                        <button type="button" class="btn btn-danger btn-sm" onclick="eliminarElemento(this)">Eliminar</button>
+                    </div>
+                </div>
+            </div>`;
+        container.insertAdjacentHTML('beforeend', newCentro);
+        contadorCentros++;
+    }
+
+    function eliminarElemento(boton) {
+        boton.closest('.form-group').remove();
+    }
+</script>

@@ -20,7 +20,7 @@
         @foreach (var pago in Model)
         {
             <tr>
-                <td>@pago.Convenio.Nombre</td>
+                <td>@pago.Convenio</td>
                 <td>@pago.Monto</td>
                 <td>@pago.Estado</td>
                 <td>@pago.FechaVencimiento.ToShortDateString()</td>

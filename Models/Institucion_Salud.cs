@@ -12,7 +12,7 @@ namespace Gestion_Del_Presupuesto.Models
         public string Telefono { get; set; }
 
         // Relación con Convenio
-        public virtual ICollection<ConveniosModel> Convenios { get; set; }
+        public virtual ICollection<ConvenioModel> Convenios { get; set; }
     }
 }
 

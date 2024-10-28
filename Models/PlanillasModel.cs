@@ -9,13 +9,13 @@ namespace Gestion_Del_Presupuesto.Models
         [Key]
         public int Id_Planillas { get; set; }
 
-        public string Nombre_Planilla { get; set; }
+        public string Nombre { get; set; }
 
         public int  Rut { get; set; }
 
-        public DateTime Fecha_Inicio { get; set; }
+        public DateTime Fecha_Inicio { get; set; } = DateTime.Now;
 
-        public required DateTime Fecha_Termino { get; set; }
+        public required DateTime Fecha_Termino { get; set; } = DateTime.Now;
 
         public string Institución { get; set; }
 
@@ -29,6 +29,6 @@ namespace Gestion_Del_Presupuesto.Models
         public virtual Estudiante Estudiante { get; set; }
 
 
-        public virtual ICollection<ConveniosModel> Convenios { get; set; }
+        
     }
 }

@@ -1,15 +1,19 @@
 ﻿@model IEnumerable<Gestion_Del_Presupuesto.Models.PlanillasModel>
 
 <h1>Lista de Planillas</h1>
-
-<p>
-    <a asp-action="Upload" class="btn btn-secondary">Subir Planillas</a>
-</p>
-
+    <div> 
+      <form method="get">
+        <p>
+            <a asp-action="Upload" class="btn btn-secondary">Subir Planillas</a>
+        </p>
+      
+      </form>
+        
+    </div>
 <table class="table">
     <thead>
         <tr>
-            <th>Nombre Planilla</th>
+            <th>Nombre</th>
             <th>Rut</th>
             <th>Fecha Inicio</th>
             <th>Fecha Término</th>
@@ -21,7 +25,7 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>@item.Nombre_Planilla</td>
+                <td>@item.Nombre</td>
                 <td>@item.Rut</td>
                 <td>@item.Fecha_Inicio.ToShortDateString()</td>
                 <td>@item.Fecha_Termino.ToShortDateString()</td>

@@ -1,11 +1,12 @@
-﻿@model Gestion_Del_Presupuesto.Models.UFCombinedViewModel
+﻿@model Gestion_Del_Presupuesto.Models.IndicadorEconomico
 
 <h2>Buscar Valor de UF por Fecha</h2>
 <form method="get" asp-action="buscarUF">
+    <div>
 
-    <input asp-for="SelectedDate" type="date" class="form-control" />
-     
+        <input asp-for="SelectedDate" type="date" style="width: 200px class="form-control" />
     <button type="submit" class="btn btn-primary">Buscar Valor UF</button>
+    </div>
 </form>
 @{
     ViewBag.Title = "Valor UF";

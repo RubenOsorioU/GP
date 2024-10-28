@@ -20,7 +20,7 @@ namespace Gestion_Del_Presupuesto.Models
         public int Id_Convenio { get; set; }
 
         // Propiedad de navegación
-        public virtual Retribucion Retribucion { get; set; }
-        public virtual Retribucion Convenio { get; set; }
+        public virtual RetribucionModel Retribucion { get; set; }
+        public virtual RetribucionModel Convenio { get; set; }
     }
 }

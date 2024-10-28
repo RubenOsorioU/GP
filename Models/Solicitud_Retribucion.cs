@@ -14,8 +14,8 @@ namespace Gestion_Del_Presupuesto.Models
 
         // Foreign Key a Convenio
         public int Id_Convenio { get; set; }
-        public virtual ConveniosModel Convenio { get; set; }
-        public virtual Retribucion Retribucion { get; set; }
+        public virtual ConvenioModel Convenio { get; set; }
+        public virtual RetribucionModel Retribucion { get; set; }
     }
 }
 
