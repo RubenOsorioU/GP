@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Gestion_Del_Presupuesto.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gestion_Del_Presupuesto.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241028133710_AgregarRelaciónConvenioCentroDeSalud")]
+    partial class AgregarRelaciónConvenioCentroDeSalud
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -91,15 +94,7 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.Property<bool>("RenovacionAutomatica")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("Rut")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("Sede")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Telefono")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -525,18 +520,12 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.Property<int>("ConvenioId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("FechaRetribucion")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<decimal>("Monto")
                         .HasColumnType("numeric");
 
                     b.Property<string>("Tipo_Retribucion")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<decimal>("UFTotal")
-                        .HasColumnType("numeric");
 
                     b.HasKey("Id_Retribucion");
 

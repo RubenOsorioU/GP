@@ -19,10 +19,13 @@ namespace Gestion_Del_Presupuesto.Models
 
         [Display(Name = "Contacto Principal")]
         public string ContactoPrincipal { get; set; }
+
+        public string Telefono { get; set; }
+        public string Rut { get; set; }
         public string Direccion { get; set; }
         public bool RenovacionAutomatica { get; set; }
-        public double ValorUF { get; set; }
-        public List<RetribucionModel> Retribuciones { get; set; }
+        public decimal ValorUF { get; set; }
+        public List<RetribucionModel> Retribuciones { get; set; } = new List<RetribucionModel>();
         public List<CentroSaludModel> CentrosDeSalud { get; set; } = new List<CentroSaludModel>();
     }
 }

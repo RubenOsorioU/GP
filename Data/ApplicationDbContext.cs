@@ -30,21 +30,11 @@ namespace Gestion_Del_Presupuesto.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Configurar la relación muchos a uno entre Retribucion y Convenio
-
-
-            // Configurar la relación uno a uno entre Retribucion y Solicitud_Retribucion
-
-
-            // Configurar la relación entre Usuario y Historial_Actividad
             modelBuilder.Entity<Historial_Actividad>()
                 .HasOne(h => h.Usuario)
                 .WithMany(u => u.Historial_Actividades)
                 .HasForeignKey(h => h.Id_Usuario)
                 .OnDelete(DeleteBehavior.Cascade);
-
-            // Configurar la relación muchos a uno entre Pago y Retribucion
-
 
             modelBuilder.Entity<Estudiante>()
                 .HasOne(e => e.Planilla)
@@ -58,11 +48,19 @@ namespace Gestion_Del_Presupuesto.Data
                .HasForeignKey(u => u.Id_Rol)
                .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<CentroSaludModel>()
+               .HasOne(c => c.Convenio)
+               .WithMany(c => c.CentrosDeSalud)
+               .HasForeignKey(c => c.ConvenioId)
+               .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<RetribucionModel>()
                .HasOne(r => r.Convenios)
                .WithMany(c => c.Retribuciones)
-               .HasForeignKey(r => r.ConvenioId) // Asumiendo que `ConvenioId` es la clave externa en `RetribucionModel`
+               .HasForeignKey(r => r.ConvenioId) 
                .OnDelete(DeleteBehavior.Cascade);
+
+
         }
 
     }
