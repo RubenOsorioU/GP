@@ -1,10 +1,13 @@
 ﻿namespace Gestion_Del_Presupuesto.Models
 {
+    using Microsoft.EntityFrameworkCore.Metadata.Internal;
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
 
     public class IndicadorEconomico
     {
+       
         public int Codigo { get; set; }
 
         public DateTime? SelectedDate {get; set; }
@@ -23,6 +26,7 @@
 
     public class ObsData
     {
+        [Key]
         public string IndexDateString { get; set; }
         public string Value { get; set; }
         public string StatusCode { get; set; }

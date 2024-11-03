@@ -22,7 +22,7 @@ namespace Gestion_Del_Presupuesto.Controllers
         // GET: Pagos
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Pagos.Include(p => p.Convenio);
+            var applicationDbContext = _context.Pagos.Include(p => p.Convenios);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -35,7 +35,7 @@ namespace Gestion_Del_Presupuesto.Controllers
             }
 
             var pago = await _context.Pagos
-                .Include(p => p.Convenio)
+                .Include(p => p.Convenios)
                 .FirstOrDefaultAsync(m => m.Id_Pago == id);
             if (pago == null)
             {
@@ -131,7 +131,7 @@ namespace Gestion_Del_Presupuesto.Controllers
             }
 
             var pago = await _context.Pagos
-                .Include(p => p.Convenio)
+                .Include(p => p.Convenios)
                 .FirstOrDefaultAsync(m => m.Id_Pago == id);
             if (pago == null)
             {

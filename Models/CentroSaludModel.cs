@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Gestion_Del_Presupuesto.Models
 {
@@ -7,10 +8,17 @@ namespace Gestion_Del_Presupuesto.Models
         [Key]
         public int Id_CentroSalud { get; set; }
         public int Rut_CentrodeSalud { get; set; }
-        public string Nombre { get; set; }
+
+
+        [Required]
+        [Display(Name = "Nombre Centro de Salud Asociado")]
+        public string NombreCentro { get; set; }
         public string Direccion { get; set; }
         public string Contacto { get; set; }
+
+        [ForeignKey("ConvenioModel")]
         public int ConvenioId { get; set; }
-        public ConvenioModel Convenio { get; set; }
+        public ConvenioModel? Convenios { get; set; }
+        public RetribucionModel? Retribuciones { get; set; }
     }
 }

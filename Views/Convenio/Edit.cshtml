@@ -19,8 +19,8 @@
         <span asp-validation-for="Telefono" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label asp-for="Tipo" class="control-label"></label>
-        <select asp-for="Tipo" class="form-control">
+        <label asp-for="Tipo_Retribucion" class="control-label"></label>
+        <select asp-for="Tipo_Retribucion" class="form-control">
             <option value="">Selecciona un Tipo</option>
             <option value="HOSPITALES / CLINICAS">HOSPITALES / CLINICAS</option>
             <option value="Hogares / C.Educacionales">Hogares / C.Educacionales</option>
@@ -71,7 +71,23 @@
             <input type="hidden" asp-for="@Model.Retribuciones[i].Id_Retribucion" />
         }
     </div>
+    <h4 >Centros de Salud</h4>
+     <div id="centrosdesaludContainer">
+         @for (int i =0;i <Model.CentrosDeSalud.Count;i++)
+        {
+            <div class="form-group">
+                <label>Tipo de Retribución</label>
+                <input asp-for="@Model.CentrosDeSalud[i].NombreCentro" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label>Valor UF</label>
+                <input asp-for="@Model.CentrosDeSalud[i].Direccion" class="form-control" />
+            </div>
+            <input type="hidden" asp-for="@Model.CentrosDeSalud[i].Contacto" />
+        }
 
+
+    </div>
     <button type="submit" class="btn btn-primary">Guardar</button>
     <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
 </form>

@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gestion_Del_Presupuesto.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241023190734_ArregloatributoConvenio")]
-    partial class ArregloatributoConvenio
+    [Migration("20241103182634_DB1")]
+    partial class DB1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -45,15 +45,23 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Nombre")
+                    b.Property<string>("NombreCentro")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int?>("RetribucionesId_Retribucion")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Rut_CentrodeSalud")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id_CentroSalud");
 
                     b.HasIndex("ConvenioId");
 
-                    b.ToTable("CentroSaludModel");
+                    b.HasIndex("RetribucionesId_Retribucion");
+
+                    b.ToTable("CentrosDeSalud");
                 });
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.ConvenioModel", b =>
@@ -64,6 +72,9 @@ namespace Gestion_Del_Presupuesto.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id_Convenio"));
 
+                    b.Property<int>("CentrosDeSaludId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("ContactoPrincipal")
                         .IsRequired()
                         .HasColumnType("text");
@@ -72,14 +83,17 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("Duracion_meses")
-                        .HasColumnType("integer");
-
                     b.Property<int?>("EstudianteId_Estudiante")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("Fecha_Inicio")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("Fecha_Termino")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Id_Retribucion")
+                        .HasColumnType("integer");
 
                     b.Property<int?>("Institucion_SaludId_Institucion_Salud")
                         .HasColumnType("integer");
@@ -88,13 +102,27 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<bool>("RenovacionAutomatica")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Rut")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Sede")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Tipo")
+                    b.Property<string>("Telefono")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<string>("Tipo_Retribucion")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("ValorUF")
+                        .HasColumnType("numeric");
 
                     b.HasKey("Id_Convenio");
 
@@ -145,7 +173,24 @@ namespace Gestion_Del_Presupuesto.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id_Devengado"));
 
+                    b.Property<int>("CantEstudiantes")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CantidadTiempo")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Carrera")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("CentroCosto")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<int>("ConvenioId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CostoUF")
                         .HasColumnType("integer");
 
                     b.Property<string>("Descripcion")
@@ -155,11 +200,22 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.Property<int?>("DevengadoId_Devengado")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("Fecha")
+                    b.Property<DateTime>("FechaFin")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<decimal>("GastoComprometido")
+                    b.Property<DateTime>("FechaInicio")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal>("GastoTotalComprometidoMonto")
                         .HasColumnType("numeric");
+
+                    b.Property<string>("Itempresupuestario")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ObsvalorUFIndexDateString")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<decimal>("PagosRealizados")
                         .HasColumnType("numeric");
@@ -167,11 +223,19 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.Property<decimal>("SaldoPendiente")
                         .HasColumnType("numeric");
 
+                    b.Property<decimal>("TotalGastoDevengadoGeneradoporEstudiantes")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("ValorUFDevengado")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id_Devengado");
 
                     b.HasIndex("ConvenioId");
 
                     b.HasIndex("DevengadoId_Devengado");
+
+                    b.HasIndex("ObsvalorUFIndexDateString");
 
                     b.ToTable("Devengados");
                 });
@@ -216,6 +280,12 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("ConvenioId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ConveniosId_Convenio")
+                        .HasColumnType("integer");
+
                     b.Property<string>("CorreoElectronico")
                         .IsRequired()
                         .HasColumnType("text");
@@ -224,6 +294,9 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<DateTime>("FechaUFDia")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Giro")
                         .IsRequired()
                         .HasColumnType("text");
@@ -231,6 +304,9 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.Property<string>("Institucion")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<decimal>("NetoUF")
+                        .HasColumnType("numeric");
 
                     b.Property<string>("NivelFormacion")
                         .IsRequired()
@@ -241,6 +317,10 @@ namespace Gestion_Del_Presupuesto.Migrations
 
                     b.Property<int>("NumeroTiempo")
                         .HasColumnType("integer");
+
+                    b.Property<string>("ObsvalorUFIndexDateString")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("RUT")
                         .IsRequired()
@@ -273,10 +353,23 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("TotalEstudiantes")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("TotalaPagar")
+                        .HasColumnType("numeric");
+
                     b.Property<decimal>("ValorUF")
                         .HasColumnType("numeric");
 
+                    b.Property<decimal>("ValorUFMesPractica")
+                        .HasColumnType("numeric");
+
                     b.HasKey("Id_Facturacion");
+
+                    b.HasIndex("ConveniosId_Convenio");
+
+                    b.HasIndex("ObsvalorUFIndexDateString");
 
                     b.ToTable("Facturacion");
                 });
@@ -331,6 +424,24 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.ToTable("InstitucionesSalud");
                 });
 
+            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.ObsData", b =>
+                {
+                    b.Property<string>("IndexDateString")
+                        .HasColumnType("text");
+
+                    b.Property<string>("StatusCode")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("IndexDateString");
+
+                    b.ToTable("ObsData");
+                });
+
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Pago", b =>
                 {
                     b.Property<int>("Id_Pago")
@@ -339,7 +450,7 @@ namespace Gestion_Del_Presupuesto.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id_Pago"));
 
-                    b.Property<int>("ConvenioId_Retribucion")
+                    b.Property<int>("ConveniosId_Convenio")
                         .HasColumnType("integer");
 
                     b.Property<string>("Estado")
@@ -365,14 +476,14 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("RetribucionId_Retribucion")
+                    b.Property<int>("RetribucionesId_Retribucion")
                         .HasColumnType("integer");
 
                     b.HasKey("Id_Pago");
 
-                    b.HasIndex("ConvenioId_Retribucion");
+                    b.HasIndex("ConveniosId_Convenio");
 
-                    b.HasIndex("RetribucionId_Retribucion");
+                    b.HasIndex("RetribucionesId_Retribucion");
 
                     b.ToTable("Pagos");
                 });
@@ -385,7 +496,14 @@ namespace Gestion_Del_Presupuesto.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id_Planillas"));
 
-                    b.Property<double>("CuantasSemanas")
+                    b.Property<string>("Asignatura")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("CantDias")
+                        .HasColumnType("integer");
+
+                    b.Property<double>("CantidadHoras")
                         .HasColumnType("double precision");
 
                     b.Property<DateTime>("Fecha_Inicio")
@@ -405,13 +523,11 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("Observaciones")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<int>("Rut")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("TotalCosto")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("ValorUfContrato")
                         .HasColumnType("integer");
 
                     b.HasKey("Id_Planillas");
@@ -447,6 +563,12 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.Property<string>("Convenio")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("ConvenioId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ConveniosId_Convenio")
+                        .HasColumnType("integer");
 
                     b.Property<decimal>("CostoMM")
                         .HasColumnType("numeric");
@@ -497,6 +619,8 @@ namespace Gestion_Del_Presupuesto.Migrations
 
                     b.HasKey("Id_PresupuestoXCentroCosto");
 
+                    b.HasIndex("ConveniosId_Convenio");
+
                     b.ToTable("Presupuestos");
                 });
 
@@ -508,22 +632,33 @@ namespace Gestion_Del_Presupuesto.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id_Retribucion"));
 
+                    b.Property<decimal>("CantPesos")
+                        .HasColumnType("numeric");
+
                     b.Property<int>("ConvenioId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("ConveniosId_Convenio")
-                        .HasColumnType("integer");
+                    b.Property<string>("DetalleOtrosGastos")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("FechaRetribucion")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<decimal>("Monto")
                         .HasColumnType("numeric");
 
-                    b.Property<string>("Tipo")
-                        .IsRequired()
+                    b.Property<string>("Periodo")
                         .HasColumnType("text");
+
+                    b.Property<string>("Tipo_Retribucion")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("UFTotal")
+                        .HasColumnType("numeric");
 
                     b.HasKey("Id_Retribucion");
 
-                    b.HasIndex("ConveniosId_Convenio");
+                    b.HasIndex("ConvenioId");
 
                     b.ToTable("Retribuciones");
                 });
@@ -618,13 +753,19 @@ namespace Gestion_Del_Presupuesto.Migrations
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.CentroSaludModel", b =>
                 {
-                    b.HasOne("Gestion_Del_Presupuesto.Models.ConvenioModel", "Convenio")
+                    b.HasOne("Gestion_Del_Presupuesto.Models.ConvenioModel", "Convenios")
                         .WithMany("CentrosDeSalud")
                         .HasForeignKey("ConvenioId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Convenio");
+                    b.HasOne("Gestion_Del_Presupuesto.Models.RetribucionModel", "Retribuciones")
+                        .WithMany()
+                        .HasForeignKey("RetribucionesId_Retribucion");
+
+                    b.Navigation("Convenios");
+
+                    b.Navigation("Retribuciones");
                 });
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.ConvenioModel", b =>
@@ -661,7 +802,32 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .WithMany("Devengados")
                         .HasForeignKey("DevengadoId_Devengado");
 
+                    b.HasOne("Gestion_Del_Presupuesto.Models.ObsData", "ObsvalorUF")
+                        .WithMany()
+                        .HasForeignKey("ObsvalorUFIndexDateString")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Convenio");
+
+                    b.Navigation("ObsvalorUF");
+                });
+
+            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.FacturacionModel", b =>
+                {
+                    b.HasOne("Gestion_Del_Presupuesto.Models.ConvenioModel", "Convenios")
+                        .WithMany()
+                        .HasForeignKey("ConveniosId_Convenio");
+
+                    b.HasOne("Gestion_Del_Presupuesto.Models.ObsData", "ObsvalorUF")
+                        .WithMany()
+                        .HasForeignKey("ObsvalorUFIndexDateString")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Convenios");
+
+                    b.Navigation("ObsvalorUF");
                 });
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Historial_Actividad", b =>
@@ -677,21 +843,21 @@ namespace Gestion_Del_Presupuesto.Migrations
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Pago", b =>
                 {
-                    b.HasOne("Gestion_Del_Presupuesto.Models.RetribucionModel", "Convenio")
+                    b.HasOne("Gestion_Del_Presupuesto.Models.ConvenioModel", "Convenios")
                         .WithMany()
-                        .HasForeignKey("ConvenioId_Retribucion")
+                        .HasForeignKey("ConveniosId_Convenio")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Gestion_Del_Presupuesto.Models.RetribucionModel", "Retribucion")
+                    b.HasOne("Gestion_Del_Presupuesto.Models.RetribucionModel", "Retribuciones")
                         .WithMany()
-                        .HasForeignKey("RetribucionId_Retribucion")
+                        .HasForeignKey("RetribucionesId_Retribucion")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Convenio");
+                    b.Navigation("Convenios");
 
-                    b.Navigation("Retribucion");
+                    b.Navigation("Retribuciones");
                 });
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.PlanillasModel", b =>
@@ -705,11 +871,20 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.Navigation("Estudiante");
                 });
 
+            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.PresupuestoModel", b =>
+                {
+                    b.HasOne("Gestion_Del_Presupuesto.Models.ConvenioModel", "Convenios")
+                        .WithMany()
+                        .HasForeignKey("ConveniosId_Convenio");
+
+                    b.Navigation("Convenios");
+                });
+
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.RetribucionModel", b =>
                 {
                     b.HasOne("Gestion_Del_Presupuesto.Models.ConvenioModel", "Convenios")
                         .WithMany("Retribuciones")
-                        .HasForeignKey("ConveniosId_Convenio")
+                        .HasForeignKey("ConvenioId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

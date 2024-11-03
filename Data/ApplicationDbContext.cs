@@ -23,6 +23,7 @@ namespace Gestion_Del_Presupuesto.Data
         public DbSet<Devengado> Devengados { get; set; }
         public DbSet<Costo> Costo { get; set; }
         public DbSet<FacturacionModel> Facturacion { get; set; }
+        public DbSet<CentroSaludModel> CentrosDeSalud { get; set; }
 
         public DbSet<PlanillasModel> Planillas { get; set; }
         // Configurar relaciones entre entidades
@@ -49,7 +50,7 @@ namespace Gestion_Del_Presupuesto.Data
                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<CentroSaludModel>()
-               .HasOne(c => c.Convenio)
+               .HasOne(c => c.Convenios)
                .WithMany(c => c.CentrosDeSalud)
                .HasForeignKey(c => c.ConvenioId)
                .OnDelete(DeleteBehavior.Cascade);

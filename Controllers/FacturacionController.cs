@@ -1,6 +1,8 @@
 ﻿using Gestion_Del_Presupuesto.Data;
 using Gestion_Del_Presupuesto.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
 namespace Gestion_Del_Presupuesto.Controllers
@@ -17,14 +19,14 @@ namespace Gestion_Del_Presupuesto.Controllers
         // GET: FacturacionController
         public ActionResult Index()
         {
-            var facturaciones = _context.Facturacion.ToList();
+            var facturaciones = _context.Facturacion.Include(f => f.Convenios).ToList();
             return View(facturaciones);
         }
 
         // GET: FacturacionController/Details/5
         public ActionResult Details(int id)
         {
-            var facturacion = _context.Facturacion.Find(id);
+            var facturacion = _context.Facturacion.Include(f => f.Convenios).FirstOrDefault(f => f.Id_Facturacion == id);
             if (facturacion == null)
             {
                 return NotFound();
@@ -35,6 +37,7 @@ namespace Gestion_Del_Presupuesto.Controllers
         // GET: FacturacionController/Create
         public ActionResult Create()
         {
+            ViewData["ConvenioId"] = new SelectList(_context.Convenios, "Id", "Nombre");
             return View();
         }
 
@@ -43,12 +46,11 @@ namespace Gestion_Del_Presupuesto.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(FacturacionModel facturacion)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Facturacion.Add(facturacion);
-                _context.SaveChanges();
-                return RedirectToAction(nameof(Index));
-            }
+
+            _context.Facturacion.Add(facturacion);
+            _context.SaveChanges();
+
+            ViewData["ConvenioId"] = new SelectList(_context.Convenios, "Id", "Nombre", facturacion.ConvenioId);
             return View(facturacion);
         }
 
@@ -60,6 +62,7 @@ namespace Gestion_Del_Presupuesto.Controllers
             {
                 return NotFound();
             }
+            ViewData["ConvenioId"] = new SelectList(_context.Convenios, "Id", "Nombre", facturacion.ConvenioId);
             return View(facturacion);
         }
 
@@ -75,17 +78,32 @@ namespace Gestion_Del_Presupuesto.Controllers
 
             if (ModelState.IsValid)
             {
-                _context.Update(facturacion);
-                _context.SaveChanges();
+                try
+                {
+                    _context.Update(facturacion);
+                    _context.SaveChanges();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!FacturacionExists(facturacion.Id_Facturacion))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["ConvenioId"] = new SelectList(_context.Convenios, "Id", "Nombre", facturacion.ConvenioId);
             return View(facturacion);
         }
 
         // GET: FacturacionController/Delete/5
         public ActionResult Delete(int id)
         {
-            var facturacion = _context.Facturacion.Find(id);
+            var facturacion = _context.Facturacion.Include(f => f.Convenios).FirstOrDefault(f => f.Id_Facturacion == id);
             if (facturacion == null)
             {
                 return NotFound();
@@ -102,6 +120,11 @@ namespace Gestion_Del_Presupuesto.Controllers
             _context.Facturacion.Remove(facturacion);
             _context.SaveChanges();
             return RedirectToAction(nameof(Index));
+        }
+
+        private bool FacturacionExists(int id)
+        {
+            return _context.Facturacion.Any(e => e.Id_Facturacion == id);
         }
     }
 }

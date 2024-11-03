@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Gestion_Del_Presupuesto.Models
 {
@@ -75,10 +76,25 @@ namespace Gestion_Del_Presupuesto.Models
 
         [Required]
         [Display(Name = "Valor 3 UF mes/práctica profesional")]
+        public decimal ValorUFMesPractica { get; set; } 
+        public DateTime FechaUFDia { get; set; } = DateTime.Now;
         public decimal ValorUF { get; set; }
 
         [Required]
         [Display(Name = "Subtotal")]
         public decimal Subtotal { get; set; }
+
+        public int TotalEstudiantes { get; set; }
+
+        public decimal NetoUF { get; set; }
+
+        public decimal TotalaPagar { get; set; }
+
+
+        [ForeignKey("ConvenioModel")]
+        [Required]
+        public int ConvenioId { get; set; }
+        public ConvenioModel? Convenios { get; set; }
+        public ObsData ObsvalorUF { get; set; }
     }
 }

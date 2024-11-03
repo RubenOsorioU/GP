@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Gestion_Del_Presupuesto.Models
 {
@@ -77,6 +78,10 @@ namespace Gestion_Del_Presupuesto.Models
         [Display(Name = "Saldo Estimado x pagar Año Actual")]
         public decimal? SaldoEstimadoPagarAnioActual { get; set; }
 
+        [ForeignKey("ConvenioModel")]
+        [Required]
+        public int ConvenioId { get; set; }
+        public ConvenioModel? Convenios { get; set; }
         public List<string> FormasRetribucionSeleccionadas { get; set; } = new List<string>();  // Almacena las retribuciones seleccionadas
     }
 }

@@ -2,7 +2,7 @@
 
 @{
     ViewData["Title"] = "Listado de Presupuestos";
-    var sedes = ViewBag.Sedes as List<string> ?? new List<string> { "Santiago", "Coquimbo" }; // Asegúrate de inicializar las sedes
+    var sedes = ViewBag.Sedes as List<string> ?? new List<string> { "Santiago", "Coquimbo","Ambas" }; // Asegúrate de inicializar las sedes
     var conveniosPorSede = ViewBag.ConveniosPorSede as Dictionary<string, List<string>> ?? new Dictionary<string, List<string>>();
     var carreraActual = ViewData["CarreraActual"] as string ?? "";
     var sedeActual = ViewData["SedeActual"] as string ?? "";
