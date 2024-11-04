@@ -24,8 +24,14 @@ namespace Gestion_Del_Presupuesto.Data
         public DbSet<Costo> Costo { get; set; }
         public DbSet<FacturacionModel> Facturacion { get; set; }
         public DbSet<CentroSaludModel> CentrosDeSalud { get; set; }
+        public DbSet <ProvisionModel> Provision { get; set; }
 
         public DbSet<PlanillasModel> Planillas { get; set; }
+        public DbSet<IndicadorEconomico> IndicadorEcono{ get; set; }
+
+        public DbSet<SeriesData> SerieDatas { get; set; }
+        public DbSet<ObsData> ObsDatas { get; set; }
+
         // Configurar relaciones entre entidades
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

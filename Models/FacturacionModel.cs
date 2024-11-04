@@ -94,7 +94,10 @@ namespace Gestion_Del_Presupuesto.Models
         [ForeignKey("ConvenioModel")]
         [Required]
         public int ConvenioId { get; set; }
+
+        public int Id_IndicadorEco { get; set; }
         public ConvenioModel? Convenios { get; set; }
         public ObsData ObsvalorUF { get; set; }
+        public IndicadorEconomico indicador { get; set; }
     }
 }

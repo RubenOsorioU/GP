@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gestion_Del_Presupuesto.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241103182634_DB1")]
+    [Migration("20241104024644_DB1")]
     partial class DB1
     {
         /// <inheritdoc />
@@ -301,6 +301,9 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("Id_IndicadorEco")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Institucion")
                         .IsRequired()
                         .HasColumnType("text");
@@ -365,11 +368,16 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.Property<decimal>("ValorUFMesPractica")
                         .HasColumnType("numeric");
 
+                    b.Property<int>("indicadorId_IndicadorEco")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id_Facturacion");
 
                     b.HasIndex("ConveniosId_Convenio");
 
                     b.HasIndex("ObsvalorUFIndexDateString");
+
+                    b.HasIndex("indicadorId_IndicadorEco");
 
                     b.ToTable("Facturacion");
                 });
@@ -397,6 +405,34 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.HasIndex("Id_Usuario");
 
                     b.ToTable("Historial_Actividad");
+                });
+
+            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.IndicadorEconomico", b =>
+                {
+                    b.Property<int>("Id_IndicadorEco")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id_IndicadorEco"));
+
+                    b.Property<int>("Codigo")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("SelectedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("SeriesId_SeriesData")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id_IndicadorEco");
+
+                    b.HasIndex("SeriesId_SeriesData");
+
+                    b.ToTable("IndicadorEcono");
                 });
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Institucion_Salud", b =>
@@ -429,6 +465,9 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.Property<string>("IndexDateString")
                         .HasColumnType("text");
 
+                    b.Property<int?>("SeriesDataId_SeriesData")
+                        .HasColumnType("integer");
+
                     b.Property<string>("StatusCode")
                         .IsRequired()
                         .HasColumnType("text");
@@ -439,7 +478,9 @@ namespace Gestion_Del_Presupuesto.Migrations
 
                     b.HasKey("IndexDateString");
 
-                    b.ToTable("ObsData");
+                    b.HasIndex("SeriesDataId_SeriesData");
+
+                    b.ToTable("ObsDatas");
                 });
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Pago", b =>
@@ -624,6 +665,44 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.ToTable("Presupuestos");
                 });
 
+            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.ProvisionModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal>("Monto")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("NombreCampoClinico")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("NombreSede")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Numero")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("TipoGasto")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Provision");
+                });
+
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.RetribucionModel", b =>
                 {
                     b.Property<int>("Id_Retribucion")
@@ -682,6 +761,31 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.HasKey("Id_Rol");
 
                     b.ToTable("Roles");
+                });
+
+            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.SeriesData", b =>
+                {
+                    b.Property<int>("Id_SeriesData")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id_SeriesData"));
+
+                    b.Property<string>("DescripEsp")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("DescripIng")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("SeriesId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id_SeriesData");
+
+                    b.ToTable("SerieDatas");
                 });
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Solicitud_Retribucion", b =>
@@ -825,9 +929,17 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Gestion_Del_Presupuesto.Models.IndicadorEconomico", "indicador")
+                        .WithMany()
+                        .HasForeignKey("indicadorId_IndicadorEco")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Convenios");
 
                     b.Navigation("ObsvalorUF");
+
+                    b.Navigation("indicador");
                 });
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Historial_Actividad", b =>
@@ -839,6 +951,24 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .IsRequired();
 
                     b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.IndicadorEconomico", b =>
+                {
+                    b.HasOne("Gestion_Del_Presupuesto.Models.SeriesData", "Series")
+                        .WithMany()
+                        .HasForeignKey("SeriesId_SeriesData")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Series");
+                });
+
+            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.ObsData", b =>
+                {
+                    b.HasOne("Gestion_Del_Presupuesto.Models.SeriesData", null)
+                        .WithMany("Obs")
+                        .HasForeignKey("SeriesDataId_SeriesData");
                 });
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Pago", b =>
@@ -949,6 +1079,11 @@ namespace Gestion_Del_Presupuesto.Migrations
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Rol", b =>
                 {
                     b.Navigation("Usuarios");
+                });
+
+            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.SeriesData", b =>
+                {
+                    b.Navigation("Obs");
                 });
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Usuario", b =>
