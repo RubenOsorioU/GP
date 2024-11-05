@@ -126,7 +126,7 @@ namespace Gestion_Del_Presupuesto.Migrations
                     Id_Convenio = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Nombre = table.Column<string>(type: "text", nullable: false),
-                    Tipo_Retribucion = table.Column<string>(type: "text", nullable: false),
+                    Tipo_Convenio = table.Column<string>(type: "text", nullable: false),
                     Sede = table.Column<string>(type: "text", nullable: false),
                     Fecha_Inicio = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Fecha_Termino = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -405,8 +405,9 @@ namespace Gestion_Del_Presupuesto.Migrations
                     ConvenioId = table.Column<int>(type: "integer", nullable: false),
                     Id_IndicadorEco = table.Column<int>(type: "integer", nullable: false),
                     ConveniosId_Convenio = table.Column<int>(type: "integer", nullable: true),
-                    ObsvalorUFIndexDateString = table.Column<string>(type: "text", nullable: false),
-                    indicadorId_IndicadorEco = table.Column<int>(type: "integer", nullable: false)
+                    PlanillasId_Planillas = table.Column<int>(type: "integer", nullable: true),
+                    ObsvalorUFIndexDateString = table.Column<string>(type: "text", nullable: true),
+                    IndicadorId_IndicadorEco = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -417,17 +418,20 @@ namespace Gestion_Del_Presupuesto.Migrations
                         principalTable: "Convenios",
                         principalColumn: "Id_Convenio");
                     table.ForeignKey(
-                        name: "FK_Facturacion_IndicadorEcono_indicadorId_IndicadorEco",
-                        column: x => x.indicadorId_IndicadorEco,
+                        name: "FK_Facturacion_IndicadorEcono_IndicadorId_IndicadorEco",
+                        column: x => x.IndicadorId_IndicadorEco,
                         principalTable: "IndicadorEcono",
-                        principalColumn: "Id_IndicadorEco",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id_IndicadorEco");
                     table.ForeignKey(
                         name: "FK_Facturacion_ObsDatas_ObsvalorUFIndexDateString",
                         column: x => x.ObsvalorUFIndexDateString,
                         principalTable: "ObsDatas",
-                        principalColumn: "IndexDateString",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "IndexDateString");
+                    table.ForeignKey(
+                        name: "FK_Facturacion_Planillas_PlanillasId_Planillas",
+                        column: x => x.PlanillasId_Planillas,
+                        principalTable: "Planillas",
+                        principalColumn: "Id_Planillas");
                 });
 
             migrationBuilder.CreateTable(
@@ -569,14 +573,19 @@ namespace Gestion_Del_Presupuesto.Migrations
                 column: "ConveniosId_Convenio");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Facturacion_indicadorId_IndicadorEco",
+                name: "IX_Facturacion_IndicadorId_IndicadorEco",
                 table: "Facturacion",
-                column: "indicadorId_IndicadorEco");
+                column: "IndicadorId_IndicadorEco");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Facturacion_ObsvalorUFIndexDateString",
                 table: "Facturacion",
                 column: "ObsvalorUFIndexDateString");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Facturacion_PlanillasId_Planillas",
+                table: "Facturacion",
+                column: "PlanillasId_Planillas");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Historial_Actividad_Id_Usuario",
@@ -657,9 +666,6 @@ namespace Gestion_Del_Presupuesto.Migrations
                 name: "Pagos");
 
             migrationBuilder.DropTable(
-                name: "Planillas");
-
-            migrationBuilder.DropTable(
                 name: "Presupuestos");
 
             migrationBuilder.DropTable(
@@ -673,6 +679,9 @@ namespace Gestion_Del_Presupuesto.Migrations
 
             migrationBuilder.DropTable(
                 name: "ObsDatas");
+
+            migrationBuilder.DropTable(
+                name: "Planillas");
 
             migrationBuilder.DropTable(
                 name: "Usuarios");

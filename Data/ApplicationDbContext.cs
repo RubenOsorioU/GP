@@ -33,12 +33,46 @@ namespace Gestion_Del_Presupuesto.Data
         public DbSet<ObsData> ObsDatas { get; set; }
 
         // Configurar relaciones entre entidades
+        public override int SaveChanges()
+        {
+            ConvertDatesToUtc();
+            return base.SaveChanges();
+        }
+
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            ConvertDatesToUtc();
+            return await base.SaveChangesAsync(cancellationToken);
+        }
+
+        private void ConvertDatesToUtc()
+        {
+            foreach (var entry in ChangeTracker.Entries()
+                 .Where(e => e.Entity is ConvenioModel && (e.State == EntityState.Added || e.State == EntityState.Modified)))
+            {
+                var convenio = (ConvenioModel)entry.Entity;
+
+                convenio.Fecha_Inicio = DateTime.SpecifyKind(convenio.Fecha_Inicio, DateTimeKind.Utc);
+                if (convenio.Fecha_Termino.HasValue)
+                {
+                    convenio.Fecha_Termino = DateTime.SpecifyKind(convenio.Fecha_Termino.Value, DateTimeKind.Utc);
+                }
+
+                if (convenio.Retribuciones != null)
+                {
+                    foreach (var retribucion in convenio.Retribuciones)
+                    {
+                        retribucion.FechaRetribucion = DateTime.SpecifyKind(retribucion.FechaRetribucion, DateTimeKind.Utc);
+                    }
+                }
+            }
+        }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Historial_Actividad>()
-                .HasOne(h => h.Usuario)
+                .HasOne(h => h.Usuarios)
                 .WithMany(u => u.Historial_Actividades)
                 .HasForeignKey(h => h.Id_Usuario)
                 .OnDelete(DeleteBehavior.Cascade);

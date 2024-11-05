@@ -78,6 +78,8 @@ namespace Gestion_Del_Presupuesto.Models
         [Display(Name = "Valor 3 UF mes/práctica profesional")]
         public decimal ValorUFMesPractica { get; set; } 
         public DateTime FechaUFDia { get; set; } = DateTime.Now;
+
+        [Required]
         public decimal ValorUF { get; set; }
 
         [Required]
@@ -97,7 +99,10 @@ namespace Gestion_Del_Presupuesto.Models
 
         public int Id_IndicadorEco { get; set; }
         public ConvenioModel? Convenios { get; set; }
-        public ObsData ObsvalorUF { get; set; }
-        public IndicadorEconomico indicador { get; set; }
+        public PlanillasModel? Planillas { get; set; }
+        public ObsData? ObsvalorUF { get; set; }
+        public IndicadorEconomico? Indicador { get; set; }
+
+
     }
 }

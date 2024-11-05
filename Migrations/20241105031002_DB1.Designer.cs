@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gestion_Del_Presupuesto.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241104024644_DB1")]
+    [Migration("20241105031002_DB1")]
     partial class DB1
     {
         /// <inheritdoc />
@@ -117,7 +117,7 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Tipo_Retribucion")
+                    b.Property<string>("Tipo_Convenio")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -304,6 +304,9 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.Property<int>("Id_IndicadorEco")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("IndicadorId_IndicadorEco")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Institucion")
                         .IsRequired()
                         .HasColumnType("text");
@@ -322,8 +325,10 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("ObsvalorUFIndexDateString")
-                        .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int?>("PlanillasId_Planillas")
+                        .HasColumnType("integer");
 
                     b.Property<string>("RUT")
                         .IsRequired()
@@ -368,16 +373,15 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.Property<decimal>("ValorUFMesPractica")
                         .HasColumnType("numeric");
 
-                    b.Property<int>("indicadorId_IndicadorEco")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id_Facturacion");
 
                     b.HasIndex("ConveniosId_Convenio");
 
+                    b.HasIndex("IndicadorId_IndicadorEco");
+
                     b.HasIndex("ObsvalorUFIndexDateString");
 
-                    b.HasIndex("indicadorId_IndicadorEco");
+                    b.HasIndex("PlanillasId_Planillas");
 
                     b.ToTable("Facturacion");
                 });
@@ -923,34 +927,36 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .WithMany()
                         .HasForeignKey("ConveniosId_Convenio");
 
+                    b.HasOne("Gestion_Del_Presupuesto.Models.IndicadorEconomico", "Indicador")
+                        .WithMany()
+                        .HasForeignKey("IndicadorId_IndicadorEco");
+
                     b.HasOne("Gestion_Del_Presupuesto.Models.ObsData", "ObsvalorUF")
                         .WithMany()
-                        .HasForeignKey("ObsvalorUFIndexDateString")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ObsvalorUFIndexDateString");
 
-                    b.HasOne("Gestion_Del_Presupuesto.Models.IndicadorEconomico", "indicador")
+                    b.HasOne("Gestion_Del_Presupuesto.Models.PlanillasModel", "Planillas")
                         .WithMany()
-                        .HasForeignKey("indicadorId_IndicadorEco")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("PlanillasId_Planillas");
 
                     b.Navigation("Convenios");
 
+                    b.Navigation("Indicador");
+
                     b.Navigation("ObsvalorUF");
 
-                    b.Navigation("indicador");
+                    b.Navigation("Planillas");
                 });
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Historial_Actividad", b =>
                 {
-                    b.HasOne("Gestion_Del_Presupuesto.Models.Usuario", "Usuario")
+                    b.HasOne("Gestion_Del_Presupuesto.Models.Usuario", "Usuarios")
                         .WithMany("Historial_Actividades")
                         .HasForeignKey("Id_Usuario")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Usuario");
+                    b.Navigation("Usuarios");
                 });
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.IndicadorEconomico", b =>

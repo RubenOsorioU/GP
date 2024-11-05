@@ -84,19 +84,20 @@
         <span asp-validation-for="NumeroAlumnos" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label for="FechaUFDia">Fecha UF Día</label>
-        <input asp-for="FechaUFDia" class="form-control" />
-        <span asp-validation-for="FechaUFDia" class="text-danger"></span>
-    </div>
-    <div class="form-group">
         <label for="ValorUFMesPractica">Valor 3 UF mes/práctica profesional</label>
         <input asp-for="ValorUFMesPractica" class="form-control" />
     </div>
+    <form method="get" asp-action="BuscarUF">
+        <div class="form-group">
+            <label for="FechaSeleccionada">Fecha UF Día</label>
+            <input type="date" id="fechaSeleccionada" class="form-control" onchange="obtenerUF(this)" />
+        </div>
+    </form>
     <div class="form-group">
-        <label for="ValorUF">Valor UF</label>
-        <input asp-for="ValorUF" class="form-control" />
-        <span asp-validation-for="ValorUF" class="text-danger"></span>
+        <label for="valorUF">Valor UF</label>
+        <input type="text" class="form-control" id="valorUF" placeholder="" readonly />
     </div>
+
     <div class="form-group">
         <label for="Subtotal">Subtotal</label>
         <input asp-for="Subtotal" class="form-control" />
@@ -105,25 +106,33 @@
     <button type="submit" class="btn btn-primary">Guardar</button>
     <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
 </form>
-<form method="get" asp-action="buscarUF">
-    <div>
 
-        <input asp-for="indicador.SelectedDate" type="date" style="width: 200px class="form-control" />
-        <button type="submit" class="btn btn-primary">Buscar Valor UF</button>
-    </div>
-</form>
-@{
-    ViewBag.Title = "Valor UF";
-}
+<script>
+    async function obtenerUF(fechaInput) {
+        const fechaSeleccionada = fechaInput.value;  // Fecha seleccionada YYYY-MM-DD
+        const valorUFInput = document.getElementById('valorUF');  
 
-<h2>Resultado de la UF</h2>
+        if (fechaSeleccionada) {
+            const valorUF = await buscarUF(fechaSeleccionada);  
+            valorUFInput.value = valorUF;  
+        }
+    }
 
-@if (ViewBag.Error != null)
-{
-    <p style="color: red;">@ViewBag.Error</p>
-}
-else
-{
-    <p><strong>Fecha UF:</strong> @ViewBag.FechaUF</p>
-    <p><strong>Valor UF:</strong> @ViewBag.ValorUF</p>
-}
+    async function buscarUF(fechaSeleccionada) {
+        const url = `/Facturacion/BuscarUF?SelectedDate=${fechaSeleccionada}`;
+
+        try {
+            const response = await fetch(url);
+            if (response.ok) {
+                const data = await response.json();
+                return data.valorUF || 0;  
+            } else {
+                console.error("Error al obtener el valor de la UF:", response.statusText);
+                return 0;
+            }
+        } catch (error) {
+            console.error("Error de conexión:", error);
+            return 0;
+        }
+    }
+</script>

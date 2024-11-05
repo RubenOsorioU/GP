@@ -29,7 +29,7 @@ namespace Gestion_Del_Presupuesto.Controllers
                 conveniosQuery = conveniosQuery.Where(c => c.Nombre.Contains(nombre));
 
             if (!string.IsNullOrWhiteSpace(tipo))
-                conveniosQuery = conveniosQuery.Where(c => c.Tipo_Retribucion.Equals(tipo, System.StringComparison.OrdinalIgnoreCase));
+                conveniosQuery = conveniosQuery.Where(c => c.Tipo_Convenio.Equals(tipo, System.StringComparison.OrdinalIgnoreCase));
 
             if (!string.IsNullOrWhiteSpace(sede))
                 conveniosQuery = conveniosQuery.Where(c => c.Sede.Equals(sede, System.StringComparison.OrdinalIgnoreCase));
@@ -37,7 +37,7 @@ namespace Gestion_Del_Presupuesto.Controllers
             // Incluir relaciones necesarias y obtener datos para las vistas
             var convenios = await conveniosQuery.Include(c => c.Retribuciones).ToListAsync();
             ViewBag.NombresConvenios = await _context.Convenios.Select(c => c.Nombre).Distinct().ToListAsync();
-            ViewBag.TiposConvenios = await _context.Convenios.Select(c => c.Tipo_Retribucion).Distinct().ToListAsync();
+            ViewBag.TiposConvenios = await _context.Convenios.Select(c => c.Tipo_Convenio).Distinct().ToListAsync();
             ViewBag.Sedes = new List<string> { "Santiago", "Coquimbo", "Ambas" };
 
             return View(convenios);
@@ -117,7 +117,6 @@ namespace Gestion_Del_Presupuesto.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, ConvenioModel convenios, bool renovacionAutomatica)
         {
-            // Validaciones manuales
             if (id != convenios.Id_Convenio)
                 return NotFound();
 
@@ -140,9 +139,17 @@ namespace Gestion_Del_Presupuesto.Controllers
                 convenios.Fecha_Termino = DateTime.SpecifyKind(convenios.Fecha_Termino.Value, DateTimeKind.Utc);
             }
 
+            // Convertir las fechas de las retribuciones a UTC
+            if (convenios.Retribuciones != null)
+            {
+                foreach (var retribucion in convenios.Retribuciones)
+                {
+                    retribucion.FechaRetribucion = DateTime.SpecifyKind(retribucion.FechaRetribucion, DateTimeKind.Utc);
+                }
+            }
+
             try
             {
-                // Actualizar el convenio
                 _context.Update(convenios);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -227,7 +234,7 @@ namespace Gestion_Del_Presupuesto.Controllers
                     foreach (var retribucion in convenio.Retribuciones)
                     {
                         worksheet.Cells[currentRow, 1].Value = convenio.Nombre;
-                        worksheet.Cells[currentRow, 2].Value = convenio.Tipo_Retribucion;
+                        worksheet.Cells[currentRow, 2].Value = convenio.Tipo_Convenio;
                         worksheet.Cells[currentRow, 3].Value = convenio.Sede;
                         worksheet.Cells[currentRow, 4].Value = convenio.Telefono;
                         worksheet.Cells[currentRow, 5].Value = convenio.Rut;
@@ -248,7 +255,7 @@ namespace Gestion_Del_Presupuesto.Controllers
                     if (!convenio.Retribuciones.Any())
                     {
                         worksheet.Cells[currentRow, 1].Value = convenio.Nombre;
-                        worksheet.Cells[currentRow, 2].Value = convenio.Tipo_Retribucion;
+                        worksheet.Cells[currentRow, 2].Value = convenio.Tipo_Convenio;
                         worksheet.Cells[currentRow, 3].Value = convenio.Sede;
                         worksheet.Cells[currentRow, 4].Value = convenio.Telefono;
                         worksheet.Cells[currentRow, 5].Value = convenio.Rut;

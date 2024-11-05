@@ -24,7 +24,7 @@ namespace Gestion_Del_Presupuesto.Controllers
             return View(facturaciones);
         }
 
-        // GET: FacturacionController/Details/5
+        // GET: FacturacionController/Details/
         public ActionResult Details(int id)
         {
             var facturacion = _context.Facturacion.Include(f => f.Convenios).FirstOrDefault(f => f.Id_Facturacion == id);
@@ -55,7 +55,7 @@ namespace Gestion_Del_Presupuesto.Controllers
             return View(facturacion);
         }
 
-        // GET: FacturacionController/Edit/5
+        // GET: FacturacionController/Edit/
         public ActionResult Edit(int id)
         {
             var facturacion = _context.Facturacion.Find(id);
@@ -67,7 +67,7 @@ namespace Gestion_Del_Presupuesto.Controllers
             return View(facturacion);
         }
 
-        // POST: FacturacionController/Edit/5
+        // POST: FacturacionController/Edit/
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, FacturacionModel facturacion)
@@ -127,32 +127,45 @@ namespace Gestion_Del_Presupuesto.Controllers
         {
             return _context.Facturacion.Any(e => e.Id_Facturacion == id);
         }
-        public async Task<IActionResult> BuscarUF(DateTime SelectedDate)
-        {
 
-            //string url = $"https://mindicador.cl/api/uf/{SelectedDate.Year.ToString()}-{SelectedDate.Month.ToString()}-{SelectedDate.Day.ToString()}}";
-            string url = $"https://si3.bcentral.cl/SieteRestWS/SieteRestWS.ashx?user=Ruben1Ulloa@gmail.com&pass=Benchi12&function=GetSeries&timeseries=F073.UFF.PRE.Z.D&firstdate={SelectedDate.ToString("yyyy-MM-dd")}&lastdate={SelectedDate.ToString("yyyy-MM-dd")}";
+
+        public async Task<JsonResult> BuscarUF(DateTime SelectedDate)
+        {
+            string url = $"https://si3.bcentral.cl/SieteRestWS/SieteRestWS.ashx?user=Ruben1Ulloa@gmail.com&pass=Benchi12&function=GetSeries&timeseries=F073.UFF.PRE.Z.D&firstdate={SelectedDate:yyyy-MM-dd}&lastdate={SelectedDate:yyyy-MM-dd}";
 
             using (HttpClient client = new HttpClient())
             {
-                HttpResponseMessage response = await client.GetAsync(url);
-                if (response.IsSuccessStatusCode)
+                try
                 {
-                    string jsonResponse = await response.Content.ReadAsStringAsync();
-                    IndicadorEconomico indicador = JsonConvert.DeserializeObject<IndicadorEconomico>(jsonResponse);
-                    var valorUF = indicador.Series.Obs.FirstOrDefault()?.Value;
-                    var fechaUF = indicador.Series.Obs.FirstOrDefault()?.IndexDateString;
-                    ViewBag.ValorUF = valorUF;
-                    ViewBag.FechaUF = fechaUF;
+                    HttpResponseMessage response = await client.GetAsync(url);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string jsonResponse = await response.Content.ReadAsStringAsync();
+                        IndicadorEconomico indicador = JsonConvert.DeserializeObject<IndicadorEconomico>(jsonResponse);
 
+                        // Verificar que Series y Obs no sean null antes de acceder a ellas
+                        if (indicador?.Series?.Obs != null && indicador.Series.Obs.Any())
+                        {
+                            var valorUF = indicador.Series.Obs.FirstOrDefault()?.Value;
+                            var fechaUF = indicador.Series.Obs.FirstOrDefault()?.IndexDateString;
+                            return Json(new { valorUF = valorUF, fechaUF = fechaUF });
+                        }
+                        else
+                        {
+                            return Json(new { valorUF = 0, error = "No se encontraron datos de UF para la fecha seleccionada." });
+                        }
+                    }
+                    else
+                    {
+                        return Json(new { valorUF = 0, error = "Error al obtener el valor de la UF: " + response.StatusCode });
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    ViewBag.Error = "Error al obtener el valor de la UF";
+                    return Json(new { valorUF = 0, error = "Error de conexión: " + ex.Message });
                 }
             }
-
-            return View("index");
         }
+
     }
 }

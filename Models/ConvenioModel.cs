@@ -11,9 +11,8 @@ namespace Gestion_Del_Presupuesto.Models
         [Display(Name = "Nombre Institución")]
         public string Nombre { get; set; }
 
-        [Display(Name = "Tipo de Retribución")]
-        public string Tipo_Retribucion { get; set; }
-
+        [Display(Name = "Tipo Centro")]
+        public string Tipo_Convenio { get; set; }
 
         public string Sede { get; set; }
         [Display(Name = "Fecha Inicio")]

@@ -22,7 +22,7 @@ namespace Gestion_Del_Presupuesto.Controllers
         // GET: Historial_Actividad
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Historial_Actividad.Include(h => h.Usuario);
+            var applicationDbContext = _context.Historial_Actividad.Include(h => h.Usuarios);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -35,7 +35,7 @@ namespace Gestion_Del_Presupuesto.Controllers
             }
 
             var historial_Actividad = await _context.Historial_Actividad
-                .Include(h => h.Usuario)
+                .Include(h => h.Usuarios)
                 .FirstOrDefaultAsync(m => m.Id_Historial_Actividad == id);
             if (historial_Actividad == null)
             {
@@ -131,7 +131,7 @@ namespace Gestion_Del_Presupuesto.Controllers
             }
 
             var historial_Actividad = await _context.Historial_Actividad
-                .Include(h => h.Usuario)
+                .Include(h => h.Usuarios)
                 .FirstOrDefaultAsync(m => m.Id_Historial_Actividad == id);
             if (historial_Actividad == null)
             {

@@ -17,6 +17,6 @@ namespace Gestion_Del_Presupuesto.Models
 
         // Propiedad de navegación hacia Usuario
         [ForeignKey("Id_Usuario")]
-        public virtual Usuario Usuario { get; set; }
+        public virtual Usuario Usuarios { get; set; }
     }
 }
