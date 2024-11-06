@@ -22,7 +22,7 @@ namespace Gestion_Del_Presupuesto.Controllers
         // Método Index que muestra la tabla de convenios con filtros opcionales
         public async Task<IActionResult> Index(string nombre, string tipo, string sede)
         {
-            var conveniosQuery = _context.Convenios.AsQueryable();
+            var conveniosQuery = _context.Convenios.Where(c => !c.Eliminado).AsQueryable();
 
             // Aplicar filtros si se proporcionan
             if (!string.IsNullOrWhiteSpace(nombre))
@@ -53,29 +53,36 @@ namespace Gestion_Del_Presupuesto.Controllers
         // Método Create (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ConvenioModel convenios, bool renovacionAutomatica)
+        public async Task<IActionResult> Create(ConvenioModel convenio, bool renovacionAutomatica)
         {
+            if (!ModelState.IsValid)
+            {
+                LoadViewData();
+                return View(convenio);
+            }
+
             // Convertir las fechas a UTC
-            convenios.Fecha_Inicio = DateTime.SpecifyKind(convenios.Fecha_Inicio, DateTimeKind.Utc);
+            convenio.Fecha_Inicio = DateTime.SpecifyKind(convenio.Fecha_Inicio, DateTimeKind.Utc);
 
             if (renovacionAutomatica)
             {
-                convenios.Fecha_Termino = DateTime.SpecifyKind(convenios.Fecha_Inicio.AddYears(1), DateTimeKind.Utc);
+                convenio.Fecha_Termino = DateTime.SpecifyKind(convenio.Fecha_Inicio.AddYears(1), DateTimeKind.Utc);
             }
-            else if (convenios.Fecha_Termino.HasValue)
+            else if (convenio.Fecha_Termino.HasValue)
             {
-                convenios.Fecha_Termino = DateTime.SpecifyKind(convenios.Fecha_Termino.Value, DateTimeKind.Utc);
+                convenio.Fecha_Termino = DateTime.SpecifyKind(convenio.Fecha_Termino.Value, DateTimeKind.Utc);
             }
 
             // Asignar las relaciones adecuadamente
-            foreach (var retribucion in convenios.Retribuciones)
+            if (convenio.Retribuciones != null)
             {
-                retribucion.FechaRetribucion = DateTime.SpecifyKind(retribucion.FechaRetribucion, DateTimeKind.Utc);
-                retribucion.ConvenioId = convenios.Id_Convenio; // Usar la clave foránea correctamente
+                foreach (var retribucion in convenio.Retribuciones)
+                {
+                    retribucion.FechaRetribucion = DateTime.SpecifyKind(retribucion.FechaRetribucion, DateTimeKind.Utc);
+                }
             }
 
-            // Agregar el convenio a la base de datos
-            _context.Add(convenios);
+            _context.Add(convenio);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -83,17 +90,22 @@ namespace Gestion_Del_Presupuesto.Controllers
         // Método Details
         public async Task<IActionResult> Details(int? id)
         {
-            var convenios = await _context.Convenios
-                .Include(c => c.CentrosDeSalud)
-                .Include(c => c.Retribuciones)
-                .FirstOrDefaultAsync(m => m.Id_Convenio == id);
-
-            if (id == null || convenios == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            return View(convenios);
+            var convenio = await _context.Convenios
+                .Include(c => c.CentrosDeSalud)
+                .Include(c => c.Retribuciones)
+                .FirstOrDefaultAsync(m => m.Id_Convenio == id);
+
+            if (convenio == null)
+            {
+                return NotFound();
+            }
+
+            return View(convenio);
         }
 
         // Método Edit (GET)
@@ -101,48 +113,50 @@ namespace Gestion_Del_Presupuesto.Controllers
         {
             if (id == null) return NotFound();
 
-            var convenios = await _context.Convenios
+            // Buscar el convenio en la base de datos
+            var convenio = await _context.Convenios
                 .Include(c => c.Retribuciones)
                 .Include(c => c.CentrosDeSalud)
                 .FirstOrDefaultAsync(m => m.Id_Convenio == id);
 
-            if (convenios == null) return NotFound();
+            if (convenio == null) return NotFound();
 
             LoadViewData();
-            return View(convenios);
+
+            return View(convenio);
         }
 
         // Método Edit (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, ConvenioModel convenios, bool renovacionAutomatica)
+        public async Task<IActionResult> Edit(int id, ConvenioModel convenio, bool renovacionAutomatica)
         {
-            if (id != convenios.Id_Convenio)
+            if (id != convenio.Id_Convenio)
                 return NotFound();
 
-            if (string.IsNullOrWhiteSpace(convenios.Nombre) || string.IsNullOrWhiteSpace(convenios.Sede))
+            if (!ModelState.IsValid)
             {
                 LoadViewData();
                 ViewBag.ErrorMessage = "El nombre y la sede son campos obligatorios.";
-                return View(convenios);
+                return View(convenio);
             }
 
             // Convertir las fechas a UTC
-            convenios.Fecha_Inicio = DateTime.SpecifyKind(convenios.Fecha_Inicio, DateTimeKind.Utc);
+            convenio.Fecha_Inicio = DateTime.SpecifyKind(convenio.Fecha_Inicio, DateTimeKind.Utc);
 
             if (renovacionAutomatica)
             {
-                convenios.Fecha_Termino = DateTime.SpecifyKind(convenios.Fecha_Inicio.AddYears(1), DateTimeKind.Utc);
+                convenio.Fecha_Termino = DateTime.SpecifyKind(convenio.Fecha_Inicio.AddYears(1), DateTimeKind.Utc);
             }
-            else if (convenios.Fecha_Termino.HasValue)
+            else if (convenio.Fecha_Termino.HasValue)
             {
-                convenios.Fecha_Termino = DateTime.SpecifyKind(convenios.Fecha_Termino.Value, DateTimeKind.Utc);
+                convenio.Fecha_Termino = DateTime.SpecifyKind(convenio.Fecha_Termino.Value, DateTimeKind.Utc);
             }
 
             // Convertir las fechas de las retribuciones a UTC
-            if (convenios.Retribuciones != null)
+            if (convenio.Retribuciones != null)
             {
-                foreach (var retribucion in convenios.Retribuciones)
+                foreach (var retribucion in convenio.Retribuciones)
                 {
                     retribucion.FechaRetribucion = DateTime.SpecifyKind(retribucion.FechaRetribucion, DateTimeKind.Utc);
                 }
@@ -150,7 +164,7 @@ namespace Gestion_Del_Presupuesto.Controllers
 
             try
             {
-                _context.Update(convenios);
+                _context.Update(convenio);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -162,17 +176,35 @@ namespace Gestion_Del_Presupuesto.Controllers
                     throw;
             }
         }
+        public async Task<IActionResult> Papelera()
+        {
+            var convenios = await _context.Convenios.Where(c => c.Eliminado).ToListAsync();
+            return View(convenios);
+        }
+
 
         // Método Delete
         public async Task<IActionResult> Delete(int id)
         {
-            var convenios = await _context.Convenios.FindAsync(id);
-            if (convenios != null)
+            var convenio = await _context.Convenios.FindAsync(id);
+            if (convenio != null)
             {
-                _context.Convenios.Remove(convenios);
+                convenio.Eliminado = true; // Marca el convenio como eliminado
+                _context.Update(convenio);
                 await _context.SaveChangesAsync();
             }
             return RedirectToAction(nameof(Index));
+        }
+        public async Task<IActionResult> Restore(int id)
+        {
+            var convenio = await _context.Convenios.FindAsync(id);
+            if (convenio != null)
+            {
+                convenio.Eliminado = false;
+                _context.Update(convenio);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(Papelera));
         }
 
         // Método para verificar si un convenio existe
@@ -196,92 +228,123 @@ namespace Gestion_Del_Presupuesto.Controllers
                 "Otros Gastos x retribución"
             };
         }
+        [HttpGet]
+        public async Task<IActionResult> DeletePermanent(int id)
+        {
+            var convenio = await _context.Convenios.FindAsync(id);
+            if (convenio != null)
+            {
+                _context.Convenios.Remove(convenio); // Elimina el convenio permanentemente
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(Papelera));
+        }
 
         [HttpPost]
         public IActionResult ExportToExcel()
         {
-            var convenios = _context.Convenios.Include(c => c.Retribuciones).Include(c => c.CentrosDeSalud).ToList();
+            // Incluye las relaciones necesarias para obtener todos los datos
+            var convenios = _context.Convenios
+                .Include(c => c.Retribuciones)
+                .Include(c => c.CentrosDeSalud)
+                .Where(c => !c.Eliminado) // Puedes incluir los convenios eliminados si lo deseas
+                .ToList();
 
+            if (convenios == null || !convenios.Any())
+            {
+                // Si no hay datos, devuelve un mensaje al usuario
+                TempData["ErrorMessage"] = "No hay convenios para exportar.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Configurar la licencia de EPPlus
             ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+
             using (var package = new ExcelPackage())
             {
+                // Crear una hoja de cálculo
                 var worksheet = package.Workbook.Worksheets.Add("Convenios");
 
-                // Header row
-                worksheet.Cells[1, 1].Value = "Nombre";
-                worksheet.Cells[1, 2].Value = "Tipo";
-                worksheet.Cells[1, 3].Value = "Sede";
-                worksheet.Cells[1, 4].Value = "Teléfono";
-                worksheet.Cells[1, 5].Value = "Rut";
-                worksheet.Cells[1, 6].Value = "Dirección";
-                worksheet.Cells[1, 7].Value = "Contacto Principal";
-                worksheet.Cells[1, 8].Value = "Fecha de Inicio";
-                worksheet.Cells[1, 9].Value = "Fecha de Término";
-                worksheet.Cells[1, 10].Value = "Renovación Automática";
-                worksheet.Cells[1, 11].Value = "Tipo Retribución";
-                worksheet.Cells[1, 12].Value = "Valor UF Retribución";
-                worksheet.Cells[1, 13].Value = "Cantidad Pesos Retribución";
-                worksheet.Cells[1, 14].Value = "Periodo Retribución";
-                worksheet.Cells[1, 15].Value = "Nombre Centro de Salud";
-                worksheet.Cells[1, 16].Value = "Dirección Centro de Salud";
-                worksheet.Cells[1, 17].Value = "Contacto Centro de Salud";
+                // Agregar los encabezados a la hoja de cálculo
+                worksheet.Cells[1, 1].Value = "Id Convenio";
+                worksheet.Cells[1, 2].Value = "Nombre";
+                worksheet.Cells[1, 3].Value = "Tipo Convenio";
+                worksheet.Cells[1, 4].Value = "Sede";
+                worksheet.Cells[1, 5].Value = "Teléfono";
+                worksheet.Cells[1, 6].Value = "Rut";
+                worksheet.Cells[1, 7].Value = "Dirección";
+                worksheet.Cells[1, 8].Value = "Contacto Principal";
+                worksheet.Cells[1, 9].Value = "Fecha de Inicio";
+                worksheet.Cells[1, 10].Value = "Fecha de Término";
+                worksheet.Cells[1, 11].Value = "Renovación Automática";
+                worksheet.Cells[1, 12].Value = "Tipo Retribución";
+                worksheet.Cells[1, 13].Value = "Valor UF";
+                worksheet.Cells[1, 14].Value = "Cantidad Pesos";
+                worksheet.Cells[1, 15].Value = "Periodo";
+                worksheet.Cells[1, 16].Value = "Tipo Práctica";
+                worksheet.Cells[1, 17].Value = "Centro Salud - Nombre";
+                worksheet.Cells[1, 18].Value = "Centro Salud - Dirección";
+                worksheet.Cells[1, 19].Value = "Centro Salud - Contacto";
+                worksheet.Cells[1, 20].Value = "Centro Salud - Correo";
+                worksheet.Cells[1, 21].Value = "Centro Salud - Teléfono";
 
                 int row = 2;
+
+                // Iterar sobre los convenios y agregar los datos
                 foreach (var convenio in convenios)
                 {
-                    int currentRow = row;
+                    int initialRow = row;
 
-                    foreach (var retribucion in convenio.Retribuciones)
+                    // Agregar datos del convenio
+                    worksheet.Cells[row, 1].Value = convenio.Id_Convenio;
+                    worksheet.Cells[row, 2].Value = convenio.Nombre;
+                    worksheet.Cells[row, 3].Value = convenio.Tipo_Convenio;
+                    worksheet.Cells[row, 4].Value = convenio.Sede;
+                    worksheet.Cells[row, 5].Value = convenio.Telefono;
+                    worksheet.Cells[row, 6].Value = convenio.Rut;
+                    worksheet.Cells[row, 7].Value = convenio.Direccion;
+                    worksheet.Cells[row, 8].Value = convenio.ContactoPrincipal;
+                    worksheet.Cells[row, 9].Value = convenio.Fecha_Inicio.ToShortDateString();
+                    worksheet.Cells[row, 10].Value = convenio.Fecha_Termino?.ToShortDateString();
+                    worksheet.Cells[row, 11].Value = convenio.RenovacionAutomatica ? "Sí" : "No";
+
+                    // Agregar las retribuciones
+                    if (convenio.Retribuciones != null && convenio.Retribuciones.Any())
                     {
-                        worksheet.Cells[currentRow, 1].Value = convenio.Nombre;
-                        worksheet.Cells[currentRow, 2].Value = convenio.Tipo_Convenio;
-                        worksheet.Cells[currentRow, 3].Value = convenio.Sede;
-                        worksheet.Cells[currentRow, 4].Value = convenio.Telefono;
-                        worksheet.Cells[currentRow, 5].Value = convenio.Rut;
-                        worksheet.Cells[currentRow, 6].Value = convenio.Direccion;
-                        worksheet.Cells[currentRow, 7].Value = convenio.ContactoPrincipal;
-                        worksheet.Cells[currentRow, 8].Value = convenio.Fecha_Inicio.ToShortDateString();
-                        worksheet.Cells[currentRow, 9].Value = convenio.Fecha_Termino?.ToShortDateString();
-                        worksheet.Cells[currentRow, 10].Value = convenio.RenovacionAutomatica;
-
-                        worksheet.Cells[currentRow, 11].Value = retribucion.Tipo_Retribucion;
-                        worksheet.Cells[currentRow, 12].Value = retribucion.UFTotal;
-                        worksheet.Cells[currentRow, 13].Value = retribucion.CantPesos;
-                        worksheet.Cells[currentRow, 14].Value = retribucion.Periodo;
-
-                        currentRow++;
+                        foreach (var retribucion in convenio.Retribuciones)
+                        {
+                            worksheet.Cells[row, 12].Value = retribucion.Tipo_Retribucion;
+                            worksheet.Cells[row, 13].Value = retribucion.UFTotal;
+                            worksheet.Cells[row, 14].Value = retribucion.CantPesos;
+                            worksheet.Cells[row, 15].Value = retribucion.Periodo;
+                            worksheet.Cells[row, 16].Value = retribucion.Tipo_Practica;
+                            row++;
+                        }
                     }
-
-                    if (!convenio.Retribuciones.Any())
+                    else
                     {
-                        worksheet.Cells[currentRow, 1].Value = convenio.Nombre;
-                        worksheet.Cells[currentRow, 2].Value = convenio.Tipo_Convenio;
-                        worksheet.Cells[currentRow, 3].Value = convenio.Sede;
-                        worksheet.Cells[currentRow, 4].Value = convenio.Telefono;
-                        worksheet.Cells[currentRow, 5].Value = convenio.Rut;
-                        worksheet.Cells[currentRow, 6].Value = convenio.Direccion;
-                        worksheet.Cells[currentRow, 7].Value = convenio.ContactoPrincipal;
-                        worksheet.Cells[currentRow, 8].Value = convenio.Fecha_Inicio.ToShortDateString();
-                        worksheet.Cells[currentRow, 9].Value = convenio.Fecha_Termino?.ToShortDateString();
-                        worksheet.Cells[currentRow, 10].Value = convenio.RenovacionAutomatica;
-
-                        currentRow++;
-                    }
-
-                    foreach (var centro in convenio.CentrosDeSalud)
-                    {
-                        worksheet.Cells[row, 15].Value = centro.NombreCentro;
-                        worksheet.Cells[row, 16].Value = centro.Direccion;
-                        worksheet.Cells[row, 17].Value = centro.Contacto;
                         row++;
                     }
 
-                    if (!convenio.CentrosDeSalud.Any())
+                    // Agregar los centros de salud
+                    if (convenio.CentrosDeSalud != null && convenio.CentrosDeSalud.Any())
                     {
-                        row = currentRow;
+                        foreach (var centro in convenio.CentrosDeSalud)
+                        {
+                            worksheet.Cells[initialRow, 17].Value = centro.NombreCentro;
+                            worksheet.Cells[initialRow, 18].Value = centro.Direccion;
+                            worksheet.Cells[initialRow, 19].Value = centro.NombrecargocentroAso;
+                            worksheet.Cells[initialRow, 20].Value = centro.CorreoPersonaCargo;
+                            worksheet.Cells[initialRow, 21].Value = centro.Telefono_CentroAso;
+                            initialRow++;
+                        }
                     }
                 }
 
+                // Ajustar el ancho de las columnas automáticamente
+                worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+
+                // Guardar el archivo y devolverlo al usuario
                 var stream = new MemoryStream();
                 package.SaveAs(stream);
                 var content = stream.ToArray();
@@ -289,5 +352,6 @@ namespace Gestion_Del_Presupuesto.Controllers
                 return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Convenios.xlsx");
             }
         }
+
     }
 }

@@ -32,6 +32,7 @@ namespace Gestion_Del_Presupuesto.Models
         public bool RenovacionAutomatica { get; set; }
         public decimal ValorUF { get; set; }
 
+        public bool Eliminado { get; set; }
         public int Id_Retribucion { get; set; }
         public int CentrosDeSaludId { get; set; }
         public List<RetribucionModel> Retribuciones { get; set; } = new List<RetribucionModel>();

@@ -42,13 +42,15 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" asp-controller="Auditoria" asp-action="Historial">Auditoría</a>
+                <a class="nav-link" asp-controller="Historial De Usuario" asp-action="Historial">Auditoría</a>
             </li>
             <li class="nav-item dropdown">
-                <a class="nav-link" href="#">Campo Clínico <span class="dropdown-toggle-icon">▼</span></a>
+                <a class="nav-link" href="#">Convenios <span class="dropdown-toggle-icon">▼</span></a>
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item" asp-controller="Convenio" asp-action="Index">Listado de Convenios</a></li>
                     <li><a class="dropdown-item" asp-controller="Convenio" asp-action="Create">Registrar Convenios</a></li>
+                    <li><a class="dropdown-item" asp-controller="Convenio" asp-action="Papelera">Registro de Convenios Históricos</a></li>
+                    <li><a class="dropdown-item" asp-controller="Convenio" asp-action="Papelera">Documento Certificación</a></li>
                 </ul>
             </li>
            
@@ -70,7 +72,7 @@
             </li>
            
             <li class="nav-item dropdown">
-                <a class="nav-link" href="#">Facturación <span class="dropdown-toggle-icon">▼</span></a>
+                <a class="nav-link" href="#">Documentos de Facturación <span class="dropdown-toggle-icon">▼</span></a>
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item" asp-controller="Facturacion" asp-action="Index">Listado Facturación</a></li>
                     <li><a class="dropdown-item" asp-controller="Facturacion" asp-action="Create">Registrar Factura</a></li>

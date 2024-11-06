@@ -136,6 +136,7 @@ namespace Gestion_Del_Presupuesto.Migrations
                     Direccion = table.Column<string>(type: "text", nullable: false),
                     RenovacionAutomatica = table.Column<bool>(type: "boolean", nullable: false),
                     ValorUF = table.Column<decimal>(type: "numeric", nullable: false),
+                    Eliminado = table.Column<bool>(type: "boolean", nullable: false),
                     Id_Retribucion = table.Column<int>(type: "integer", nullable: false),
                     CentrosDeSaludId = table.Column<int>(type: "integer", nullable: false),
                     EstudianteId_Estudiante = table.Column<int>(type: "integer", nullable: true),
@@ -293,6 +294,7 @@ namespace Gestion_Del_Presupuesto.Migrations
                     UFTotal = table.Column<decimal>(type: "numeric", nullable: false),
                     ConvenioId = table.Column<int>(type: "integer", nullable: false),
                     Periodo = table.Column<string>(type: "text", nullable: true),
+                    Tipo_Practica = table.Column<string>(type: "text", nullable: true),
                     FechaRetribucion = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
@@ -443,7 +445,9 @@ namespace Gestion_Del_Presupuesto.Migrations
                     Rut_CentrodeSalud = table.Column<int>(type: "integer", nullable: false),
                     NombreCentro = table.Column<string>(type: "text", nullable: false),
                     Direccion = table.Column<string>(type: "text", nullable: false),
-                    Contacto = table.Column<string>(type: "text", nullable: false),
+                    Telefono_CentroAso = table.Column<string>(type: "text", nullable: false),
+                    NombrecargocentroAso = table.Column<string>(type: "text", nullable: false),
+                    CorreoPersonaCargo = table.Column<string>(type: "text", nullable: false),
                     ConvenioId = table.Column<int>(type: "integer", nullable: false),
                     RetribucionesId_Retribucion = table.Column<int>(type: "integer", nullable: true)
                 },

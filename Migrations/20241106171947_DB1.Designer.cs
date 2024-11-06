@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gestion_Del_Presupuesto.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241105031002_DB1")]
+    [Migration("20241106171947_DB1")]
     partial class DB1
     {
         /// <inheritdoc />
@@ -34,12 +34,12 @@ namespace Gestion_Del_Presupuesto.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id_CentroSalud"));
 
-                    b.Property<string>("Contacto")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<int>("ConvenioId")
                         .HasColumnType("integer");
+
+                    b.Property<string>("CorreoPersonaCargo")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Direccion")
                         .IsRequired()
@@ -49,11 +49,19 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("NombrecargocentroAso")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<int?>("RetribucionesId_Retribucion")
                         .HasColumnType("integer");
 
                     b.Property<int>("Rut_CentrodeSalud")
                         .HasColumnType("integer");
+
+                    b.Property<string>("Telefono_CentroAso")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("Id_CentroSalud");
 
@@ -82,6 +90,9 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.Property<string>("Direccion")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<bool>("Eliminado")
+                        .HasColumnType("boolean");
 
                     b.Property<int?>("EstudianteId_Estudiante")
                         .HasColumnType("integer");
@@ -731,6 +742,9 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .HasColumnType("numeric");
 
                     b.Property<string>("Periodo")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Tipo_Practica")
                         .HasColumnType("text");
 
                     b.Property<string>("Tipo_Retribucion")
