@@ -29,13 +29,16 @@ namespace Gestion_Del_Presupuesto.Models
         public double CantidadHoras {  get; set; }
 
         public int CantDias { get; set; }
-
+        public int CarreraId { get; set; }
         public string Observaciones { get; set; }
         public int Id_Estudiante {  get; set; }
+        public int FacturacionId { get; set; }
 
         public virtual Estudiante Estudiante { get; set; }
-
-
         
+
+        public virtual CarreraModel Carrera { get; set; }
+
+        public virtual FacturacionModel Facturacion { get; set; }
     }
 }

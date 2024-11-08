@@ -1,6 +1,21 @@
 ﻿model IEnumerable<Gestion_Del_Presupuesto.Models.FacturacionModel>
 
 <h1>Lista de Facturaciones</h1>
+    <form method="get">
+        <div class="form-group">
+            <label for="fechaInicio">Fecha Inicio</label>
+            <input type="date" id="fechaInicio" name="fechaInicio" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label for="fechaFin">Fecha Fin</label>
+            <input type="date" id="fechaFin" name="fechaFin" class="form-control" />
+        </div>
+        <button type="submit" class="btn btn-primary">Calcular Total a Pagar</button>
+    </form>
+
+    <p>Neto UF: @ViewBag.NetoUF</p>
+    <p>Valor UF Promedio: @ViewBag.ValorUFPromedio</p>
+    <p>Total a Pagar: @ViewBag.TotalAPagar</p>
 <p>
     <a asp-action="Create" class="btn btn-primary">Registrar Nueva Facturación</a>
 </p>
@@ -50,7 +65,7 @@
                 <td>@item.Sede</td>
                 <td>@item.Carrera</td>
                 <td>@item.NivelFormacion</td>
-                <td>@item.Institucion</td>
+                <td>@item.Planillas.Institucion</td>
                 <td>@item.TiempoPractica</td>
                 <td>@item.NumeroTiempo</td>
                 <td>@item.NumeroAlumnos</td>

@@ -20,6 +20,10 @@ namespace Gestion_Del_Presupuesto.Models
         [ForeignKey("ConvenioModel")]
         [Required]
         public int ConvenioId { get; set; }
+
+        [ForeignKey("CarreraModel")]
+       
+        public int CarreraId { get; set; }
         public string? Periodo { get; set; }
         public string? Tipo_Practica { get; set; }
         public DateTime FechaRetribucion { get; set; } = DateTime.Now;

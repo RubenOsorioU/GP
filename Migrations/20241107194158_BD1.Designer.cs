@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gestion_Del_Presupuesto.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241106171947_DB1")]
-    partial class DB1
+    [Migration("20241107194158_BD1")]
+    partial class BD1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -26,6 +26,34 @@ namespace Gestion_Del_Presupuesto.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.CarreraModel", b =>
+                {
+                    b.Property<int>("Id_Carrera")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id_Carrera"));
+
+                    b.Property<string>("Cantidad_Estudiantes")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("ConvenioId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Coordinador")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Nombre_Carrera")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id_Carrera");
+
+                    b.ToTable("Carreras");
+                });
+
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.CentroSaludModel", b =>
                 {
                     b.Property<int>("Id_CentroSalud")
@@ -33,6 +61,9 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id_CentroSalud"));
+
+                    b.Property<int?>("CarreraModelId_Carrera")
+                        .HasColumnType("integer");
 
                     b.Property<int>("ConvenioId")
                         .HasColumnType("integer");
@@ -64,6 +95,8 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id_CentroSalud");
+
+                    b.HasIndex("CarreraModelId_Carrera");
 
                     b.HasIndex("ConvenioId");
 
@@ -103,6 +136,9 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.Property<DateTime?>("Fecha_Termino")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("Id_Carrera")
+                        .HasColumnType("integer");
+
                     b.Property<int>("Id_Retribucion")
                         .HasColumnType("integer");
 
@@ -138,6 +174,8 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.HasKey("Id_Convenio");
 
                     b.HasIndex("EstudianteId_Estudiante");
+
+                    b.HasIndex("Id_Carrera");
 
                     b.HasIndex("Institucion_SaludId_Institucion_Salud");
 
@@ -318,10 +356,6 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.Property<int?>("IndicadorId_IndicadorEco")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Institucion")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<decimal>("NetoUF")
                         .HasColumnType("numeric");
 
@@ -337,9 +371,6 @@ namespace Gestion_Del_Presupuesto.Migrations
 
                     b.Property<string>("ObsvalorUFIndexDateString")
                         .HasColumnType("text");
-
-                    b.Property<int?>("PlanillasId_Planillas")
-                        .HasColumnType("integer");
 
                     b.Property<string>("RUT")
                         .IsRequired()
@@ -391,8 +422,6 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.HasIndex("IndicadorId_IndicadorEco");
 
                     b.HasIndex("ObsvalorUFIndexDateString");
-
-                    b.HasIndex("PlanillasId_Planillas");
 
                     b.ToTable("Facturacion");
                 });
@@ -562,6 +591,12 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.Property<double>("CantidadHoras")
                         .HasColumnType("double precision");
 
+                    b.Property<int>("CarreraId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("FacturacionId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("Fecha_Inicio")
                         .HasColumnType("timestamp with time zone");
 
@@ -587,6 +622,10 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id_Planillas");
+
+                    b.HasIndex("CarreraId");
+
+                    b.HasIndex("FacturacionId");
 
                     b.HasIndex("Id_Estudiante")
                         .IsUnique();
@@ -729,6 +768,12 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.Property<decimal>("CantPesos")
                         .HasColumnType("numeric");
 
+                    b.Property<int>("CarreraId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("CarreraModelId_Carrera")
+                        .HasColumnType("integer");
+
                     b.Property<int>("ConvenioId")
                         .HasColumnType("integer");
 
@@ -748,12 +793,15 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Tipo_Retribucion")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<decimal>("UFTotal")
                         .HasColumnType("numeric");
 
                     b.HasKey("Id_Retribucion");
+
+                    b.HasIndex("CarreraModelId_Carrera");
 
                     b.HasIndex("ConvenioId");
 
@@ -875,6 +923,10 @@ namespace Gestion_Del_Presupuesto.Migrations
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.CentroSaludModel", b =>
                 {
+                    b.HasOne("Gestion_Del_Presupuesto.Models.CarreraModel", null)
+                        .WithMany("CentrosDeSalud")
+                        .HasForeignKey("CarreraModelId_Carrera");
+
                     b.HasOne("Gestion_Del_Presupuesto.Models.ConvenioModel", "Convenios")
                         .WithMany("CentrosDeSalud")
                         .HasForeignKey("ConvenioId")
@@ -896,9 +948,17 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .WithMany("Convenio")
                         .HasForeignKey("EstudianteId_Estudiante");
 
+                    b.HasOne("Gestion_Del_Presupuesto.Models.CarreraModel", "Carreras")
+                        .WithMany("Convenios")
+                        .HasForeignKey("Id_Carrera")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Gestion_Del_Presupuesto.Models.Institucion_Salud", null)
                         .WithMany("Convenios")
                         .HasForeignKey("Institucion_SaludId_Institucion_Salud");
+
+                    b.Navigation("Carreras");
                 });
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Costo", b =>
@@ -949,17 +1009,11 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .WithMany()
                         .HasForeignKey("ObsvalorUFIndexDateString");
 
-                    b.HasOne("Gestion_Del_Presupuesto.Models.PlanillasModel", "Planillas")
-                        .WithMany()
-                        .HasForeignKey("PlanillasId_Planillas");
-
                     b.Navigation("Convenios");
 
                     b.Navigation("Indicador");
 
                     b.Navigation("ObsvalorUF");
-
-                    b.Navigation("Planillas");
                 });
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Historial_Actividad", b =>
@@ -1012,13 +1066,29 @@ namespace Gestion_Del_Presupuesto.Migrations
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.PlanillasModel", b =>
                 {
+                    b.HasOne("Gestion_Del_Presupuesto.Models.CarreraModel", "Carrera")
+                        .WithMany("Planillas")
+                        .HasForeignKey("CarreraId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gestion_Del_Presupuesto.Models.FacturacionModel", "Facturacion")
+                        .WithMany("Planillas")
+                        .HasForeignKey("FacturacionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Gestion_Del_Presupuesto.Models.Estudiante", "Estudiante")
                         .WithOne("Planilla")
                         .HasForeignKey("Gestion_Del_Presupuesto.Models.PlanillasModel", "Id_Estudiante")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Carrera");
+
                     b.Navigation("Estudiante");
+
+                    b.Navigation("Facturacion");
                 });
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.PresupuestoModel", b =>
@@ -1032,6 +1102,10 @@ namespace Gestion_Del_Presupuesto.Migrations
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.RetribucionModel", b =>
                 {
+                    b.HasOne("Gestion_Del_Presupuesto.Models.CarreraModel", null)
+                        .WithMany("Retribuciones")
+                        .HasForeignKey("CarreraModelId_Carrera");
+
                     b.HasOne("Gestion_Del_Presupuesto.Models.ConvenioModel", "Convenios")
                         .WithMany("Retribuciones")
                         .HasForeignKey("ConvenioId")
@@ -1071,6 +1145,17 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.Navigation("Rol");
                 });
 
+            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.CarreraModel", b =>
+                {
+                    b.Navigation("CentrosDeSalud");
+
+                    b.Navigation("Convenios");
+
+                    b.Navigation("Planillas");
+
+                    b.Navigation("Retribuciones");
+                });
+
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.ConvenioModel", b =>
                 {
                     b.Navigation("CentrosDeSalud");
@@ -1089,6 +1174,11 @@ namespace Gestion_Del_Presupuesto.Migrations
 
                     b.Navigation("Planilla")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.FacturacionModel", b =>
+                {
+                    b.Navigation("Planillas");
                 });
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Institucion_Salud", b =>

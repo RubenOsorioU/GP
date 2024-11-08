@@ -17,10 +17,24 @@ namespace Gestion_Del_Presupuesto.Controllers
             _context = context;
         }
 
-        // GET: FacturacionController
-        public ActionResult Index()
+
+        public async Task<IActionResult> Index()
         {
-            var facturaciones = _context.Facturacion.Include(f => f.Convenios).ToList();
+            var facturaciones = await _context.Facturacion.Include(f => f.Convenios).ToListAsync();
+
+            // Calcula el Neto UF
+            var netoUF = CalcularNetoUF(facturaciones);
+
+            // Obtiene el valor de la UF actual (esperar la tarea)
+            var valorUF = await ObtenerValorUFActual(DateTime.Now); // Aquí esperamos la tarea y pasamos la fecha deseada
+
+            // Calcula el Total a Pagar
+            var totalAPagar = CalcularTotalAPagar(netoUF, valorUF);
+
+            // Pasa los valores calculados a la vista
+            ViewBag.NetoUF = netoUF;
+            ViewBag.TotalAPagar = totalAPagar;
+
             return View(facturaciones);
         }
 
@@ -128,7 +142,25 @@ namespace Gestion_Del_Presupuesto.Controllers
             return _context.Facturacion.Any(e => e.Id_Facturacion == id);
         }
 
+        public decimal CalcularNetoUF(List<FacturacionModel> facturaciones)
+        {
+            decimal netoUF = 0;
 
+            foreach (var facturacion in facturaciones)
+            {
+                // Cálculo del subtotal por cada fila
+                var subtotal = facturacion.NumeroTiempo * facturacion.NumeroAlumnos * facturacion.ValorUFMesPractica;
+                facturacion.Subtotal = subtotal; // Actualiza el valor del subtotal en el modelo
+                netoUF += subtotal;
+            }
+
+            return netoUF;
+        }
+
+        public decimal CalcularTotalAPagar(decimal netoUF, decimal valorUF)
+        {
+            return netoUF * valorUF;
+        }
         public async Task<JsonResult> BuscarUF(DateTime SelectedDate)
         {
             string url = $"https://si3.bcentral.cl/SieteRestWS/SieteRestWS.ashx?user=Ruben1Ulloa@gmail.com&pass=Benchi12&function=GetSeries&timeseries=F073.UFF.PRE.Z.D&firstdate={SelectedDate:yyyy-MM-dd}&lastdate={SelectedDate:yyyy-MM-dd}";
@@ -165,6 +197,70 @@ namespace Gestion_Del_Presupuesto.Controllers
                     return Json(new { valorUF = 0, error = "Error de conexión: " + ex.Message });
                 }
             }
+        }
+        public async Task<decimal> ObtenerValorUFPromedio(DateTime fechaInicio, DateTime fechaFin)
+        {
+            string url = $"https://si3.bcentral.cl/SieteRestWS/SieteRestWS.ashx?user=Ruben1Ulloa@gmail.com&pass=Benchi12&function=GetSeries&timeseries=F073.UFF.PRE.Z.D&firstdate={fechaInicio:yyyy-MM-dd}&lastdate={fechaFin:yyyy-MM-dd}";
+
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    HttpResponseMessage response = await client.GetAsync(url);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string jsonResponse = await response.Content.ReadAsStringAsync();
+                        IndicadorEconomico indicador = JsonConvert.DeserializeObject<IndicadorEconomico>(jsonResponse);
+
+                        if (indicador?.Series?.Obs != null && indicador.Series.Obs.Any())
+                        {
+                            var valoresUF = indicador.Series.Obs.Select(obs => Convert.ToDecimal(obs.Value)).ToList(); // Convierte a decimal
+                            if (valoresUF.Any())
+                            {
+                                return valoresUF.Average();  // Calcula el promedio de los valores de UF
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error de conexión: " + ex.Message);
+                }
+            }
+
+            return 0; // Valor por defecto si no se puede obtener la UF
+        }
+        public async Task<decimal> ObtenerValorUFActual(DateTime selectedDate)
+        {
+            string url = $"https://si3.bcentral.cl/SieteRestWS/SieteRestWS.ashx?user=Ruben1Ulloa@gmail.com&pass=Benchi12&function=GetSeries&timeseries=F073.UFF.PRE.Z.D&firstdate={selectedDate:yyyy-MM-dd}&lastdate={selectedDate:yyyy-MM-dd}";
+
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    HttpResponseMessage response = await client.GetAsync(url);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string jsonResponse = await response.Content.ReadAsStringAsync();
+                        IndicadorEconomico indicador = JsonConvert.DeserializeObject<IndicadorEconomico>(jsonResponse);
+
+                        if (indicador?.Series?.Obs != null && indicador.Series.Obs.Any())
+                        {
+                            var valorUFString = indicador.Series.Obs.FirstOrDefault()?.Value;
+                            if (decimal.TryParse(valorUFString, out decimal valorUF))
+                            {
+                                return valorUF;  // Devuelve el valor de la UF convertido correctamente
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error de conexión: " + ex.Message);
+                }
+            }
+
+            return 0; //  si no se puede obtener la UF
         }
 
     }

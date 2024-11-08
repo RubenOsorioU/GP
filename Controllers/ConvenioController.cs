@@ -184,8 +184,24 @@ namespace Gestion_Del_Presupuesto.Controllers
 
 
         // Método Delete
-        public async Task<IActionResult> Delete(int id)
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id, IFormFile documentoTermino)
         {
+            // Verificar si el archivo se ha subido
+            if (documentoTermino == null || documentoTermino.Length == 0)
+            {
+                TempData["ErrorMessage"] = "Debe proporcionar un documento de término para proceder con la eliminación.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Guardar el documento de término en el servidor o base de datos si es necesario
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/documentos", documentoTermino.FileName);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await documentoTermino.CopyToAsync(stream);
+            }
+
+            // Buscar y eliminar el convenio
             var convenio = await _context.Convenios.FindAsync(id);
             if (convenio != null)
             {
@@ -193,8 +209,10 @@ namespace Gestion_Del_Presupuesto.Controllers
                 _context.Update(convenio);
                 await _context.SaveChangesAsync();
             }
+
             return RedirectToAction(nameof(Index));
         }
+
         public async Task<IActionResult> Restore(int id)
         {
             var convenio = await _context.Convenios.FindAsync(id);

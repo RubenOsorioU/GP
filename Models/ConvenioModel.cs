@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Gestion_Del_Presupuesto.Models
 {
@@ -17,7 +18,6 @@ namespace Gestion_Del_Presupuesto.Models
         public string Sede { get; set; }
         [Display(Name = "Fecha Inicio")]
 
-
         public DateTime Fecha_Inicio { get; set; } = DateTime.Now;
 
         [Display(Name = "Fecha Termino")]
@@ -25,16 +25,18 @@ namespace Gestion_Del_Presupuesto.Models
 
         [Display(Name = "Contacto Principal")]
         public string ContactoPrincipal { get; set; }
-
         public string Telefono { get; set; }
         public string Rut { get; set; }
         public string Direccion { get; set; }
         public bool RenovacionAutomatica { get; set; }
         public decimal ValorUF { get; set; }
-
         public bool Eliminado { get; set; }
         public int Id_Retribucion { get; set; }
         public int CentrosDeSaludId { get; set; }
+
+        [ForeignKey("CarreraModel")]
+        public int Id_Carrera { get; set; }
+        public CarreraModel Carreras { get; set; }
         public List<RetribucionModel> Retribuciones { get; set; } = new List<RetribucionModel>();
         public List<CentroSaludModel> CentrosDeSalud { get; set; } = new List<CentroSaludModel>();
     }

@@ -8,11 +8,27 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gestion_Del_Presupuesto.Migrations
 {
     /// <inheritdoc />
-    public partial class DB1 : Migration
+    public partial class BD1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Carreras",
+                columns: table => new
+                {
+                    Id_Carrera = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Nombre_Carrera = table.Column<string>(type: "text", nullable: false),
+                    Coordinador = table.Column<string>(type: "text", nullable: false),
+                    Cantidad_Estudiantes = table.Column<string>(type: "text", nullable: false),
+                    ConvenioId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Carreras", x => x.Id_Carrera);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Estudiantes",
                 columns: table => new
@@ -92,34 +108,6 @@ namespace Gestion_Del_Presupuesto.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Planillas",
-                columns: table => new
-                {
-                    Id_Planillas = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Asignatura = table.Column<string>(type: "text", nullable: false),
-                    Institución = table.Column<string>(type: "text", nullable: false),
-                    Nombre = table.Column<string>(type: "text", nullable: false),
-                    Rut = table.Column<int>(type: "integer", nullable: false),
-                    Fecha_Inicio = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Fecha_Termino = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CantidadHoras = table.Column<double>(type: "double precision", nullable: false),
-                    CantDias = table.Column<int>(type: "integer", nullable: false),
-                    Observaciones = table.Column<string>(type: "text", nullable: false),
-                    Id_Estudiante = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Planillas", x => x.Id_Planillas);
-                    table.ForeignKey(
-                        name: "FK_Planillas_Estudiantes_Id_Estudiante",
-                        column: x => x.Id_Estudiante,
-                        principalTable: "Estudiantes",
-                        principalColumn: "Id_Estudiante",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Convenios",
                 columns: table => new
                 {
@@ -139,12 +127,19 @@ namespace Gestion_Del_Presupuesto.Migrations
                     Eliminado = table.Column<bool>(type: "boolean", nullable: false),
                     Id_Retribucion = table.Column<int>(type: "integer", nullable: false),
                     CentrosDeSaludId = table.Column<int>(type: "integer", nullable: false),
+                    Id_Carrera = table.Column<int>(type: "integer", nullable: false),
                     EstudianteId_Estudiante = table.Column<int>(type: "integer", nullable: true),
                     Institucion_SaludId_Institucion_Salud = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Convenios", x => x.Id_Convenio);
+                    table.ForeignKey(
+                        name: "FK_Convenios_Carreras_Id_Carrera",
+                        column: x => x.Id_Carrera,
+                        principalTable: "Carreras",
+                        principalColumn: "Id_Carrera",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Convenios_Estudiantes_EstudianteId_Estudiante",
                         column: x => x.EstudianteId_Estudiante,
@@ -287,19 +282,26 @@ namespace Gestion_Del_Presupuesto.Migrations
                 {
                     Id_Retribucion = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Tipo_Retribucion = table.Column<string>(type: "text", nullable: true),
+                    Tipo_Retribucion = table.Column<string>(type: "text", nullable: false),
                     DetalleOtrosGastos = table.Column<string>(type: "text", nullable: true),
                     Monto = table.Column<decimal>(type: "numeric", nullable: false),
                     CantPesos = table.Column<decimal>(type: "numeric", nullable: false),
                     UFTotal = table.Column<decimal>(type: "numeric", nullable: false),
                     ConvenioId = table.Column<int>(type: "integer", nullable: false),
+                    CarreraId = table.Column<int>(type: "integer", nullable: false),
                     Periodo = table.Column<string>(type: "text", nullable: true),
                     Tipo_Practica = table.Column<string>(type: "text", nullable: true),
-                    FechaRetribucion = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    FechaRetribucion = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CarreraModelId_Carrera = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Retribuciones", x => x.Id_Retribucion);
+                    table.ForeignKey(
+                        name: "FK_Retribuciones_Carreras_CarreraModelId_Carrera",
+                        column: x => x.CarreraModelId_Carrera,
+                        principalTable: "Carreras",
+                        principalColumn: "Id_Carrera");
                     table.ForeignKey(
                         name: "FK_Retribuciones_Convenios_ConvenioId",
                         column: x => x.ConvenioId,
@@ -393,7 +395,6 @@ namespace Gestion_Del_Presupuesto.Migrations
                     Sede = table.Column<string>(type: "text", nullable: false),
                     Carrera = table.Column<string>(type: "text", nullable: false),
                     NivelFormacion = table.Column<string>(type: "text", nullable: false),
-                    Institucion = table.Column<string>(type: "text", nullable: false),
                     TiempoPractica = table.Column<string>(type: "text", nullable: false),
                     NumeroTiempo = table.Column<int>(type: "integer", nullable: false),
                     NumeroAlumnos = table.Column<int>(type: "integer", nullable: false),
@@ -407,7 +408,6 @@ namespace Gestion_Del_Presupuesto.Migrations
                     ConvenioId = table.Column<int>(type: "integer", nullable: false),
                     Id_IndicadorEco = table.Column<int>(type: "integer", nullable: false),
                     ConveniosId_Convenio = table.Column<int>(type: "integer", nullable: true),
-                    PlanillasId_Planillas = table.Column<int>(type: "integer", nullable: true),
                     ObsvalorUFIndexDateString = table.Column<string>(type: "text", nullable: true),
                     IndicadorId_IndicadorEco = table.Column<int>(type: "integer", nullable: true)
                 },
@@ -429,11 +429,6 @@ namespace Gestion_Del_Presupuesto.Migrations
                         column: x => x.ObsvalorUFIndexDateString,
                         principalTable: "ObsDatas",
                         principalColumn: "IndexDateString");
-                    table.ForeignKey(
-                        name: "FK_Facturacion_Planillas_PlanillasId_Planillas",
-                        column: x => x.PlanillasId_Planillas,
-                        principalTable: "Planillas",
-                        principalColumn: "Id_Planillas");
                 });
 
             migrationBuilder.CreateTable(
@@ -449,11 +444,17 @@ namespace Gestion_Del_Presupuesto.Migrations
                     NombrecargocentroAso = table.Column<string>(type: "text", nullable: false),
                     CorreoPersonaCargo = table.Column<string>(type: "text", nullable: false),
                     ConvenioId = table.Column<int>(type: "integer", nullable: false),
-                    RetribucionesId_Retribucion = table.Column<int>(type: "integer", nullable: true)
+                    RetribucionesId_Retribucion = table.Column<int>(type: "integer", nullable: true),
+                    CarreraModelId_Carrera = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_CentrosDeSalud", x => x.Id_CentroSalud);
+                    table.ForeignKey(
+                        name: "FK_CentrosDeSalud_Carreras_CarreraModelId_Carrera",
+                        column: x => x.CarreraModelId_Carrera,
+                        principalTable: "Carreras",
+                        principalColumn: "Id_Carrera");
                     table.ForeignKey(
                         name: "FK_CentrosDeSalud_Convenios_ConvenioId",
                         column: x => x.ConvenioId,
@@ -531,6 +532,53 @@ namespace Gestion_Del_Presupuesto.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Planillas",
+                columns: table => new
+                {
+                    Id_Planillas = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Asignatura = table.Column<string>(type: "text", nullable: false),
+                    Institución = table.Column<string>(type: "text", nullable: false),
+                    Nombre = table.Column<string>(type: "text", nullable: false),
+                    Rut = table.Column<int>(type: "integer", nullable: false),
+                    Fecha_Inicio = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Fecha_Termino = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CantidadHoras = table.Column<double>(type: "double precision", nullable: false),
+                    CantDias = table.Column<int>(type: "integer", nullable: false),
+                    CarreraId = table.Column<int>(type: "integer", nullable: false),
+                    Observaciones = table.Column<string>(type: "text", nullable: false),
+                    Id_Estudiante = table.Column<int>(type: "integer", nullable: false),
+                    FacturacionId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Planillas", x => x.Id_Planillas);
+                    table.ForeignKey(
+                        name: "FK_Planillas_Carreras_CarreraId",
+                        column: x => x.CarreraId,
+                        principalTable: "Carreras",
+                        principalColumn: "Id_Carrera",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Planillas_Estudiantes_Id_Estudiante",
+                        column: x => x.Id_Estudiante,
+                        principalTable: "Estudiantes",
+                        principalColumn: "Id_Estudiante",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Planillas_Facturacion_FacturacionId",
+                        column: x => x.FacturacionId,
+                        principalTable: "Facturacion",
+                        principalColumn: "Id_Facturacion",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CentrosDeSalud_CarreraModelId_Carrera",
+                table: "CentrosDeSalud",
+                column: "CarreraModelId_Carrera");
+
             migrationBuilder.CreateIndex(
                 name: "IX_CentrosDeSalud_ConvenioId",
                 table: "CentrosDeSalud",
@@ -545,6 +593,11 @@ namespace Gestion_Del_Presupuesto.Migrations
                 name: "IX_Convenios_EstudianteId_Estudiante",
                 table: "Convenios",
                 column: "EstudianteId_Estudiante");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Convenios_Id_Carrera",
+                table: "Convenios",
+                column: "Id_Carrera");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Convenios_Institucion_SaludId_Institucion_Salud",
@@ -587,11 +640,6 @@ namespace Gestion_Del_Presupuesto.Migrations
                 column: "ObsvalorUFIndexDateString");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Facturacion_PlanillasId_Planillas",
-                table: "Facturacion",
-                column: "PlanillasId_Planillas");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Historial_Actividad_Id_Usuario",
                 table: "Historial_Actividad",
                 column: "Id_Usuario");
@@ -617,6 +665,16 @@ namespace Gestion_Del_Presupuesto.Migrations
                 column: "RetribucionesId_Retribucion");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Planillas_CarreraId",
+                table: "Planillas",
+                column: "CarreraId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Planillas_FacturacionId",
+                table: "Planillas",
+                column: "FacturacionId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Planillas_Id_Estudiante",
                 table: "Planillas",
                 column: "Id_Estudiante",
@@ -626,6 +684,11 @@ namespace Gestion_Del_Presupuesto.Migrations
                 name: "IX_Presupuestos_ConveniosId_Convenio",
                 table: "Presupuestos",
                 column: "ConveniosId_Convenio");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Retribuciones_CarreraModelId_Carrera",
+                table: "Retribuciones",
+                column: "CarreraModelId_Carrera");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Retribuciones_ConvenioId",
@@ -661,13 +724,13 @@ namespace Gestion_Del_Presupuesto.Migrations
                 name: "Devengados");
 
             migrationBuilder.DropTable(
-                name: "Facturacion");
-
-            migrationBuilder.DropTable(
                 name: "Historial_Actividad");
 
             migrationBuilder.DropTable(
                 name: "Pagos");
+
+            migrationBuilder.DropTable(
+                name: "Planillas");
 
             migrationBuilder.DropTable(
                 name: "Presupuestos");
@@ -679,28 +742,31 @@ namespace Gestion_Del_Presupuesto.Migrations
                 name: "SolicitudesRetribucion");
 
             migrationBuilder.DropTable(
+                name: "Usuarios");
+
+            migrationBuilder.DropTable(
+                name: "Facturacion");
+
+            migrationBuilder.DropTable(
+                name: "Retribuciones");
+
+            migrationBuilder.DropTable(
+                name: "Roles");
+
+            migrationBuilder.DropTable(
                 name: "IndicadorEcono");
 
             migrationBuilder.DropTable(
                 name: "ObsDatas");
 
             migrationBuilder.DropTable(
-                name: "Planillas");
-
-            migrationBuilder.DropTable(
-                name: "Usuarios");
-
-            migrationBuilder.DropTable(
-                name: "Retribuciones");
+                name: "Convenios");
 
             migrationBuilder.DropTable(
                 name: "SerieDatas");
 
             migrationBuilder.DropTable(
-                name: "Roles");
-
-            migrationBuilder.DropTable(
-                name: "Convenios");
+                name: "Carreras");
 
             migrationBuilder.DropTable(
                 name: "Estudiantes");

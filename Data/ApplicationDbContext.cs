@@ -28,11 +28,11 @@ namespace Gestion_Del_Presupuesto.Data
 
         public DbSet<PlanillasModel> Planillas { get; set; }
         public DbSet<IndicadorEconomico> IndicadorEcono{ get; set; }
-
+        public DbSet<CarreraModel> Carreras { get; set; }
         public DbSet<SeriesData> SerieDatas { get; set; }
         public DbSet<ObsData> ObsDatas { get; set; }
 
-        // Configurar relaciones entre entidades
+        //  relaciones entre entidades
         public override int SaveChanges()
         {
             ConvertDatesToUtc();
@@ -71,6 +71,12 @@ namespace Gestion_Del_Presupuesto.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<ConvenioModel>()
+                .HasOne(c => c.Carreras)
+                .WithMany(ca => ca.Convenios)
+                .HasForeignKey(c => c.Id_Carrera)
+                .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<Historial_Actividad>()
                 .HasOne(h => h.Usuarios)
                 .WithMany(u => u.Historial_Actividades)
@@ -100,6 +106,18 @@ namespace Gestion_Del_Presupuesto.Data
                .WithMany(c => c.Retribuciones)
                .HasForeignKey(r => r.ConvenioId) 
                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<PlanillasModel>()
+               .HasOne(p => p.Carrera)
+               .WithMany(c => c.Planillas)
+               .HasForeignKey(p => p.CarreraId)
+               .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<PlanillasModel>()
+                .HasOne(p => p.Facturacion)
+                .WithMany(f => f.Planillas)
+                .HasForeignKey(p => p.FacturacionId)
+                .OnDelete(DeleteBehavior.Cascade);
 
 
         }
