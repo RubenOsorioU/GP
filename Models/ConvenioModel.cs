@@ -13,7 +13,8 @@ namespace Gestion_Del_Presupuesto.Models
         public string Nombre { get; set; }
 
         [Display(Name = "Tipo Centro")]
-        public string Tipo_Convenio { get; set; }
+
+        public string? Tipo_Convenio { get; set; }
 
         public string Sede { get; set; }
         [Display(Name = "Fecha Inicio")]
@@ -34,9 +35,8 @@ namespace Gestion_Del_Presupuesto.Models
         public int Id_Retribucion { get; set; }
         public int CentrosDeSaludId { get; set; }
 
-        [ForeignKey("CarreraModel")]
-        public int Id_Carrera { get; set; }
-        public CarreraModel Carreras { get; set; }
+     
+       
         public List<RetribucionModel> Retribuciones { get; set; } = new List<RetribucionModel>();
         public List<CentroSaludModel> CentrosDeSalud { get; set; } = new List<CentroSaludModel>();
     }

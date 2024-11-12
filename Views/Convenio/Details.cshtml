@@ -14,6 +14,7 @@
             <th>Tipo Convenio</th>
             <td>@Model.Tipo_Convenio</td>
         </tr>
+
         <tr>
             <th>Sede</th>
             <td>@Model.Sede</td>
@@ -56,7 +57,7 @@
         <thead>
             <tr>
                 <th>Tipo de Retribución</th>
-                <th>Valor UF</th>
+                <th>Monto UF</th>
                 <th>Cantidad Pesos</th>
                 <th>Periodo</th>
                 <th>Tipo Práctica</th>
@@ -68,7 +69,7 @@
             {
                 <tr>
                     <td>@retribucion.Tipo_Retribucion</td>
-                    <td>@retribucion.UFTotal</td>
+                    <td>@retribucion.Monto.ToString("G")</td>
                     <td>@retribucion.CantPesos</td>
                     <td>@retribucion.Periodo</td>
                     <td>@retribucion.Tipo_Practica</td>

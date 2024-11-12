@@ -36,7 +36,7 @@ namespace Gestion_Del_Presupuesto.Models
 
         public virtual Estudiante Estudiante { get; set; }
         
-
+        public virtual Devengado Devengados { get; set; }
         public virtual CarreraModel Carrera { get; set; }
 
         public virtual FacturacionModel Facturacion { get; set; }

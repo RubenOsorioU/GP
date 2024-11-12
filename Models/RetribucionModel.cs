@@ -26,6 +26,7 @@ namespace Gestion_Del_Presupuesto.Models
         public int CarreraId { get; set; }
         public string? Periodo { get; set; }
         public string? Tipo_Practica { get; set; }
+
         public DateTime FechaRetribucion { get; set; } = DateTime.Now;
         public ConvenioModel? Convenios { get; set; }
         

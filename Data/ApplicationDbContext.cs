@@ -1,15 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Gestion_Del_Presupuesto.Models;
-using Gestion_Del_Presupuesto.Controllers;
+using Microsoft.AspNetCore.Identity;
 
 namespace Gestion_Del_Presupuesto.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
-        // Definir las tablas para cada modelo
-
+        // Definir las tablas personalizadas para cada modelo
         public DbSet<ConvenioModel> Convenios { get; set; }
         public DbSet<Estudiante> Estudiantes { get; set; }
         public DbSet<Historial_Actividad> Historial_Actividad { get; set; }
@@ -24,59 +24,19 @@ namespace Gestion_Del_Presupuesto.Data
         public DbSet<Costo> Costo { get; set; }
         public DbSet<FacturacionModel> Facturacion { get; set; }
         public DbSet<CentroSaludModel> CentrosDeSalud { get; set; }
-        public DbSet <ProvisionModel> Provision { get; set; }
-
+        public DbSet<ProvisionModel> Provision { get; set; }
         public DbSet<PlanillasModel> Planillas { get; set; }
-        public DbSet<IndicadorEconomico> IndicadorEcono{ get; set; }
+        public DbSet<IndicadorEconomico> IndicadorEcono { get; set; }
         public DbSet<CarreraModel> Carreras { get; set; }
         public DbSet<SeriesData> SerieDatas { get; set; }
         public DbSet<ObsData> ObsDatas { get; set; }
 
-        //  relaciones entre entidades
-        public override int SaveChanges()
-        {
-            ConvertDatesToUtc();
-            return base.SaveChanges();
-        }
-
-        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-        {
-            ConvertDatesToUtc();
-            return await base.SaveChangesAsync(cancellationToken);
-        }
-
-        private void ConvertDatesToUtc()
-        {
-            foreach (var entry in ChangeTracker.Entries()
-                 .Where(e => e.Entity is ConvenioModel && (e.State == EntityState.Added || e.State == EntityState.Modified)))
-            {
-                var convenio = (ConvenioModel)entry.Entity;
-
-                convenio.Fecha_Inicio = DateTime.SpecifyKind(convenio.Fecha_Inicio, DateTimeKind.Utc);
-                if (convenio.Fecha_Termino.HasValue)
-                {
-                    convenio.Fecha_Termino = DateTime.SpecifyKind(convenio.Fecha_Termino.Value, DateTimeKind.Utc);
-                }
-
-                if (convenio.Retribuciones != null)
-                {
-                    foreach (var retribucion in convenio.Retribuciones)
-                    {
-                        retribucion.FechaRetribucion = DateTime.SpecifyKind(retribucion.FechaRetribucion, DateTimeKind.Utc);
-                    }
-                }
-            }
-        }
+        // Configurar relaciones entre entidades
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
+            base.OnModelCreating(modelBuilder); // Necesario para Identity
 
-            modelBuilder.Entity<ConvenioModel>()
-                .HasOne(c => c.Carreras)
-                .WithMany(ca => ca.Convenios)
-                .HasForeignKey(c => c.Id_Carrera)
-                .OnDelete(DeleteBehavior.Cascade);
-
+            // Relaciones personalizadas
             modelBuilder.Entity<Historial_Actividad>()
                 .HasOne(h => h.Usuarios)
                 .WithMany(u => u.Historial_Actividades)
@@ -104,7 +64,7 @@ namespace Gestion_Del_Presupuesto.Data
             modelBuilder.Entity<RetribucionModel>()
                .HasOne(r => r.Convenios)
                .WithMany(c => c.Retribuciones)
-               .HasForeignKey(r => r.ConvenioId) 
+               .HasForeignKey(r => r.ConvenioId)
                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<PlanillasModel>()
@@ -118,9 +78,6 @@ namespace Gestion_Del_Presupuesto.Data
                 .WithMany(f => f.Planillas)
                 .HasForeignKey(p => p.FacturacionId)
                 .OnDelete(DeleteBehavior.Cascade);
-
-
         }
-
     }
 }

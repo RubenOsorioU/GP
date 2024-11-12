@@ -38,8 +38,9 @@ namespace Gestion_Del_Presupuesto.Models
         public decimal TotalGastoDevengadoGeneradoporEstudiantes { get; set; }
 
         public int ConvenioId { get; set; }
+        public  ICollection<PlanillasModel> Planillas {  get; set; }
         public virtual ConvenioModel Convenio { get; set; }
-        public IEnumerable<Devengado> Devengados { get; set; }
+        public IEnumerable<DevengadoViewModel> DevengadosView { get; set; }
         public virtual ObsData ObsvalorUF { get; set; }
 
     }

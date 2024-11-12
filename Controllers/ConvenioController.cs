@@ -120,6 +120,7 @@ namespace Gestion_Del_Presupuesto.Controllers
                 .FirstOrDefaultAsync(m => m.Id_Convenio == id);
 
             if (convenio == null) return NotFound();
+            ViewBag.TiposConvenio = _context.Convenios.Select(tc => tc.Nombre).ToList();
 
             LoadViewData();
 
@@ -137,34 +138,58 @@ namespace Gestion_Del_Presupuesto.Controllers
             if (!ModelState.IsValid)
             {
                 LoadViewData();
-                ViewBag.ErrorMessage = "El nombre y la sede son campos obligatorios.";
                 return View(convenio);
             }
 
-            // Convertir las fechas a UTC
-            convenio.Fecha_Inicio = DateTime.SpecifyKind(convenio.Fecha_Inicio, DateTimeKind.Utc);
+            var convenioExistente = await _context.Convenios
+                .Include(c => c.Retribuciones)
+                .Include(c => c.CentrosDeSalud)
+                .FirstOrDefaultAsync(c => c.Id_Convenio == id);
+
+            if (convenioExistente == null)
+                return NotFound();
+
+            // Limpia listas relacionadas antes de asignar los nuevos valores
+            convenioExistente.Retribuciones.Clear();
+            convenioExistente.CentrosDeSalud.Clear();
+
+            // Actualiza las propiedades principales del convenio
+            convenioExistente.Nombre = convenio.Nombre;
+            convenioExistente.Tipo_Convenio = convenio.Tipo_Convenio;
+            convenioExistente.Sede = convenio.Sede;
+            convenioExistente.Rut = convenio.Rut;
+            convenioExistente.Direccion = convenio.Direccion;
+            convenioExistente.ContactoPrincipal = convenio.ContactoPrincipal;
+            convenioExistente.Telefono = convenio.Telefono;
+            convenioExistente.Fecha_Inicio = DateTime.SpecifyKind(convenio.Fecha_Inicio, DateTimeKind.Utc);
 
             if (renovacionAutomatica)
-            {
-                convenio.Fecha_Termino = DateTime.SpecifyKind(convenio.Fecha_Inicio.AddYears(1), DateTimeKind.Utc);
-            }
+                convenioExistente.Fecha_Termino = DateTime.SpecifyKind(convenio.Fecha_Inicio.AddYears(1), DateTimeKind.Utc);
             else if (convenio.Fecha_Termino.HasValue)
-            {
-                convenio.Fecha_Termino = DateTime.SpecifyKind(convenio.Fecha_Termino.Value, DateTimeKind.Utc);
-            }
+                convenioExistente.Fecha_Termino = DateTime.SpecifyKind(convenio.Fecha_Termino.Value, DateTimeKind.Utc);
 
-            // Convertir las fechas de las retribuciones a UTC
+            convenioExistente.RenovacionAutomatica = renovacionAutomatica;
+
+            // Reasignar relaciones
             if (convenio.Retribuciones != null)
             {
                 foreach (var retribucion in convenio.Retribuciones)
                 {
                     retribucion.FechaRetribucion = DateTime.SpecifyKind(retribucion.FechaRetribucion, DateTimeKind.Utc);
+                    convenioExistente.Retribuciones.Add(retribucion);
+                }
+            }
+
+            if (convenio.CentrosDeSalud != null)
+            {
+                foreach (var centro in convenio.CentrosDeSalud)
+                {
+                    convenioExistente.CentrosDeSalud.Add(centro);
                 }
             }
 
             try
             {
-                _context.Update(convenio);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -172,8 +197,7 @@ namespace Gestion_Del_Presupuesto.Controllers
             {
                 if (!ConvenioExists(id))
                     return NotFound();
-                else
-                    throw;
+                throw;
             }
         }
         public async Task<IActionResult> Papelera()
@@ -195,7 +219,7 @@ namespace Gestion_Del_Presupuesto.Controllers
             }
 
             // Guardar el documento de término en el servidor o base de datos si es necesario
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/documentos", documentoTermino.FileName);
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "C:\\Users\\olahl\\Source\\Repos\\Campos-Clinicos-Sin-Errores-de-Compilacion\\Documentos_Termino\\", documentoTermino.FileName);
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 await documentoTermino.CopyToAsync(stream);
@@ -245,6 +269,7 @@ namespace Gestion_Del_Presupuesto.Controllers
                 "Obras Mayores",
                 "Otros Gastos x retribución"
             };
+
         }
         [HttpGet]
         public async Task<IActionResult> DeletePermanent(int id)
@@ -332,7 +357,7 @@ namespace Gestion_Del_Presupuesto.Controllers
                         foreach (var retribucion in convenio.Retribuciones)
                         {
                             worksheet.Cells[row, 12].Value = retribucion.Tipo_Retribucion;
-                            worksheet.Cells[row, 13].Value = retribucion.UFTotal;
+                            worksheet.Cells[row, 13].Value = retribucion.Monto;
                             worksheet.Cells[row, 14].Value = retribucion.CantPesos;
                             worksheet.Cells[row, 15].Value = retribucion.Periodo;
                             worksheet.Cells[row, 16].Value = retribucion.Tipo_Practica;
