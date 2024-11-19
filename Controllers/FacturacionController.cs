@@ -1,5 +1,6 @@
 ﻿using Gestion_Del_Presupuesto.Data;
 using Gestion_Del_Presupuesto.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -11,15 +12,31 @@ namespace Gestion_Del_Presupuesto.Controllers
     public class FacturacionController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public FacturacionController(ApplicationDbContext context)
+        public FacturacionController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
 
         public async Task<IActionResult> Index()
         {
+            // Obtener el usuario autenticado
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Account"); // Redirigir al login si no está autenticado
+            }
+
+            // Obtener los datos del usuario que se mostraran en la vista
+            ViewBag.NombreUsuario = user.UserName;
+            ViewBag.EmailUsuario = user.Email;
+            ViewBag.TelefonoUsuario = user.PhoneNumber;
+
+            // Otros cálculos y lógica para facturaciones...
             var facturaciones = await _context.Facturacion.Include(f => f.Convenios).ToListAsync();
 
             // Calcula el Neto UF
@@ -37,6 +54,7 @@ namespace Gestion_Del_Presupuesto.Controllers
 
             return View(facturaciones);
         }
+
 
         // GET: FacturacionController/Details/
         public ActionResult Details(int id)

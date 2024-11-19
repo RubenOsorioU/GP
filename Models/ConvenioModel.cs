@@ -30,14 +30,19 @@ namespace Gestion_Del_Presupuesto.Models
         public string Rut { get; set; }
         public string Direccion { get; set; }
         public bool RenovacionAutomatica { get; set; }
+        public bool Adendumn { get; set; }
         public decimal ValorUF { get; set; }
         public bool Eliminado { get; set; }
         public int Id_Retribucion { get; set; }
         public int CentrosDeSaludId { get; set; }
 
-     
-       
+        public virtual ICollection<Estudiante> Estudiantes { get; set; } = new List<Estudiante>();
+
         public List<RetribucionModel> Retribuciones { get; set; } = new List<RetribucionModel>();
         public List<CentroSaludModel> CentrosDeSalud { get; set; } = new List<CentroSaludModel>();
+        public virtual ICollection<Devengado> Devengados { get; set; } = new List<Devengado>();
+
+        // Relación con Facturación
+        public virtual ICollection<FacturacionModel> Facturacion { get; set; } = new List<FacturacionModel>();
     }
 }

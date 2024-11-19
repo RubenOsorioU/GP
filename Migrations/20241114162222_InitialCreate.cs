@@ -5,7 +5,7 @@
 namespace Gestion_Del_Presupuesto.Migrations
 {
     /// <inheritdoc />
-    public partial class AddIdentitySupport : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

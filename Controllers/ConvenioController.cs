@@ -38,7 +38,7 @@ namespace Gestion_Del_Presupuesto.Controllers
             var convenios = await conveniosQuery.Include(c => c.Retribuciones).ToListAsync();
             ViewBag.NombresConvenios = await _context.Convenios.Select(c => c.Nombre).Distinct().ToListAsync();
             ViewBag.TiposConvenios = await _context.Convenios.Select(c => c.Tipo_Convenio).Distinct().ToListAsync();
-            ViewBag.Sedes = new List<string> { "Santiago", "Coquimbo", "Ambas" };
+            ViewBag.Sedes = new List<string> { "Santiago", "Coquimbo", "Ambas Sedes" };
 
             return View(convenios);
         }

@@ -96,9 +96,12 @@ namespace Gestion_Del_Presupuesto.Models
 
         public int Id_IndicadorEco { get; set; }
         public ConvenioModel? Convenios { get; set; }
+
+        public CarreraModel? Carreras { get; set; }
         public ObsData? ObsvalorUF { get; set; }
         public IndicadorEconomico? Indicador { get; set; }
 
         public ICollection<PlanillasModel> Planillas { get; set; } = new List<PlanillasModel>();
+
     }
 }

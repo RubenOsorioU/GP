@@ -9,7 +9,8 @@
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark">
-        <button class="btn btn-dark me-2" id="menu-toggle">Menu
+        <button class="btn btn-dark me-2" id="menu-toggle">
+            Menu
             <span class="navbar-toggler-icon"></span>
         </button>
         <a class="navbar-brand" href="#">Gestión del Presupuesto de Campos Clínicos Universidad Central</a>
@@ -18,15 +19,32 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="Login">Iniciar Sesión</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="Register">Registrarse</a>
-                </li>
+                @if (User.Identity != null && User.Identity.IsAuthenticated)
+                {
+                    <!-- Mostrar nombre de usuario si está autenticado -->
+                    <li class="nav-item">
+                        <span class="navbar-text text-white me-3">@User.Identity.Name</span>
+                    </li>
+                    <li class="nav-item">
+                        <form asp-controller="Account" asp-action="Logout" method="post" class="form-inline">
+                            <button type="submit" class="btn btn-link nav-link" style="color: white;">Cerrar Sesión</button>
+                        </form>
+                    </li>
+                }
+                else
+                {
+                    <!-- Opciones para iniciar sesión o registrarse si no está autenticado -->
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Account" asp-action="Login">Iniciar Sesión</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Account" asp-action="Register">Registrarse</a>
+                    </li>
+                }
             </ul>
         </div>
     </nav>
+
 
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
@@ -49,8 +67,7 @@
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item" asp-controller="Convenio" asp-action="Index">Convenios Vigentes</a></li>
                     <li><a class="dropdown-item" asp-controller="Convenio" asp-action="Create">Registrar Convenios</a></li>
-                    <li><a class="dropdown-item" asp-controller="Convenio" asp-action="Papelera">Registro de Convenios Históricos</a></li>
-                    <li><a class="dropdown-item" asp-controller="Convenio" asp-action="Papelera">Documento Certificación</a></li>
+                    <li><a class="dropdown-item" asp-controller="Convenio" asp-action="Papelera">Anexos</a></li>
                 </ul>
             </li>
            
@@ -59,27 +76,31 @@
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item" asp-controller="Planillas" asp-action="Index">Listado De Estudiantes</a></li>
                     <li><a class="dropdown-item" asp-controller="Planillas" asp-action="Upload">Subir Planilla De Estudiantes</a></li>
-                    <li><a class="dropdown-item" asp-controller="Planillas" asp-action="Upload">Registro Historico De Estudiantes</a></li>
-                    <li><a class="dropdown-item" asp-controller="Facturacion" asp-action="Index">Listado Facturación</a></li>
-                    <li><a class="dropdown-item" asp-controller="Facturacion" asp-action="Create">Registrar Factura</a></li>
-                    <li><a class="dropdown-item" asp-controller="Devengado" asp-action="Index">Listado Finanzas</a></li>
-                    <li><a class="dropdown-item" asp-controller="Devengado" asp-action="Index">Devengados</a></li>
+                    <li><a class="dropdown-item" asp-controller="Planillas" asp-action="Upload">Registro Historico De Estudiantes</a></li>       
                 </ul>
 
             <li class="nav-item dropdown">
-                <a class="nav-link" href="#">Finanzas <span class="dropdown-toggle-icon">▼</span></a>
+                <a class="nav-link" href="#">Documentos de Facturacion <span class="dropdown-toggle-icon">▼</span></a>
                 <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" asp-controller="Facturacion" asp-action="Index">Documentos de Facturación</a></li>
+                    <li><a class="dropdown-item" asp-controller="Facturacion" asp-action="Create">Registrar Factura</a></li>
+                    <li><a class="dropdown-item" asp-controller="Facturacion" asp-action="Index">Registro Historico De Facturaciones</a></li>
+                </ul>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link" href="#">Devengados <span class="dropdown-toggle-icon">▼</span></a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" asp-controller="Devengado" asp-action="Index">Solicitud de Devengado</a></li>
+                    <li><a class="dropdown-item" asp-controller="Devengado" asp-action="Index">Registro Historico De Devengado</a></li>
 
-                    <li><a class="dropdown-item" asp-controller="Costos" asp-action="Index">Registrar Costos</a></li>
-                    <li><a class="dropdown-item" asp-controller="Devengado" asp-action="Index">Registro</a></li>
                 </ul>
             </li>
 
             <li class="nav-item dropdown">
-                <a class="nav-link" href="#">Pagos <span class="dropdown-toggle-icon">▼</span></a>
+                <a class="nav-link" href="#">Evaluación CE <span class="dropdown-toggle-icon">▼</span></a>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" asp-controller="Pagos" asp-action="Index">Ver Pagos</a></li>
-                    <li><a class="dropdown-item" asp-controller="Pagos" asp-action="Create">Registrar Pago</a></li>
+                    <li><a class="dropdown-item" asp-controller="Pagos" asp-action="Index">Evaluaciones</a></li>
+                    <li><a class="dropdown-item" asp-controller="Pagos" asp-action="Create">Estadistica</a></li>
                 </ul>
             </li>
             <li class="nav-item dropdown">

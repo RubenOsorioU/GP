@@ -92,11 +92,14 @@ async Task CrearRoles(IServiceProvider serviceProvider)
 }
 
 // Método para crear un usuario administrador
-async Task CrearUsuarioAdmin(IServiceProvider serviceProvider)
+ async Task CrearUsuarioAdmin(IServiceProvider serviceProvider)
 {
     var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
-    var email = "admin@example.com"; // Cambia este correo si es necesario
-    var password = "Password123!";  // Cambia esta contraseña si es necesario
+    var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+
+    // Puedes obtener la contraseña desde una configuración segura
+    string email = configuration["AdminUser:Email"];
+    string password = configuration["AdminUser:Password"];
 
     if (await userManager.FindByEmailAsync(email) == null)
     {

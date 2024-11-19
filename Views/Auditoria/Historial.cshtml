@@ -18,7 +18,9 @@
         @foreach (var actividad in Model)
         {
             <tr>
-                <td>@actividad.Usuarios.Nombre</td>
+                <td>@actividad.Usuarios.Id_Usuario</td>
+                <td>@User.Identity.Name</td>
+                <td>@actividad.Roles.Nombre</td>
                 <td>@actividad.Accion</td>
                 <td>@actividad.Fecha.ToShortDateString()</td>
             </tr>

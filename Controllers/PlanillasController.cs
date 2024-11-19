@@ -40,7 +40,7 @@ namespace Gestion_Del_Presupuesto.Controllers
 
             if (!string.IsNullOrWhiteSpace(carrera))
             {
-                planillasQuery = planillasQuery.Where(p => p.Carrera.Nombre_Carrera.Contains(carrera));
+                planillasQuery = planillasQuery.Where(p => p.Carrera.Nombre.Contains(carrera));
             }
 
             if (!string.IsNullOrWhiteSpace(nombre))

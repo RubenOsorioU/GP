@@ -94,11 +94,32 @@
             </div>
         </div>
 
-        <div class="form-check mb-4">
+       <div class="form-check mb-4">
             <input type="checkbox" asp-for="RenovacionAutomatica" class="form-check-input" id="RenovacionAutomatica" />
             <label asp-for="RenovacionAutomatica" class="form-check-label">Renovable automáticamente</label>
         </div>
+        <div class="form-check mb-4">
+            <input type="checkbox" asp-for="Adendumn" class="form-check-input" id="Adendumn" />
+            <label asp-for="Adendumn" class="form-check-label">Sub Contratos Adendumn</label>
+        </div> 
 
+        <!-- Card Adendum -->
+        <div class="card mb-4" id="adendumCard" style="display: none;">
+            <div class="card-header">
+                <h4 class="card-title">Agregar Adendum</h4>
+                <div class="col-md-6">
+                    <label>Observaciones</label>
+                    <input asp-for="Retribuciones[0].DetalleOtrosGastos" class="form-control" />
+
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Fecha_Termino" class="form-label">Modificar Fecha Ademdum</label>
+                    <input asp-for="Fecha_Termino" type="date"class="form-control" />
+                    <span asp-validation-for="Fecha_Termino" class="text-danger"></span>
+                </div>
+            </div>
+        </div> 
+       
         <!-- Sección de Retribuciones -->
         <div class="card mb-4">
             <div class="card-header">
@@ -156,15 +177,15 @@
                         </div>
                     </div>
                 </div>
-                <button type="button" class="btn btn-primary mt-3" onclick="agregarElemento()">Agregar Retribución</button>
-                <button type="submit" class="btn btn-success mt-3 ">Guardar Cambios</button>
+                <button type="button" class="btn btn-primary" onclick="agregarElemento()">Agregar Retribución</button>
+                <button type="submit" class="btn btn-success">Guardar Cambios</button>
             </div>
         </div>
 
         <!-- Sección de Centros de Salud -->
         <div class="card mb-4">
             <div class="card-header">
-                <h4 class="card-title">Centros de Salud Asociados</h4>
+                <h4 class="card-title">Centros Asociados Al Convenio</h4>
             </div>
             <div class="card-body">
                 <div id="centrosSaludContainer">
@@ -198,7 +219,7 @@
                         </div>
                     </div>
                 </div>
-                <button type="button" class="btn btn-secondary mt-3" onclick="agregarCentroSalud()">Agregar Centro de Salud</button>
+                <button type="button" class="btn btn-primary mt-3" onclick="agregarCentroSalud()">Agregar Centro de Salud</button>
             </div>
         </div>
 
@@ -314,6 +335,23 @@
         const item = button.closest('.form-group');
         if (item) item.remove();
     }
+    document.addEventListener("DOMContentLoaded", function () {
+        // Obtener el checkbox y el card
+        var adendumCheckbox = document.getElementById("Adendumn");
+        var adendumCard = document.getElementById("adendumCard");
+
+        // Mostrar u ocultar el card dependiendo del estado inicial del checkbox
+        adendumCard.style.display = adendumCheckbox.checked ? "block" : "none";
+
+        // Escuchar el evento de cambio en el checkbox
+        adendumCheckbox.addEventListener("change", function () {
+            if (adendumCheckbox.checked) {
+                adendumCard.style.display = "block";
+            } else {
+                adendumCard.style.display = "none";
+            }
+        });
+    });
 </script>
 
 @section Scripts {

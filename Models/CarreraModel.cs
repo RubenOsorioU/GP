@@ -9,17 +9,14 @@ namespace Gestion_Del_Presupuesto.Models
     {
         [Key]
         public int Id_Carrera { get; set; }
-        public string Nombre_Carrera { get; set; }
-        public string Coordinador { get; set; }
+        public string Nombre { get; set; }
+        public string Codigo { get; set; }
+        public string Facultad { get; set; }
 
-        public string Cantidad_Estudiantes { get; set; }
+        // Relación con estudiantes
+        public ICollection<Estudiante> Estudiantes { get; set; } = new List<Estudiante>();
 
-        [ForeignKey("ConvenioModel")]
-        public int ConvenioId { get; set; }
-        public virtual ICollection<ConvenioModel> Convenios { get; set; } = new List<ConvenioModel>();
-        public List<RetribucionModel> Retribuciones { get; set; } = new List<RetribucionModel>();
-        public List<CentroSaludModel> CentrosDeSalud { get; set; } = new List<CentroSaludModel>();
-        public virtual ICollection<PlanillasModel> Planillas { get; set; } = new List<PlanillasModel>();
-
+        // Relación con planillas
+        public ICollection<PlanillasModel> Planillas { get; set; } = new List<PlanillasModel>();
     }
 }

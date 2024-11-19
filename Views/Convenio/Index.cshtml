@@ -24,9 +24,9 @@
                     <!-- Botón Editar -->
                     <a asp-action="Edit" asp-route-id="@convenio.Id_Convenio" class="btn btn-secondary">Editar</a>
                     <!-- Botón Detalles -->
-                    <a asp-action="Details" asp-route-id="@convenio.Id_Convenio" class="btn btn-info btn-sm">Detalles</a>
+                    <a asp-action="Details" asp-route-id="@convenio.Id_Convenio" class="btn btn-info">Detalles</a>
                     <!-- Botón Eliminar que abre el modal -->
-                    <button class="btn btn-danger btn-sm" onclick="openDeleteModal('@Url.Action("Delete", "Convenio", new { id = convenio.Id_Convenio })')">Eliminar</button>
+                    <button class="btn btn-danger" onclick="openDeleteModal('@Url.Action("Delete", "Convenio", new { id = convenio.Id_Convenio })')">Eliminar</button>
                 </td>
             </tr>
         }
