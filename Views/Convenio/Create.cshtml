@@ -1,6 +1,5 @@
 ﻿@model Gestion_Del_Presupuesto.Models.ConvenioModel
 
-
 <div class="container">
     <h2 class="text-center mb-4">Registrar Convenio</h2>
     <form asp-action="Create" method="post">
@@ -22,7 +21,6 @@
                 </div>
             </div>
         </div>
-
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group mb-3">
@@ -99,8 +97,8 @@
             <label asp-for="RenovacionAutomatica" class="form-check-label">Renovable automáticamente</label>
         </div>
         <div class="form-check mb-4">
-            <input type="checkbox" asp-for="Adendumn" class="form-check-input" id="Adendumn" />
-            <label asp-for="Adendumn" class="form-check-label">Sub Contratos Adendumn</label>
+            <input type="checkbox" asp-for="Adendum" class="form-check-input" id="Adendumn" />
+            <label asp-for="Adendum" class="form-check-label">Sub Contratos Adendumn</label>
         </div> 
 
         <!-- Card Adendum -->
@@ -108,9 +106,8 @@
             <div class="card-header">
                 <h4 class="card-title">Agregar Adendum</h4>
                 <div class="col-md-6">
-                    <label>Observaciones</label>
-                    <input asp-for="Retribuciones[0].DetalleOtrosGastos" class="form-control" />
-
+                    <label>Observación</label>
+                    <input asp-for="Adendum" class="form-control" />
                 </div>
                 <div class="col-md-6">
                     <label asp-for="Fecha_Termino" class="form-label">Modificar Fecha Ademdum</label>

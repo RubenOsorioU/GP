@@ -8,7 +8,6 @@ namespace Gestion_Del_Presupuesto.Models
     {
         [Key]
         public int Id_Registro { get; set; }
-
         public int Id_Usuarios { get; set; }
         public virtual Usuario Usuarios { get; set; } 
 

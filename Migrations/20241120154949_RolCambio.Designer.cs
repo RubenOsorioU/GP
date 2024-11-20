@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Gestion_Del_Presupuesto.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gestion_Del_Presupuesto.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241120154949_RolCambio")]
+    partial class RolCambio
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -827,6 +830,7 @@ namespace Gestion_Del_Presupuesto.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id_Rol"));
 
                     b.Property<string>("NombreRol")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Permisos")
@@ -934,6 +938,9 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("RolId_Rol")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Rut")
                         .IsRequired()
                         .HasColumnType("text");
@@ -946,8 +953,7 @@ namespace Gestion_Del_Presupuesto.Migrations
 
                     b.HasIndex("ConveniosId_Convenio");
 
-                    b.HasIndex("Id_Rol")
-                        .IsUnique();
+                    b.HasIndex("RolId_Rol");
 
                     b.ToTable("Usuarios");
                 });
@@ -1396,8 +1402,8 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .IsRequired();
 
                     b.HasOne("Gestion_Del_Presupuesto.Models.Rol", "Rol")
-                        .WithOne("Usuarios")
-                        .HasForeignKey("Gestion_Del_Presupuesto.Models.Usuario", "Id_Rol")
+                        .WithMany("Usuarios")
+                        .HasForeignKey("RolId_Rol")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1500,8 +1506,7 @@ namespace Gestion_Del_Presupuesto.Migrations
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Rol", b =>
                 {
-                    b.Navigation("Usuarios")
-                        .IsRequired();
+                    b.Navigation("Usuarios");
                 });
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.SeriesData", b =>

@@ -57,7 +57,7 @@ public class UsuarioController : Controller
         if (rol != null)
         {
             usuario.Rol = rol;
-            await _userManager.AddToRoleAsync(identityUser, rol.Nombre);
+            await _userManager.AddToRoleAsync(identityUser, rol.NombreRol);
         }
 
         // Guardar el usuario en la base de datos

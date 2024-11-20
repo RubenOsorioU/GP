@@ -61,6 +61,25 @@
                     <input type="checkbox" asp-for="RenovacionAutomatica" id="RenovacionAutomatica" />
                     <label for="RenovacionAutomatica">Renovable automáticamente por períodos iguales o sucesivos de un año</label>
                 </div>
+                <div class="form-check mb-4">
+                    <input type="checkbox" asp-for="Adendum" class="form-check-input" id="Adendumn" />
+                    <label asp-for="Adendum" class="form-check-label">Sub Contratos Adendumn</label>
+                </div>
+                <div class="card mb-4" id="adendumCard" style="display: none;">
+                    <div class="card-header">
+                        <h4 class="card-title">Agregar Adendum</h4>
+                        <div class="col-md-6">
+                            <label>Observaciones</label>
+                            <input asp-for="Retribuciones[0].DetalleOtrosGastos" class="form-control" />
+
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Fecha_Termino" class="form-label">Modificar Fecha Ademdum</label>
+                            <input asp-for="Fecha_Termino" type="date" class="form-control" />
+                            <span asp-validation-for="Fecha_Termino" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 

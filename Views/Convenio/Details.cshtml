@@ -47,6 +47,23 @@
             <th>Renovación Automática</th>
             <td>@Model.RenovacionAutomatica</td>
         </tr>
+        <tr>
+            <th>Adendum</th>
+            <td>@(Model.Adendum ? "Sí" : "No")</td>
+        </tr>
+
+        @* Si el Adendum es verdadero, mostramos la fecha nueva y las observaciones *@
+        @if (Model.Adendum)
+        {
+            <tr>
+                <th>Modificar Fecha Adendum</th>
+                <td>@Model.Fecha_Termino?.ToShortDateString()</td>
+            </tr>
+            <tr>
+                <th>Observaciones</th>
+                <td>@(!string.IsNullOrWhiteSpace(Model.Retribuciones.FirstOrDefault()?.DetalleOtrosGastos) ? Model.Retribuciones.FirstOrDefault()?.DetalleOtrosGastos : "N/A")</td>
+            </tr>
+        }
     </tbody>
 </table>
 

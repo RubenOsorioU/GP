@@ -13,7 +13,7 @@
             Menu
             <span class="navbar-toggler-icon"></span>
         </button>
-        <a class="navbar-brand" href="#">Gestión del Presupuesto de Campos Clínicos Universidad Central</a>
+        <a class="navbar-brand" href="/">Gestión del Presupuesto de Campos Clínicos Universidad Central</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -26,6 +26,9 @@
                         <span class="navbar-text text-white me-3">@User.Identity.Name</span>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" asp-controller="Account" asp-action="ChangePassword">Cambiar Contraseña</a>
+                    </li>
+                    <li class="nav-item">
                         <form asp-controller="Account" asp-action="Logout" method="post" class="form-inline">
                             <button type="submit" class="btn btn-link nav-link" style="color: white;">Cerrar Sesión</button>
                         </form>
@@ -33,18 +36,20 @@
                 }
                 else
                 {
-                    <!-- Opciones para iniciar sesión o registrarse si no está autenticado -->
+                    <!-- Opciones para iniciar sesión, registrarse o cambiar contraseña si no está autenticado -->
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="Account" asp-action="Login">Iniciar Sesión</a>
+                        <a class="nav-link" asp-controller="Registro" asp-action="Index">Registrarse</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="Account" asp-action="Register">Registrarse</a>
+                        <a class="nav-link" asp-controller="Login" asp-action="Index">Iniciar Sesión</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Account" asp-action="ChangePassword">Cambiar Contraseña</a>
                     </li>
                 }
             </ul>
         </div>
     </nav>
-
 
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">

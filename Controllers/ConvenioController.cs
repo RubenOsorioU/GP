@@ -130,7 +130,7 @@ namespace Gestion_Del_Presupuesto.Controllers
         // Método Edit (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, ConvenioModel convenio, bool renovacionAutomatica)
+        public async Task<IActionResult> Edit(int id, ConvenioModel convenio, bool renovacionAutomatica, bool adendum)
         {
             if (id != convenio.Id_Convenio)
                 return NotFound();
@@ -149,42 +149,95 @@ namespace Gestion_Del_Presupuesto.Controllers
             if (convenioExistente == null)
                 return NotFound();
 
-            // Limpia listas relacionadas antes de asignar los nuevos valores
-            convenioExistente.Retribuciones.Clear();
-            convenioExistente.CentrosDeSalud.Clear();
-
-            // Actualiza las propiedades principales del convenio
-            convenioExistente.Nombre = convenio.Nombre;
-            convenioExistente.Tipo_Convenio = convenio.Tipo_Convenio;
-            convenioExistente.Sede = convenio.Sede;
-            convenioExistente.Rut = convenio.Rut;
-            convenioExistente.Direccion = convenio.Direccion;
-            convenioExistente.ContactoPrincipal = convenio.ContactoPrincipal;
-            convenioExistente.Telefono = convenio.Telefono;
-            convenioExistente.Fecha_Inicio = DateTime.SpecifyKind(convenio.Fecha_Inicio, DateTimeKind.Utc);
-
-            if (renovacionAutomatica)
-                convenioExistente.Fecha_Termino = DateTime.SpecifyKind(convenio.Fecha_Inicio.AddYears(1), DateTimeKind.Utc);
-            else if (convenio.Fecha_Termino.HasValue)
-                convenioExistente.Fecha_Termino = DateTime.SpecifyKind(convenio.Fecha_Termino.Value, DateTimeKind.Utc);
-
-            convenioExistente.RenovacionAutomatica = renovacionAutomatica;
-
-            // Reasignar relaciones
-            if (convenio.Retribuciones != null)
+            // Crear nueva versión si el adendum está activado y se modifica la fecha o la observación del adendum
+            if (adendum &&
+                (convenioExistente.FechaAdendum != convenio.FechaAdendum ||
+                 convenioExistente.ObservacionAdendum != convenio.ObservacionAdendum))
             {
-                foreach (var retribucion in convenio.Retribuciones)
+                var nuevoConvenio = new ConvenioModel
                 {
-                    retribucion.FechaRetribucion = DateTime.SpecifyKind(retribucion.FechaRetribucion, DateTimeKind.Utc);
-                    convenioExistente.Retribuciones.Add(retribucion);
-                }
+                    Nombre = convenioExistente.Nombre,
+                    Tipo_Convenio = convenioExistente.Tipo_Convenio,
+                    Sede = convenioExistente.Sede,
+                    Rut = convenioExistente.Rut,
+                    Direccion = convenioExistente.Direccion,
+                    ContactoPrincipal = convenioExistente.ContactoPrincipal,
+                    Telefono = convenioExistente.Telefono,
+                    Fecha_Inicio = DateTime.SpecifyKind(convenio.Fecha_Inicio, DateTimeKind.Utc),
+                    Fecha_Termino = convenio.Fecha_Termino,
+                    RenovacionAutomatica = renovacionAutomatica,
+                    Adendum = adendum,
+                    FechaAdendum = convenio.FechaAdendum,
+                    ObservacionAdendum = convenio.ObservacionAdendum,
+                    ValorUF = convenioExistente.ValorUF,
+                    Eliminado = convenioExistente.Eliminado,
+                    Version = convenioExistente.Version + 1, // Incrementar versión
+                    Retribuciones = convenioExistente.Retribuciones.Select(r => new RetribucionModel
+                    {
+                        Tipo_Retribucion = r.Tipo_Retribucion,
+                        Monto = r.Monto,
+                        CantPesos = r.CantPesos,
+                        Periodo = r.Periodo,
+                        Tipo_Practica = r.Tipo_Practica,
+                        FechaRetribucion = r.FechaRetribucion
+                    }).ToList(),
+                    CentrosDeSalud = convenioExistente.CentrosDeSalud.Select(cs => new CentroSaludModel
+                    {
+                        NombreCentro = cs.NombreCentro,
+                        Direccion = cs.Direccion,
+                        NombrecargocentroAso = cs.NombrecargocentroAso,
+                        CorreoPersonaCargo = cs.CorreoPersonaCargo,
+                        Telefono_CentroAso = cs.Telefono_CentroAso
+                    }).ToList(),
+                    Devengados = convenioExistente.Devengados.ToList(),
+                    Facturacion = convenioExistente.Facturacion.ToList()
+                };
+
+                // Agregar el nuevo convenio a la base de datos
+                _context.Convenios.Add(nuevoConvenio);
             }
-
-            if (convenio.CentrosDeSalud != null)
+            else
             {
-                foreach (var centro in convenio.CentrosDeSalud)
+                // Limpia listas relacionadas antes de asignar los nuevos valores
+                convenioExistente.Retribuciones.Clear();
+                convenioExistente.CentrosDeSalud.Clear();
+
+                // Actualiza las propiedades principales del convenio existente
+                convenioExistente.Nombre = convenio.Nombre;
+                convenioExistente.Tipo_Convenio = convenio.Tipo_Convenio;
+                convenioExistente.Sede = convenio.Sede;
+                convenioExistente.Rut = convenio.Rut;
+                convenioExistente.Direccion = convenio.Direccion;
+                convenioExistente.ContactoPrincipal = convenio.ContactoPrincipal;
+                convenioExistente.Telefono = convenio.Telefono;
+                convenioExistente.Fecha_Inicio = DateTime.SpecifyKind(convenio.Fecha_Inicio, DateTimeKind.Utc);
+
+                if (renovacionAutomatica)
+                    convenioExistente.Fecha_Termino = DateTime.SpecifyKind(convenio.Fecha_Inicio.AddYears(1), DateTimeKind.Utc);
+                else if (convenio.Fecha_Termino.HasValue)
+                    convenioExistente.Fecha_Termino = DateTime.SpecifyKind(convenio.Fecha_Termino.Value, DateTimeKind.Utc);
+
+                convenioExistente.RenovacionAutomatica = renovacionAutomatica;
+                convenioExistente.Adendum = adendum;
+                convenioExistente.FechaAdendum = convenio.FechaAdendum;
+                convenioExistente.ObservacionAdendum = convenio.ObservacionAdendum;
+
+                // Reasignar relaciones
+                if (convenio.Retribuciones != null)
                 {
-                    convenioExistente.CentrosDeSalud.Add(centro);
+                    foreach (var retribucion in convenio.Retribuciones)
+                    {
+                        retribucion.FechaRetribucion = DateTime.SpecifyKind(retribucion.FechaRetribucion, DateTimeKind.Utc);
+                        convenioExistente.Retribuciones.Add(retribucion);
+                    }
+                }
+
+                if (convenio.CentrosDeSalud != null)
+                {
+                    foreach (var centro in convenio.CentrosDeSalud)
+                    {
+                        convenioExistente.CentrosDeSalud.Add(centro);
+                    }
                 }
             }
 
@@ -200,6 +253,7 @@ namespace Gestion_Del_Presupuesto.Controllers
                 throw;
             }
         }
+
         public async Task<IActionResult> Papelera()
         {
             var convenios = await _context.Convenios.Where(c => c.Eliminado).ToListAsync();
@@ -320,16 +374,19 @@ namespace Gestion_Del_Presupuesto.Controllers
                 worksheet.Cells[1, 9].Value = "Fecha de Inicio";
                 worksheet.Cells[1, 10].Value = "Fecha de Término";
                 worksheet.Cells[1, 11].Value = "Renovación Automática";
-                worksheet.Cells[1, 12].Value = "Tipo Retribución";
-                worksheet.Cells[1, 13].Value = "Valor UF";
-                worksheet.Cells[1, 14].Value = "Cantidad Pesos";
-                worksheet.Cells[1, 15].Value = "Periodo";
-                worksheet.Cells[1, 16].Value = "Tipo Práctica";
-                worksheet.Cells[1, 17].Value = "Centro Salud - Nombre";
-                worksheet.Cells[1, 18].Value = "Centro Salud - Dirección";
-                worksheet.Cells[1, 19].Value = "Centro Salud - Contacto";
-                worksheet.Cells[1, 20].Value = "Centro Salud - Correo";
-                worksheet.Cells[1, 21].Value = "Centro Salud - Teléfono";
+                worksheet.Cells[1, 12].Value = "Adendum";
+                worksheet.Cells[1, 13].Value = "Fecha Adendum";
+                worksheet.Cells[1, 14].Value = "Observaciones Adendum";
+                worksheet.Cells[1, 15].Value = "Tipo Retribución";
+                worksheet.Cells[1, 16].Value = "Valor UF";
+                worksheet.Cells[1, 17].Value = "Cantidad Pesos";
+                worksheet.Cells[1, 18].Value = "Periodo";
+                worksheet.Cells[1, 19].Value = "Tipo Práctica";
+                worksheet.Cells[1, 20].Value = "Centro Salud - Nombre";
+                worksheet.Cells[1, 21].Value = "Centro Salud - Dirección";
+                worksheet.Cells[1, 22].Value = "Centro Salud - Contacto";
+                worksheet.Cells[1, 23].Value = "Centro Salud - Correo";
+                worksheet.Cells[1, 24].Value = "Centro Salud - Teléfono";
 
                 int row = 2;
 
@@ -350,17 +407,25 @@ namespace Gestion_Del_Presupuesto.Controllers
                     worksheet.Cells[row, 9].Value = convenio.Fecha_Inicio.ToShortDateString();
                     worksheet.Cells[row, 10].Value = convenio.Fecha_Termino?.ToShortDateString();
                     worksheet.Cells[row, 11].Value = convenio.RenovacionAutomatica ? "Sí" : "No";
+                    worksheet.Cells[row, 12].Value = convenio.Adendum ? "Sí" : "No";
+
+                    // Agregar fecha de adendum y observaciones si Adendumn es verdadero
+                    if (convenio.Adendum)
+                    {
+                        worksheet.Cells[row, 13].Value = convenio.Fecha_Termino?.ToShortDateString(); // Fecha de adendum
+                        worksheet.Cells[row, 14].Value = convenio.Retribuciones?.FirstOrDefault()?.DetalleOtrosGastos ?? "N/A"; // Observaciones de adendum
+                    }
 
                     // Agregar las retribuciones
                     if (convenio.Retribuciones != null && convenio.Retribuciones.Any())
                     {
                         foreach (var retribucion in convenio.Retribuciones)
                         {
-                            worksheet.Cells[row, 12].Value = retribucion.Tipo_Retribucion;
-                            worksheet.Cells[row, 13].Value = retribucion.Monto;
-                            worksheet.Cells[row, 14].Value = retribucion.CantPesos;
-                            worksheet.Cells[row, 15].Value = retribucion.Periodo;
-                            worksheet.Cells[row, 16].Value = retribucion.Tipo_Practica;
+                            worksheet.Cells[row, 15].Value = retribucion.Tipo_Retribucion;
+                            worksheet.Cells[row, 16].Value = retribucion.Monto;
+                            worksheet.Cells[row, 17].Value = retribucion.CantPesos;
+                            worksheet.Cells[row, 18].Value = retribucion.Periodo;
+                            worksheet.Cells[row, 19].Value = retribucion.Tipo_Practica;
                             row++;
                         }
                     }
@@ -374,11 +439,11 @@ namespace Gestion_Del_Presupuesto.Controllers
                     {
                         foreach (var centro in convenio.CentrosDeSalud)
                         {
-                            worksheet.Cells[initialRow, 17].Value = centro.NombreCentro;
-                            worksheet.Cells[initialRow, 18].Value = centro.Direccion;
-                            worksheet.Cells[initialRow, 19].Value = centro.NombrecargocentroAso;
-                            worksheet.Cells[initialRow, 20].Value = centro.CorreoPersonaCargo;
-                            worksheet.Cells[initialRow, 21].Value = centro.Telefono_CentroAso;
+                            worksheet.Cells[initialRow, 20].Value = centro.NombreCentro;
+                            worksheet.Cells[initialRow, 21].Value = centro.Direccion;
+                            worksheet.Cells[initialRow, 22].Value = centro.NombrecargocentroAso;
+                            worksheet.Cells[initialRow, 23].Value = centro.CorreoPersonaCargo;
+                            worksheet.Cells[initialRow, 24].Value = centro.Telefono_CentroAso;
                             initialRow++;
                         }
                     }
@@ -395,6 +460,7 @@ namespace Gestion_Del_Presupuesto.Controllers
                 return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Convenios.xlsx");
             }
         }
+
 
     }
 }

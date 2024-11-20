@@ -20,7 +20,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/Login/Index";         // Página de inicio de sesión
+        options.LoginPath = "/Home/Index";         // Página de inicio de sesión
         options.AccessDeniedPath = "/Home/AccessDenied"; // Página de acceso denegado
     });
 
@@ -72,7 +72,7 @@ app.UseAuthorization();    // Habilitar autorización
 // Configurar las rutas predeterminadas de la aplicación
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Login}/{action=Index}/{id?}"); // Cambiar Home por Login si es necesario
+    pattern: "{controller=Home}/{action=Index}/{id?}"); // Cambiar Home por Login si es necesario
 
 app.Run();
 

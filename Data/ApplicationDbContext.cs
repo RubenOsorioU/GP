@@ -116,6 +116,13 @@ namespace Gestion_Del_Presupuesto.Data
                 .WithOne(r => r.Usuarios) 
                 .HasForeignKey<RegistroModel>(r => r.Id_Usuarios);
 
+            modelBuilder.Entity<Usuario>()
+            .HasOne(u => u.Rol)
+            .WithOne(r => r.Usuarios)
+            .HasForeignKey<Usuario>(u => u.Id_Rol)
+            .OnDelete(DeleteBehavior.Cascade);
+
         }
     }
 }
+

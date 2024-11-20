@@ -18,7 +18,7 @@
                 <td><strong>RUT:</strong></td>
                 <td>70.995.200-5</td>
                 <td><strong>Cargo:</strong></td>
-                <td>Coordinadora de Campos Clínicos</td>
+                <td>Directora de Campos Clínicos</td>
             </tr>
             <tr>
                 <td><strong>Giro:</strong></td>
@@ -46,45 +46,19 @@
 <div class="row mb-4">
     <div class="col-md-12">
         <h4>Filtros de Facturación</h4>
-        <form method="get" class="form-inline">
-            <div class="form-group mb-2">
+        <form method="get" class="form-inline d-flex align-items-center">
+            <div class="form-group mb-2 mr-3">
                 <label for="fechaInicio" class="mr-2">Fecha Inicio</label>
                 <input type="date" id="fechaInicio" name="fechaInicio" class="form-control" />
             </div>
-            <div class="form-group mb-2 ml-2">
+            <div class="form-group mb-2 mr-3">
                 <label for="fechaFin" class="mr-2">Fecha Fin</label>
                 <input type="date" id="fechaFin" name="fechaFin" class="form-control" />
             </div>
-            <button type="submit" class="btn btn-primary ml-2 mb-2">Calcular Total a Pagar</button>
+            <div class="form-group mb-2">
+                <button type="submit" class="btn btn-primary ml-3">Calcular Total a Pagar</button>
+            </div>
         </form>
-    </div>
-</div>
-
-<!-- Resultados de Facturación -->
-<div class="row mb-4">
-    <div class="col-md-4">
-        <div class="card text-white bg-primary mb-3">
-            <div class="card-body">
-                <h5 class="card-title">Neto UF</h5>
-                <p class="card-text">@ViewBag.NetoUF</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card text-white bg-success mb-3">
-            <div class="card-body">
-                <h5 class="card-title">Valor UF Promedio</h5>
-                <p class="card-text">@ViewBag.ValorUFPromedio</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card text-white bg-danger mb-3">
-            <div class="card-body">
-                <h5 class="card-title">Total a Pagar</h5>
-                <p class="card-text">@ViewBag.TotalAPagar</p>
-            </div>
-        </div>
     </div>
 </div>
 
@@ -95,16 +69,14 @@
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>Razón Social</th>
-                    <th>RUT</th>
-                    <th>Giro</th>
-                    <th>Dirección</th>
-                    <th>Teléfono</th>
-                    <th>Receptor de Documento</th>
-                    <th>Cargo</th>
-                    <th>Teléfono de Receptor</th>
-                    <th>Correo Electrónico</th>
-                    <th>Sede</th>
+                    <th>Carrera</th>
+                    <th>Nivel Formación</th>
+                    <th>Nombre Convenio</th>
+                    <th>Tiempo de Práctica</th>
+                    <th>N° mes/día/semana/hora</th>
+                    <th>N° Alumnos</th>
+                    <th>Valor 3 UF mes/práctica profesional</th>
+                    <th>Subtotal</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -112,16 +84,14 @@
                 @foreach (var item in Model)
                 {
                     <tr>
-                        <td>@item.RazonSocial</td>
-                        <td>@item.RUT</td>
-                        <td>@item.Giro</td>
-                        <td>@item.Direccion</td>
-                        <td>@item.Telefono</td>
-                        <td>@item.ReceptorDocumento</td>
-                        <td>@item.Cargo</td>
-                        <td>@item.TelefonoReceptor</td>
-                        <td>@item.CorreoElectronico</td>
-                        <td>@item.Sede</td>
+                        <td>@item.Carrera</td>
+                        <td>@item.NivelFormacion</td>
+                        <td>@item.Convenios.Nombre</td>
+                        <td>@item.TiempoPractica</td>
+                        <td>@item.NumeroTiempo</td>
+                        <td>@item.NumeroAlumnos</td>
+                        <td>@item.ValorUFMesPractica</td>
+                        <td>@item.Subtotal</td>
                         <td>
                             <a asp-action="Edit" asp-route-id="@item.Id_Facturacion" class="btn btn-warning btn-sm">Editar</a>
                             <a asp-action="Details" asp-route-id="@item.Id_Facturacion" class="btn btn-info btn-sm">Detalles</a>
@@ -131,5 +101,32 @@
                 }
             </tbody>
         </table>
+    </div>
+</div>
+<!-- Resultados de Facturación -->
+<div class="row mb-2">
+    <div class="col-md-2">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h8 class="card-title">Neto UF</h8>
+                <p class="card-text">@ViewBag.NetoUF</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h8 class="card-title">Valor UF </h8>
+                <p class="card-text">@ViewBag.ValorUFPromedio</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card text-white bg-danger">
+            <div class="card-body">
+                <h8 class="card-title">Total a Pagar</h8>
+                <p class="card-text">@ViewBag.TotalAPagar</p>
+            </div>
+        </div>
     </div>
 </div>

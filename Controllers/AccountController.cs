@@ -15,6 +15,6 @@ public class AccountController : Controller
     public async Task<IActionResult> Logout()
     {
         await _signInManager.SignOutAsync();
-        return RedirectToAction("Index", "Login"); // Redirige al controlador "Login" acción "Index"
+        return RedirectToAction("Index", "Home"); // Redirige al controlador "Login" acción "Index"
     }
 }

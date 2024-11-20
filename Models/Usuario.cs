@@ -21,6 +21,5 @@ namespace Gestion_Del_Presupuesto.Models
         public virtual RegistroModel Registro { get; set; }
         public virtual ICollection<Historial_Actividad> Historial_Actividades { get; set; }  // Relación con Historial_Actividad
 
-        
     }
 }
