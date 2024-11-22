@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using Gestion_Del_Presupuesto.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
+using System.Net.Mail;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,13 +16,13 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Configurar Identity con soporte para roles
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddDefaultTokenProviders();
+    .AddDefaultTokenProviders();  // Esto es necesario para manejar la verificación de correos, restablecer contraseñas, etc.
 
 // Configurar autenticación por cookies
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/Home/Index";         // Página de inicio de sesión
+        options.LoginPath = "/Account/Login"; // Página de inicio de sesión
         options.AccessDeniedPath = "/Home/AccessDenied"; // Página de acceso denegado
     });
 
@@ -72,7 +74,7 @@ app.UseAuthorization();    // Habilitar autorización
 // Configurar las rutas predeterminadas de la aplicación
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}"); // Cambiar Home por Login si es necesario
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
 
@@ -80,7 +82,7 @@ app.Run();
 async Task CrearRoles(IServiceProvider serviceProvider)
 {
     var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    string[] roles = { "Admin", "Manager", "User" };
+    string[] roles = { "Dirección", "Coordinación", "Visitante" };
 
     foreach (var role in roles)
     {
@@ -92,7 +94,7 @@ async Task CrearRoles(IServiceProvider serviceProvider)
 }
 
 // Método para crear un usuario administrador
- async Task CrearUsuarioAdmin(IServiceProvider serviceProvider)
+async Task CrearUsuarioAdmin(IServiceProvider serviceProvider)
 {
     var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
     var configuration = serviceProvider.GetRequiredService<IConfiguration>();
@@ -109,6 +111,41 @@ async Task CrearRoles(IServiceProvider serviceProvider)
         if (result.Succeeded)
         {
             await userManager.AddToRoleAsync(user, "Admin");
+
+            // Enviar correo de verificación
+            var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
+            var confirmationLink = $"https://localhost:5001/Account/ConfirmEmail?userId={user.Id}&token={token}";
+            EnviarCorreoVerificacion(user.Email, confirmationLink);
         }
+    }
+}
+
+// Método para enviar el correo de verificación
+void EnviarCorreoVerificacion(string correoDestino, string linkVerificacion)
+{
+    var fromAddress = new MailAddress("tucorreo@example.com", "Gestión de Campos Clínicos");
+    var toAddress = new MailAddress(correoDestino);
+    const string fromPassword = "tupassword"; // Usa un servicio de configuración segura para almacenar contraseñas
+    const string subject = "Confirma tu correo electrónico";
+    string body = $"Por favor, confirma tu cuenta haciendo clic en el siguiente enlace: <a href='{linkVerificacion}'>Confirmar Correo</a>";
+
+    var smtp = new SmtpClient
+    {
+        Host = "smtp.example.com",
+        Port = 587,
+        EnableSsl = true,
+        DeliveryMethod = SmtpDeliveryMethod.Network,
+        UseDefaultCredentials = false,
+        Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
+    };
+
+    using (var message = new MailMessage(fromAddress, toAddress)
+    {
+        Subject = subject,
+        Body = body,
+        IsBodyHtml = true
+    })
+    {
+        smtp.Send(message);
     }
 }

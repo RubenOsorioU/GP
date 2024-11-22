@@ -1,83 +1,114 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Gestion_Del_Presupuesto.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Mail;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace Gestion_Del_Presupuesto.Controllers
 {
     public class RegistroController : Controller
     {
+        private readonly UserManager<IdentityUser> _userManager;
+
+        // Inyección de dependencias de UserManager para gestionar usuarios
+        public RegistroController(UserManager<IdentityUser> userManager)
+        {
+            _userManager = userManager;
+        }
+
         // GET: RegistroController
         public ActionResult Index()
         {
             return View();
         }
 
-        // GET: RegistroController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: RegistroController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: RegistroController/Create
+        // POST: RegistroController/Register
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ActionResult> Register(RegistroModel model)
         {
-            try
+            if (!ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                return View("Index", model);
             }
-            catch
+
+            // Crear un nuevo usuario con los datos del modelo
+            var user = new IdentityUser
             {
-                return View();
+                UserName = model.Usuarios.Correo,
+                Email = model.Usuarios.Correo
+            };
+
+            // Registrar al usuario
+            var result = await _userManager.CreateAsync(user, model.Usuarios.Contraseña);
+
+            if (result.Succeeded)
+            {
+                // Enviar correo de verificación
+                string token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                string link = Url.Action("ConfirmEmail", "Registro", new { userId = user.Id, token }, Request.Scheme);
+                EnviarCorreoVerificacion(model.Usuarios.Correo, link);
+
+                return RedirectToAction("Index", "Home");
             }
+
+            // Si hubo errores, agregarlos al ModelState
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError("", error.Description);
+            }
+
+            return View("Index", model);
         }
 
-        // GET: RegistroController/Edit/5
-        public ActionResult Edit(int id)
+        // Método para confirmar el correo electrónico
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
         {
-            return View();
-        }
+            if (userId == null || token == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
 
-        // POST: RegistroController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
             {
-                return RedirectToAction(nameof(Index));
+                return NotFound();
             }
-            catch
-            {
-                return View();
-            }
-        }
 
-        // GET: RegistroController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+            if (result.Succeeded)
+            {
+                return RedirectToAction("Index", "Home");
+            }
 
-        // POST: RegistroController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+            return BadRequest("Error al confirmar el correo electrónico.");
+        }
+        private void EnviarCorreoVerificacion(string correoDestino, string linkVerificacion)
         {
-            try
+            var fromAddress = new MailAddress("tucorreo@example.com", "Gestión de Campos Clínicos");
+            var toAddress = new MailAddress(correoDestino);
+            const string fromPassword = "tupassword"; // Usa un servicio de configuración segura para almacenar contraseñas
+            const string subject = "Confirma tu correo electrónico";
+            string body = $"Por favor, confirma tu cuenta haciendo clic en el siguiente enlace: <a href='{linkVerificacion}'>Confirmar Correo</a>";
+
+            var smtp = new SmtpClient
             {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
+                Host = "smtp.example.com",
+                Port = 587,
+                EnableSsl = true,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                UseDefaultCredentials = false,
+                Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
+            };
+
+            using var message = new MailMessage(fromAddress, toAddress)
             {
-                return View();
-            }
+                Subject = subject,
+                Body = body,
+                IsBodyHtml = true
+            };
+            smtp.Send(message);
         }
     }
 }
