@@ -69,6 +69,8 @@
             <th>Fecha Término</th>
             <th>Cantidad de Horas</th>
             <th>Cantidad de Días</th>
+            <th>Cantidad de Meses</th>
+            <th>Año</th>
             <th>Observaciones</th>
             <th>Acciones</th>
         </tr>
@@ -86,6 +88,8 @@
                 <td>@item.Fecha_Termino.ToShortDateString()</td>
                 <td>@item.CantidadHoras</td>
                 <td>@item.CantDias</td>
+                <td>@item.CantMeses</td>
+                <td>@item.Año</td>
                 <td>@item.Observaciones</td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id_Planillas" class="btn btn-warning">Editar</a>

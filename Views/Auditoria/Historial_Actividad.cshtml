@@ -1,0 +1,27 @@
+﻿@model Gestion_Del_Presupuesto.Models.Historial_Actividad
+
+@{
+    ViewData["Title"] = "Eliminar Actividad";
+}
+
+<h2>Confirmar Eliminación</h2>
+<p>¿Estás seguro que deseas eliminar esta actividad?</p>
+
+<div>
+    <dl class="row">
+        <dt class="col-sm-2">Usuario</dt>
+        <dd class="col-sm-10">@Model.Usuario?.UserName ?? "Usuario no encontrado"</dd>
+
+        <dt class="col-sm-2">Acción</dt>
+        <dd class="col-sm-10">@Model.Accion</dd>
+
+        <dt class="col-sm-2">Fecha</dt>
+        <dd class="col-sm-10">@Model.Fecha.ToString("yyyy-MM-dd HH:mm:ss")</dd>
+    </dl>
+
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="Id_Historial_Actividad" />
+        <button type="submit" class="btn btn-danger">Eliminar</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>

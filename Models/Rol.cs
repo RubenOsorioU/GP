@@ -1,20 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
-using System;
 
 namespace Gestion_Del_Presupuesto.Models
 {
-    public class Rol
+    public class Rol : IdentityRole<int> 
     {
-        [Key]
-        public int Id_Rol { get; set; }
+        public string Descripcion { get; set; }
 
-        public string? NombreRol { get; set; }
-
-        public string Permisos { get; set; }
-
-        // Relación con Usuario
-        public virtual Usuario Usuarios { get; set; } // Relación uno a muchos con Usuario
+        public virtual ICollection<Usuario> Usuarios { get; set; }
     }
-
 }

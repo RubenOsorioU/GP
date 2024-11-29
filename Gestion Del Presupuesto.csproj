@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+	 
     <Compile Remove="Views\Cambio_Moneda\**" />
     <Content Remove="Views\Cambio_Moneda\**" />
     <EmbeddedResource Remove="Views\Cambio_Moneda\**" />

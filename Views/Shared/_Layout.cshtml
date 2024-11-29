@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@using Gestion_Del_Presupuesto.Models
+@inject UserManager<Usuario> UserManager
+
+
 <html lang="es">
 <head>
     <meta charset="utf-8" />
@@ -23,9 +27,13 @@
                 <ul class="navbar-nav">
                     @if (User.Identity != null && User.Identity.IsAuthenticated)
                     {
-                        <!-- Mostrar nombre de usuario si está autenticado -->
+                        var user = await UserManager.GetUserAsync(User);
+                        var roles = user != null ? await UserManager.GetRolesAsync(user) : new List<string>();
+                        var rolUsuario = roles.FirstOrDefault() ?? "Sin rol";
+
+                        <!-- Mostrar nombre de usuario y rol si está autenticado -->
                         <li class="nav-item d-flex align-items-center">
-                            <span class="navbar-text text-white me-3">@User.Identity.Name</span>
+                            <span class="navbar-text text-white me-3">@User.Identity.Name (@rolUsuario)</span>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-white" asp-controller="Account" asp-action="ChangePassword">Cambiar Contraseña</a>
@@ -40,10 +48,10 @@
                     {
                         <!-- Opciones para iniciar sesión, registrarse o cambiar contraseña si no está autenticado -->
                         <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Registro" asp-action="Index">Registrarse</a>
+                            <a class="nav-link text-white" asp-controller="Account" asp-action="Register">Registrarse</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Login" asp-action="Index">Iniciar Sesión</a>
+                            <a class="nav-link text-white" asp-controller="Account" asp-action="Login">Iniciar Sesión</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-white" asp-controller="Account" asp-action="ChangePassword">Cambiar Contraseña</a>
@@ -53,6 +61,7 @@
             </div>
         </nav>
     </header>
+
 
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
@@ -98,19 +107,20 @@
                     <li><a class="dropdown-item" asp-controller="Devengado" asp-action="Index">Registro Histórico De Devengado</a></li>
                 </ul>
             </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link" href="#">Evaluación CE <span class="dropdown-toggle-icon">▼</span></a>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" asp-controller="Pagos" asp-action="Index">Evaluaciones</a></li>
-                    <li><a class="dropdown-item" asp-controller="Pagos" asp-action="Create">Estadística</a></li>
-                </ul>
-            </li>
+
             <li class="nav-item dropdown">
                 <a class="nav-link" href="#">Presupuesto <span class="dropdown-toggle-icon">▼</span></a>
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item" asp-controller="Presupuesto" asp-action="Index">Listado Consolidado x Centro Costo</a></li>
                     <li><a class="dropdown-item" asp-controller="Presupuesto" asp-action="Create">Registrar</a></li>
                     <li><a class="dropdown-item" asp-controller="Provision" asp-action="Index">Listado Provisión</a></li>
+                </ul>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link" href="#">Evaluación CE <span class="dropdown-toggle-icon">▼</span></a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" asp-controller="Encuesta" asp-action="Index">Evaluaciones</a></li>
+                    <li><a class="dropdown-item" asp-controller="Encuesta" asp-action="Create">Crear Evaluación</a></li>
                 </ul>
             </li>
         </ul>

@@ -17,6 +17,8 @@ namespace Gestion_Del_Presupuesto.Models
         public DateTime Fecha_Termino { get; set; }
         public double CantidadHoras { get; set; }
         public int CantDias { get; set; }
+        public int CantMeses { get; set; }
+        public DateTime Año { get; set; }
         public string Observaciones { get; set; }
 
         // Relación con Estudiante

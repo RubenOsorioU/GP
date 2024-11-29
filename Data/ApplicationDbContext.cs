@@ -1,13 +1,15 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Gestion_Del_Presupuesto.Models;
-using Microsoft.AspNetCore.Identity;
 
 namespace Gestion_Del_Presupuesto.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<IdentityUser>
+    public class ApplicationDbContext : IdentityDbContext<Usuario, Rol, int>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
+
         public DbSet<ConvenioModel> Convenios { get; set; }
         public DbSet<Estudiante> Estudiantes { get; set; }
         public DbSet<Historial_Actividad> Historial_Actividad { get; set; }
@@ -16,8 +18,6 @@ namespace Gestion_Del_Presupuesto.Data
         public DbSet<PresupuestoModel> Presupuestos { get; set; }
         public DbSet<RetribucionModel> Retribuciones { get; set; }
         public DbSet<Solicitud_Retribucion> SolicitudesRetribucion { get; set; }
-        public DbSet<Rol> Roles { get; set; }
-        public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Devengado> Devengados { get; set; }
         public DbSet<Costo> Costo { get; set; }
         public DbSet<FacturacionModel> Facturacion { get; set; }
@@ -28,7 +28,7 @@ namespace Gestion_Del_Presupuesto.Data
         public DbSet<CarreraModel> Carreras { get; set; }
         public DbSet<SeriesData> SerieDatas { get; set; }
         public DbSet<ObsData> ObsDatas { get; set; }
-        public DbSet<RegistroModel> Registro { get; set; }
+        public DbSet<EncuestaModel> Encuesta { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -36,9 +36,9 @@ namespace Gestion_Del_Presupuesto.Data
 
             // Relación Historial_Actividad → Usuario
             modelBuilder.Entity<Historial_Actividad>()
-                .HasOne(h => h.Usuarios)
+                .HasOne(h => h.Usuario)
                 .WithMany(u => u.Historial_Actividades)
-                .HasForeignKey(h => h.Id_Usuario)
+                .HasForeignKey(h => h.UsuarioId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             // Relación Estudiante → Planilla
@@ -76,13 +76,6 @@ namespace Gestion_Del_Presupuesto.Data
                 .HasForeignKey(p => p.FacturacionId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Relación PlanillasModel → Devengado
-            modelBuilder.Entity<PlanillasModel>()
-                .HasOne(p => p.Devengado)
-                .WithMany(d => d.Planillas)
-                .HasForeignKey(p => p.Id_Planillas)
-                .OnDelete(DeleteBehavior.Restrict);
-
             // Relación PlanillasModel → IndicadorEconomico
             modelBuilder.Entity<PlanillasModel>()
                 .HasOne(p => p.Indicador)
@@ -97,13 +90,6 @@ namespace Gestion_Del_Presupuesto.Data
                 .HasForeignKey(d => d.ConvenioId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Relación Devengado → PlanillasModel
-            modelBuilder.Entity<Devengado>()
-                .HasMany(d => d.Planillas)
-                .WithOne(p => p.Devengado)
-                .HasForeignKey(p => p.Id_Planillas)
-                .OnDelete(DeleteBehavior.Restrict);
-
             // Relación FacturacionModel → Convenio
             modelBuilder.Entity<FacturacionModel>()
                 .HasOne(f => f.Convenios)
@@ -111,18 +97,34 @@ namespace Gestion_Del_Presupuesto.Data
                 .HasForeignKey(f => f.ConvenioId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Usuario>()
-                .HasOne(u => u.Registro) 
-                .WithOne(r => r.Usuarios) 
-                .HasForeignKey<RegistroModel>(r => r.Id_Usuarios);
+            // Configuración para propiedades DateTime y DateTime? en UTC
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                var dateTimeProperties = entityType.ClrType.GetProperties()
+                    .Where(p => p.PropertyType == typeof(DateTime) || p.PropertyType == typeof(DateTime?));
 
-            modelBuilder.Entity<Usuario>()
-            .HasOne(u => u.Rol)
-            .WithOne(r => r.Usuarios)
-            .HasForeignKey<Usuario>(u => u.Id_Rol)
-            .OnDelete(DeleteBehavior.Cascade);
-
+                foreach (var property in dateTimeProperties)
+                {
+                    if (property.PropertyType == typeof(DateTime))
+                    {
+                        modelBuilder.Entity(entityType.ClrType).Property(property.Name).HasConversion(
+                            new ValueConverter<DateTime, DateTime>(
+                                v => DateTime.SpecifyKind(v, DateTimeKind.Utc), // Convertir a UTC
+                                v => v // Mantener el valor al leer
+                            )
+                        );
+                    }
+                    else if (property.PropertyType == typeof(DateTime?))
+                    {
+                        modelBuilder.Entity(entityType.ClrType).Property(property.Name).HasConversion(
+                            new ValueConverter<DateTime?, DateTime?>(
+                                v => v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc) : (DateTime?)null,
+                                v => v
+                            )
+                        );
+                    }
+                }
+            }
         }
     }
 }
-

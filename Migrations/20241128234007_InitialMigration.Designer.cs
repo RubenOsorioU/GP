@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gestion_Del_Presupuesto.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241118151829_UsuarioAtributos2")]
-    partial class UsuarioAtributos2
+    [Migration("20241128234007_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -108,7 +108,7 @@ namespace Gestion_Del_Presupuesto.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id_Convenio"));
 
-                    b.Property<bool>("Adendumn")
+                    b.Property<bool>("Adendum")
                         .HasColumnType("boolean");
 
                     b.Property<int>("CentrosDeSaludId")
@@ -125,6 +125,9 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.Property<bool>("Eliminado")
                         .HasColumnType("boolean");
 
+                    b.Property<DateTime?>("FechaAdendum")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<DateTime>("Fecha_Inicio")
                         .HasColumnType("timestamp with time zone");
 
@@ -139,6 +142,9 @@ namespace Gestion_Del_Presupuesto.Migrations
 
                     b.Property<string>("Nombre")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ObservacionAdendum")
                         .HasColumnType("text");
 
                     b.Property<bool>("RenovacionAutomatica")
@@ -161,6 +167,9 @@ namespace Gestion_Del_Presupuesto.Migrations
 
                     b.Property<decimal>("ValorUF")
                         .HasColumnType("numeric");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id_Convenio");
 
@@ -254,6 +263,34 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.HasIndex("ConvenioId");
 
                     b.ToTable("Devengados");
+                });
+
+            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.EncuestaModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Comentarios")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Puntuacion")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Tipo")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Encuesta");
                 });
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Estudiante", b =>
@@ -417,20 +454,19 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("Detalles")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("Id_Usuario")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("RolesId_Rol")
+                    b.Property<int>("UsuarioId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id_Historial_Actividad");
 
-                    b.HasIndex("Id_Usuario");
-
-                    b.HasIndex("RolesId_Rol");
+                    b.HasIndex("UsuarioId");
 
                     b.ToTable("Historial_Actividad");
                 });
@@ -560,19 +596,31 @@ namespace Gestion_Del_Presupuesto.Migrations
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.PlanillasModel", b =>
                 {
                     b.Property<int>("Id_Planillas")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id_Planillas"));
 
                     b.Property<string>("Asignatura")
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<DateTime>("Año")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<int>("CantDias")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CantMeses")
                         .HasColumnType("integer");
 
                     b.Property<double>("CantidadHoras")
                         .HasColumnType("double precision");
 
                     b.Property<int>("CarreraId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("DevengadoId_Devengado")
                         .HasColumnType("integer");
 
                     b.Property<int>("FacturacionId")
@@ -609,6 +657,8 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.HasKey("Id_Planillas");
 
                     b.HasIndex("CarreraId");
+
+                    b.HasIndex("DevengadoId_Devengado");
 
                     b.HasIndex("FacturacionId");
 
@@ -795,23 +845,35 @@ namespace Gestion_Del_Presupuesto.Migrations
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Rol", b =>
                 {
-                    b.Property<int>("Id_Rol")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id_Rol"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Nombre")
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Descripcion")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Permisos")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
-                    b.HasKey("Id_Rol");
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
-                    b.ToTable("Roles");
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex");
+
+                    b.ToTable("AspNetRoles", (string)null);
                 });
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.SeriesData", b =>
@@ -882,101 +944,11 @@ namespace Gestion_Del_Presupuesto.Migrations
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Usuario", b =>
                 {
-                    b.Property<int>("Id_Usuario")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id_Usuario"));
-
-                    b.Property<string>("Contraseña")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("ConveniosId_Convenio")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Id_Rol")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("RolId_Rol")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Rut")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Telefono")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id_Usuario");
-
-                    b.HasIndex("ConveniosId_Convenio");
-
-                    b.HasIndex("RolId_Rol");
-
-                    b.ToTable("Usuarios");
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasDatabaseName("RoleNameIndex");
-
-                    b.ToTable("AspNetRoles", (string)null);
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
-                {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ClaimType")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ClaimValue")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RoleId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("AspNetRoleClaims", (string)null);
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
@@ -984,6 +956,9 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("text");
+
+                    b.Property<int>("ConveniosId_Convenio")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -1015,6 +990,13 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean");
 
+                    b.Property<int?>("RolId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Rut")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
 
@@ -1027,6 +1009,8 @@ namespace Gestion_Del_Presupuesto.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ConveniosId_Convenio");
+
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
@@ -1034,10 +1018,12 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
 
+                    b.HasIndex("RolId");
+
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1051,9 +1037,32 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.Property<string>("ClaimValue")
                         .HasColumnType("text");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
+                    b.Property<int>("RoleId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetRoleClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
                         .HasColumnType("text");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("text");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -1062,7 +1071,7 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.ToTable("AspNetUserClaims", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
                     b.Property<string>("LoginProvider")
                         .HasColumnType("text");
@@ -1073,9 +1082,8 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("text");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -1084,13 +1092,13 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.ToTable("AspNetUserLogins", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("text");
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
 
-                    b.Property<string>("RoleId")
-                        .HasColumnType("text");
+                    b.Property<int>("RoleId")
+                        .HasColumnType("integer");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -1099,10 +1107,10 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.ToTable("AspNetUserRoles", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("text");
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("LoginProvider")
                         .HasColumnType("text");
@@ -1212,21 +1220,13 @@ namespace Gestion_Del_Presupuesto.Migrations
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Historial_Actividad", b =>
                 {
-                    b.HasOne("Gestion_Del_Presupuesto.Models.Usuario", "Usuarios")
+                    b.HasOne("Gestion_Del_Presupuesto.Models.Usuario", "Usuario")
                         .WithMany("Historial_Actividades")
-                        .HasForeignKey("Id_Usuario")
+                        .HasForeignKey("UsuarioId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Gestion_Del_Presupuesto.Models.Rol", "Roles")
-                        .WithMany()
-                        .HasForeignKey("RolesId_Rol")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Roles");
-
-                    b.Navigation("Usuarios");
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.IndicadorEconomico", b =>
@@ -1274,6 +1274,12 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Gestion_Del_Presupuesto.Models.Devengado", "Devengado")
+                        .WithMany("Planillas")
+                        .HasForeignKey("DevengadoId_Devengado")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Gestion_Del_Presupuesto.Models.FacturacionModel", "Facturacion")
                         .WithMany("Planillas")
                         .HasForeignKey("FacturacionId")
@@ -1289,12 +1295,6 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.HasOne("Gestion_Del_Presupuesto.Models.IndicadorEconomico", "Indicador")
                         .WithMany()
                         .HasForeignKey("Id_IndicadorEco")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Gestion_Del_Presupuesto.Models.Devengado", "Devengado")
-                        .WithMany("Planillas")
-                        .HasForeignKey("Id_Planillas")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -1354,62 +1354,58 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Gestion_Del_Presupuesto.Models.Rol", "Rol")
+                    b.HasOne("Gestion_Del_Presupuesto.Models.Rol", null)
                         .WithMany("Usuarios")
-                        .HasForeignKey("RolId_Rol")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("RolId");
 
                     b.Navigation("Convenios");
-
-                    b.Navigation("Rol");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("Gestion_Del_Presupuesto.Models.Rol", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("Gestion_Del_Presupuesto.Models.Usuario", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("Gestion_Del_Presupuesto.Models.Usuario", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("Gestion_Del_Presupuesto.Models.Rol", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("Gestion_Del_Presupuesto.Models.Usuario", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("Gestion_Del_Presupuesto.Models.Usuario", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

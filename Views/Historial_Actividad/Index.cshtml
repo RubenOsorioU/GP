@@ -19,7 +19,7 @@
                 @Html.DisplayNameFor(model => model.Accion)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Usuarios)
+                @Html.DisplayNameFor(model => model.Usuario)
             </th>
             <th></th>
         </tr>
@@ -34,7 +34,7 @@
                 @Html.DisplayFor(modelItem => item.Accion)
             </td>
             <td>
-                    @Html.DisplayFor(modelItem => item.Usuarios.Id_Usuario)
+                    @Html.DisplayFor(modelItem => item.Usuario.UserName)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id_Historial_Actividad">Edit</a> |

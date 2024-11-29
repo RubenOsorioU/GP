@@ -2,8 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using Gestion_Del_Presupuesto.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
-using System.Net.Mail;
-using System.Net;
+using Gestion_Del_Presupuesto.Models;
+using Gestion_Del_Presupuesto.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,23 +13,22 @@ AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", false);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Configurar Identity con soporte para roles
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+// Configurar Identity con soporte para roles usando los modelos `Usuario` y `Rol`
+builder.Services.AddIdentity<Usuario, Rol>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();  // Esto es necesario para manejar la verificación de correos, restablecer contraseñas, etc.
 
 // Configurar autenticación por cookies
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
-    {
-        options.LoginPath = "/Account/Login"; // Página de inicio de sesión
-        options.AccessDeniedPath = "/Home/AccessDenied"; // Página de acceso denegado
-    });
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Account/Login"; // Página de inicio de sesión
+    options.AccessDeniedPath = "/Home/AccessDenied"; // Página de acceso denegado
+});
 
 // Configurar autorización
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin")); // Política para Admin
+    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Direccion")); // Política para Dirección
     options.AddPolicy("UserOnly", policy => policy.RequireRole("User"));   // Política para User
 });
 
@@ -45,17 +44,8 @@ builder.Services.AddSession(options =>
 
 var app = builder.Build();
 
-// Inicialización de roles y usuario administrador
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-
-    // Crear roles iniciales
-    await CrearRoles(services);
-
-    // Crear usuario administrador inicial
-    await CrearUsuarioAdmin(services);
-}
+// Inicializar roles y usuario administrador
+await InitializeRolesAndAdminAsync(app);
 
 // Configurar el pipeline de solicitud HTTP
 if (!app.Environment.IsDevelopment())
@@ -67,6 +57,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+app.UseMiddleware<UserActivity>();
 app.UseSession();          // Habilitar el uso de sesiones
 app.UseAuthentication();   // Habilitar autenticación
 app.UseAuthorization();    // Habilitar autorización
@@ -78,74 +69,97 @@ app.MapControllerRoute(
 
 app.Run();
 
-// Método para crear roles
-async Task CrearRoles(IServiceProvider serviceProvider)
+async Task InitializeRolesAndAdminAsync(IHost app)
 {
-    var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    string[] roles = { "Dirección", "Coordinación", "Visitante" };
-
-    foreach (var role in roles)
+    using (var scope = app.Services.CreateScope())
     {
-        if (!await roleManager.RoleExistsAsync(role))
+        var services = scope.ServiceProvider;
+
+        try
         {
-            await roleManager.CreateAsync(new IdentityRole(role));
+            // Crear roles iniciales
+            await CrearRoles(services);
+
+            // Crear usuario administrador inicial
+            await CrearUsuarioAdmin(services);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al crear los roles o usuario admin: {ex.Message}");
         }
     }
 }
 
-// Método para crear un usuario administrador
+// Método para crear roles
+async Task CrearRoles(IServiceProvider serviceProvider)
+{
+    var roleManager = serviceProvider.GetRequiredService<RoleManager<Rol>>();
+
+    var roles = new[]
+    {
+        new { Name = "Direccion", Descripcion = "Dirección de Campos Clínicos" },
+        new { Name = "SubDireccion", Descripcion = "Subdirección de Campos Clínicos" },
+        new { Name = "Coordinacion", Descripcion = "Coordinación de Campos Clínicos" },
+        new { Name = "ApoyoAcademico", Descripcion = "Apoyo Académico" }
+    };
+
+    foreach (var role in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(role.Name))
+        {
+            var identityRole = new Rol
+            {
+                Name = role.Name,
+                Descripcion = role.Descripcion // Asignar la descripción
+            };
+
+            var result = await roleManager.CreateAsync(identityRole);
+            if (!result.Succeeded)
+            {
+                throw new Exception($"Error al crear el rol {role.Name}: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+            }
+        }
+    }
+}
+
 async Task CrearUsuarioAdmin(IServiceProvider serviceProvider)
 {
-    var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
+    var userManager = serviceProvider.GetRequiredService<UserManager<Usuario>>();
+    var roleManager = serviceProvider.GetRequiredService<RoleManager<Rol>>(); // Agregado para verificar existencia de roles
     var configuration = serviceProvider.GetRequiredService<IConfiguration>();
 
-    // Puedes obtener la contraseña desde una configuración segura
+    string name = configuration["AdminUser:Name"];
     string email = configuration["AdminUser:Email"];
     string password = configuration["AdminUser:Password"];
+    string role = "Direccion";
+    string rut = configuration["AdminUser:Rut"]; // Agrega el RUT desde la configuración o un valor predeterminado
 
     if (await userManager.FindByEmailAsync(email) == null)
     {
-        var user = new IdentityUser { UserName = email, Email = email };
+        var user = new Usuario
+        {
+            UserName = name,
+            Email = email,
+            EmailConfirmed = true,
+            Rut = rut // Proporciona un valor para el RUT
+        };
+
         var result = await userManager.CreateAsync(user, password);
 
         if (result.Succeeded)
         {
-            await userManager.AddToRoleAsync(user, "Admin");
-
-            // Enviar correo de verificación
-            var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
-            var confirmationLink = $"https://localhost:5001/Account/ConfirmEmail?userId={user.Id}&token={token}";
-            EnviarCorreoVerificacion(user.Email, confirmationLink);
+            if (await roleManager.RoleExistsAsync(role))
+            {
+                await userManager.AddToRoleAsync(user, role);
+            }
+            else
+            {
+                throw new Exception($"El rol '{role}' no existe. Asegúrate de que el rol esté creado.");
+            }
         }
-    }
-}
-
-// Método para enviar el correo de verificación
-void EnviarCorreoVerificacion(string correoDestino, string linkVerificacion)
-{
-    var fromAddress = new MailAddress("tucorreo@example.com", "Gestión de Campos Clínicos");
-    var toAddress = new MailAddress(correoDestino);
-    const string fromPassword = "tupassword"; // Usa un servicio de configuración segura para almacenar contraseñas
-    const string subject = "Confirma tu correo electrónico";
-    string body = $"Por favor, confirma tu cuenta haciendo clic en el siguiente enlace: <a href='{linkVerificacion}'>Confirmar Correo</a>";
-
-    var smtp = new SmtpClient
-    {
-        Host = "smtp.example.com",
-        Port = 587,
-        EnableSsl = true,
-        DeliveryMethod = SmtpDeliveryMethod.Network,
-        UseDefaultCredentials = false,
-        Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
-    };
-
-    using (var message = new MailMessage(fromAddress, toAddress)
-    {
-        Subject = subject,
-        Body = body,
-        IsBodyHtml = true
-    })
-    {
-        smtp.Send(message);
+        else
+        {
+            throw new Exception($"Error al crear el usuario: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+        }
     }
 }

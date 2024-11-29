@@ -8,17 +8,14 @@ namespace Gestion_Del_Presupuesto.Models
     {
         [Key]
         public int Id_Historial_Actividad { get; set; }  // Clave primaria de Historial_Actividad
-
-        public DateTime Fecha { get; set; }
+        
         public string Accion { get; set; }
+        public DateTime Fecha { get; set; }
+        public string Detalles { get; set; }
 
-        // Clave foránea hacia Usuario
-        public int Id_Usuario { get; set; }
-
-        public virtual Rol Roles { get; set; }
-
-        // Propiedad de navegación hacia Usuario
-        [ForeignKey("Id_Usuario")]
-        public virtual Usuario Usuarios { get; set; }
+       // Propiedad de navegación hacia Usuario
+        [ForeignKey("UsuarioId")]
+        public int UsuarioId { get; set; }
+        public virtual Usuario Usuario { get; set; }
     }
 }

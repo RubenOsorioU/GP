@@ -1,0 +1,31 @@
+﻿@model IEnumerable<Gestion_Del_Presupuesto.Models.EncuestaModel>
+
+@{
+    ViewData["Title"] = "Listado de Encuestas";
+}
+
+<div class="container">
+    <h2>@ViewData["Title"]</h2>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Tipo</th>
+                <th>Puntuación</th>
+                <th>Comentarios</th>
+                <th>Fecha</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var encuesta in Model)
+            {
+                <tr>
+                    <td>@encuesta.Tipo</td>
+                    <td>@encuesta.Puntuacion</td>
+                    <td>@encuesta.Comentarios</td>
+                    <td>@encuesta.Fecha.ToString("dd/MM/yyyy")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

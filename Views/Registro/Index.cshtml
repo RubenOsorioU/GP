@@ -1,73 +1,54 @@
-﻿@model Gestion_Del_Presupuesto.Models.RegistroModel
-@{
-    Layout = "~/Views/Shared/_Layout.cshtml";
-}
-<html lang="es">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Registrarse - Gestión de Campos Clínicos</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-</head>
-<body>
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <h2 class="text-center">Registro de Usuario</h2>
-                <form asp-action="Register" method="post">
-                    <div class="form-group mb-3">
-                        <label asp-for="Usuarios.Rol" class="form-label">Rol</label>
-                        <select asp-for="Usuarios.Rol" class="form-control">
-                            <option value="">Seleccione un rol...</option>
-                            <option value="Direccion">Dirección</option>
-                            <option value="Coordinacion">Coordinación</option>
-                            <option value="Invitado">Invitado</option>
-                        </select>
-                        <span asp-validation-for="Usuarios.Rol" class="text-danger"></span>
-                    </div>
-                    <div class="form-group mb-3">
-                        <label asp-for="Usuarios.Nombre" class="form-label">Nombre de Usuario</label>
-                        <input asp-for="Usuarios.Nombre" class="form-control" />
-                        <span asp-validation-for="Usuarios.Nombre" class="text-danger"></span>
-                    </div>
-                    <div class="form-group mb-3">
-                        <label asp-for="Usuarios.Rut" class="form-label">Rut</label>
-                        <input asp-for="Usuarios.Rut" class="form-control" type="text" />
-                        <span asp-validation-for="Usuarios.Rut" class="text-danger"></span>
-                    </div>
-                    <div class="form-group mb-3">
-                        <label asp-for="Usuarios.Correo" class="form-label">Correo Electrónico</label>
-                        <input asp-for="Usuarios.Correo" class="form-control" type="email" />
-                        <span asp-validation-for="Usuarios.Correo" class="text-danger"></span>
-                    </div>
-                    <div class="form-group mb-3">
-                        <label asp-for="Usuarios.Telefono" class="form-label">Telefono</label>
-                        <input asp-for="Usuarios.Telefono" class="form-control" type="text" />
-                        <span asp-validation-for="Usuarios.Telefono" class="text-danger"></span>
-                    </div>
-                    <div class="form-group mb-3">
-                        <label asp-for="Usuarios.Contraseña" class="form-label">Contraseña</label>
-                        <input asp-for="Usuarios.Contraseña" class="form-control" type="password" />
-                        <span asp-validation-for="Usuarios.Contraseña" class="text-danger"></span>
-                    </div>
-                    <div class="form-group mb-3">
-                        <label asp-for="Usuarios.ConfirmarPassword" class="form-label">Confirmar Contraseña</label>
-                        <input asp-for="Usuarios.ConfirmarPassword" class="form-control" type="password" />
-                        <span asp-validation-for="Usuarios.ConfirmarPassword" class="text-danger"></span>
-                    </div>
+﻿@model Gestion_Del_Presupuesto.ViewModels.RegistroViewModel
 
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-primary">Registrarse</button>
-                    </div>
-                </form>
-                <div class="text-center mt-3">
-                    <p>¿Ya tienes una cuenta? <a href="/Login">Iniciar Sesión</a></p>
-                </div>
-            </div>
-        </div>
+
+@{
+    ViewData["Title"] = "Registro de Usuario";
+}
+
+<h1>Registro</h1>
+
+<form asp-action="Register" method="post">
+    <div class="form-group">
+        <label asp-for="UserName" class="form-label"></label>
+        <input asp-for="UserName" class="form-control" />
+        <span asp-validation-for="UserName" class="text-danger"></span>
     </div>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+    <div class="form-group mb-3">
+        <label asp-for="Rut" class="form-label">RUT</label>
+        <input asp-for="Rut" class="form-control" />
+        <span asp-validation-for="Rut" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Email" class="form-label"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="PhoneNumber" class="form-label"></label>
+        <input asp-for="PhoneNumber" class="form-control" />
+        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Password" class="form-label"></label>
+        <input asp-for="Password" class="form-control" type="password" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="ConfirmPassword" class="form-label"></label>
+        <input asp-for="ConfirmPassword" class="form-control" type="password" />
+        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Rol" class="form-label"></label>
+        <select asp-for="Rol" class="form-control">
+            <option value="">Seleccione un rol...</option>
+            <option value="Direccion">Dirección</option>
+            <option value="SubDireccion">SubDirección</option>
+            <option value="Coordinacion">Coordinación</option>
+            <option value="ApoyoAcademico">Apoyo Académico</option>
+        </select>
+        <span asp-validation-for="Rol" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Registrarse</button>
+</form>

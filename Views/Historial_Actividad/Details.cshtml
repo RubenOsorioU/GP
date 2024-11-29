@@ -1,36 +1,35 @@
 ﻿@model Gestion_Del_Presupuesto.Models.Historial_Actividad
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalles de la Actividad";
 }
 
-<h1>Details</h1>
+<h1>Detalles de la Actividad</h1>
 
 <div>
-    <h4>Historial_Actividad</h4>
+    <h4>Historial de Actividad</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Fecha)
+        <dt class="col-sm-2">
+            Fecha
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Fecha)
+        <dd class="col-sm-10">
+            @Model.Fecha.ToString("yyyy-MM-dd HH:mm:ss")
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Accion)
+        <dt class="col-sm-2">
+            Acción
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Accion)
+        <dd class="col-sm-10">
+            @Model.Accion
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Usuarios)
+        <dt class="col-sm-2">
+            Usuario
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Usuarios.Id_Usuario)
+        <dd class="col-sm-10">
+            @Model.Usuario.UserName
         </dd>
     </dl>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id_Historial_Actividad">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+<div>|
+    <a asp-action="Index">Volver al listado</a>
 </div>

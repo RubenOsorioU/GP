@@ -5,24 +5,18 @@
 namespace Gestion_Del_Presupuesto.Migrations
 {
     /// <inheritdoc />
-    public partial class RolCambio : Migration
+    public partial class UpdateRoles : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.RenameColumn(
-                name: "Nombre",
-                table: "Roles",
-                newName: "NombreRol");
+
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.RenameColumn(
-                name: "NombreRol",
-                table: "Roles",
-                newName: "Nombre");
+
         }
     }
 }

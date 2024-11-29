@@ -57,33 +57,28 @@ namespace Gestion_Del_Presupuesto.Controllers
         {
             if (!ModelState.IsValid)
             {
+                // Cargar datos de vista si el modelo no es válido
                 LoadViewData();
                 return View(convenio);
             }
 
-            // Convertir las fechas a UTC
+            // Convertir fechas a UTC
             convenio.Fecha_Inicio = DateTime.SpecifyKind(convenio.Fecha_Inicio, DateTimeKind.Utc);
 
-            if (renovacionAutomatica)
-            {
-                convenio.Fecha_Termino = DateTime.SpecifyKind(convenio.Fecha_Inicio.AddYears(1), DateTimeKind.Utc);
-            }
-            else if (convenio.Fecha_Termino.HasValue)
+            if (convenio.Fecha_Termino.HasValue)
             {
                 convenio.Fecha_Termino = DateTime.SpecifyKind(convenio.Fecha_Termino.Value, DateTimeKind.Utc);
             }
 
-            // Asignar las relaciones adecuadamente
-            if (convenio.Retribuciones != null)
+            if (renovacionAutomatica)
             {
-                foreach (var retribucion in convenio.Retribuciones)
-                {
-                    retribucion.FechaRetribucion = DateTime.SpecifyKind(retribucion.FechaRetribucion, DateTimeKind.Utc);
-                }
+                convenio.Fecha_Termino = convenio.Fecha_Inicio.AddYears(1);
             }
 
-            _context.Add(convenio);
+            // Guardar en la base de datos
+            _context.Convenios.Add(convenio);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 

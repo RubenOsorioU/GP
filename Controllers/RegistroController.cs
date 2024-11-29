@@ -4,21 +4,23 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net.Mail;
 using System.Net;
 using System.Threading.Tasks;
+using Gestion_Del_Presupuesto.ViewModels;
 
 namespace Gestion_Del_Presupuesto.Controllers
 {
     public class RegistroController : Controller
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<IdentityUser<int>> _userManager;
+        private readonly RoleManager<IdentityRole<int>> _roleManager;
 
-        // Inyección de dependencias de UserManager para gestionar usuarios
-        public RegistroController(UserManager<IdentityUser> userManager)
+        public RegistroController(UserManager<IdentityUser<int>> userManager, RoleManager<IdentityRole<int>> roleManager)
         {
             _userManager = userManager;
+            _roleManager = roleManager;
         }
 
         // GET: RegistroController
-        public ActionResult Index()
+        public IActionResult Index()
         {
             return View();
         }
@@ -26,51 +28,56 @@ namespace Gestion_Del_Presupuesto.Controllers
         // POST: RegistroController/Register
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Register(RegistroModel model)
+        public async Task<IActionResult> Register(RegistroViewModel model)
         {
             if (!ModelState.IsValid)
             {
                 return View("Index", model);
             }
 
-            // Crear un nuevo usuario con los datos del modelo
-            var user = new IdentityUser
+            // Crear el usuario
+            var user = new IdentityUser<int>
             {
-                UserName = model.Usuarios.Correo,
-                Email = model.Usuarios.Correo
+                UserName = model.UserName,
+                Email = model.Email,
+                PhoneNumber = model.PhoneNumber
             };
 
-            // Registrar al usuario
-            var result = await _userManager.CreateAsync(user, model.Usuarios.Contraseña);
+            var result = await _userManager.CreateAsync(user, model.Password);
 
             if (result.Succeeded)
             {
-                // Enviar correo de verificación
-                string token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                string link = Url.Action("ConfirmEmail", "Registro", new { userId = user.Id, token }, Request.Scheme);
-                EnviarCorreoVerificacion(model.Usuarios.Correo, link);
+                // Asignar el rol
+                if (!string.IsNullOrEmpty(model.Rol) && await _roleManager.RoleExistsAsync(model.Rol))
+                {
+                    await _userManager.AddToRoleAsync(user, model.Rol);
+                }
+
+                // Generar y enviar correo de confirmación
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                var confirmationLink = Url.Action("ConfirmEmail", "Registro", new { userId = user.Id, token }, Request.Scheme);
+                EnviarCorreoVerificacion(model.Email, confirmationLink);
 
                 return RedirectToAction("Index", "Home");
             }
 
-            // Si hubo errores, agregarlos al ModelState
+            // Manejo de errores
             foreach (var error in result.Errors)
             {
-                ModelState.AddModelError("", error.Description);
+                ModelState.AddModelError(string.Empty, error.Description);
             }
 
             return View("Index", model);
         }
 
-        // Método para confirmar el correo electrónico
-        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        public async Task<IActionResult> ConfirmEmail(int userId, string token)
         {
-            if (userId == null || token == null)
+            if (userId == 0 || string.IsNullOrEmpty(token))
             {
                 return RedirectToAction("Index", "Home");
             }
 
-            var user = await _userManager.FindByIdAsync(userId);
+            var user = await _userManager.FindByIdAsync(userId.ToString());
             if (user == null)
             {
                 return NotFound();
@@ -84,11 +91,12 @@ namespace Gestion_Del_Presupuesto.Controllers
 
             return BadRequest("Error al confirmar el correo electrónico.");
         }
+
         private void EnviarCorreoVerificacion(string correoDestino, string linkVerificacion)
         {
             var fromAddress = new MailAddress("tucorreo@example.com", "Gestión de Campos Clínicos");
             var toAddress = new MailAddress(correoDestino);
-            const string fromPassword = "tupassword"; // Usa un servicio de configuración segura para almacenar contraseñas
+            const string fromPassword = "tupassword";
             const string subject = "Confirma tu correo electrónico";
             string body = $"Por favor, confirma tu cuenta haciendo clic en el siguiente enlace: <a href='{linkVerificacion}'>Confirmar Correo</a>";
 
