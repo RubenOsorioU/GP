@@ -8,52 +8,84 @@
 
     <!-- Sección de tarjetas de dashboard -->
     <div class="row mb-4">
-        <!-- Tarjeta de Presupuesto Total -->
         <div class="col-md-3 mb-4">
             <div class="card">
                 <div class="card-body text-center">
-                    <h5 class="card-title">Presupuesto Total</h5>
-                    <p class="card-text display-6 text-success">$1,234,567</p>
-                    <small>+2.5% desde el mes pasado</small>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tarjeta de Campos Clínicos Activos -->
-        <div class="col-md-3 mb-4">
-            <div class="card">
-                <div class="card-body text-center">
-                    <h5 class="card-title">Campos Clínicos Activos</h5>
-                    <p class="card-text display-6">42</p>
+                    <h5 class="card-title">Total Convenios Activos</h5>
+                    <p class="card-text display-6">@ViewBag.TotalConvenios</p>
                     <small>En todos los departamentos</small>
                 </div>
             </div>
         </div>
 
-        <!-- Tarjeta de Aprobaciones Pendientes -->
+        <!-- Tarjeta de Convenios Activos en Santiago -->
         <div class="col-md-3 mb-4">
             <div class="card">
                 <div class="card-body text-center">
-                    <h5 class="card-title">Aprobaciones Pendientes</h5>
-                    <p class="card-text display-6 text-warning">7</p>
-                    <small>Requieren su atención</small>
+                    <h5 class="card-title">Convenios Activos en Santiago</h5>
+                    <p class="card-text display-6">@ViewBag.ConveniosSantiago</p>
+                    <small>Convenios en la sede de Santiago</small>
                 </div>
             </div>
         </div>
 
-        <!-- Tarjeta de Facturación Mensual -->
+        <!-- Tarjeta de Convenios Activos en Coquimbo -->
         <div class="col-md-3 mb-4">
             <div class="card">
                 <div class="card-body text-center">
-                    <h5 class="card-title">Facturación Mensual</h5>
-                    <p class="card-text display-6 text-danger">$98,765</p>
-                    <small>-1.2% desde el mes pasado</small>
+                    <h5 class="card-title">Convenios Activos en Coquimbo</h5>
+                    <p class="card-text display-6">@ViewBag.ConveniosCoquimbo</p>
+                    <small>Convenios en la sede de Coquimbo</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarjeta de Convenios Activos en Ambas Sedes -->
+        <div class="col-md-3 mb-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Convenios Activos en Ambas Sedes</h5>
+                    <p class="card-text display-6">@ViewBag.ConvenisAmbas</p>
+                    <small>Convenios aplicables a ambas sedes</small>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Sección de Actividad Reciente y Próximos Vencimientos -->
+
+    <div class="row">
+        <div class="col-md-3 mb-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Presupuesto Total</h5>
+                    <p class="card-text display-6 text-success">$1,234,567</p>
+                    <h5 class="card-title">Presupuesto Gastado</h5>
+                    <p class="card-text display-6 text-success">$2000</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Presupuesto Total Santiago</h5>
+                    <p class="card-text display-6 text-success">$1,234,567</p>
+                    <h5 class="card-title">Presupuesto Gastado</h5>
+                    <p class="card-text display-6 text-success">$2000</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Presupuesto Total Coquimbo</h5>
+                    <p class="card-text display-6 text-success">$1,234,567</p>
+                    <h5 class="card-title">Presupuesto Gastado</h5>
+                    <p class="card-text display-6 text-success">$2000</p>
+                </div>
+            </div>
+        </div>
+        </div>
     <div class="row">
         <div class="col-md-6">
             <h5>Actividad Reciente</h5>
@@ -91,4 +123,5 @@
             </div>
         </div>
     </div>
+   
 </div>

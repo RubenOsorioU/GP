@@ -42,6 +42,31 @@ namespace Gestion_Del_Presupuesto.Controllers
 
             return View(convenios);
         }
+        // Método para contar los convenios por sede y el total
+        public async Task<IActionResult> GetConvenioCounts()
+        {
+            var conveniosSantiago = await _context.Convenios
+                .Where(c => !c.Eliminado && c.Sede == "Santiago")
+                .CountAsync();
+
+            var conveniosCoquimbo = await _context.Convenios
+                .Where(c => !c.Eliminado && c.Sede == "Coquimbo")
+                .CountAsync();
+            var conveniosAmbas = await _context.Convenios
+               .Where(c => !c.Eliminado && c.Sede == "Ambas Sedes")
+               .CountAsync();
+
+            var totalConvenios = conveniosSantiago + conveniosCoquimbo+ conveniosAmbas;
+
+            // Retornar un objeto JSON con los conteos
+            return Json(new
+            {
+                TotalConvenios = totalConvenios,
+                ConveniosSantiago = conveniosSantiago,
+                ConveniosCoquimbo = conveniosCoquimbo,
+                ConveniosAmbas =conveniosAmbas
+            });
+        }
 
         // Método Create (GET)
         public IActionResult Create()

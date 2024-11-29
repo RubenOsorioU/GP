@@ -131,7 +131,7 @@ async Task CrearUsuarioAdmin(IServiceProvider serviceProvider)
     string name = configuration["AdminUser:Name"];
     string email = configuration["AdminUser:Email"];
     string password = configuration["AdminUser:Password"];
-    string role = "Direccion";
+    string role = "Dirección de Campos Clínicos";  // Cambiado para coincidir con el rol definido
     string rut = configuration["AdminUser:Rut"]; // Agrega el RUT desde la configuración o un valor predeterminado
 
     if (await userManager.FindByEmailAsync(email) == null)
