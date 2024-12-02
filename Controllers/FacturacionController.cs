@@ -2,115 +2,93 @@
 using Gestion_Del_Presupuesto.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
+using System.Threading.Tasks;
 
-namespace Gestion_Del_Presupuesto.Controllers
+public class FacturacionController : Controller
 {
-    public class FacturacionController : Controller
+    private readonly ApplicationDbContext _context;
+    private readonly UserManager<Usuario> _userManager;
+
+    public FacturacionController(ApplicationDbContext context, UserManager<Usuario> userManager)
     {
-        private readonly ApplicationDbContext _context;
-        private readonly UserManager<Usuario> _userManager; // Cambio para usar `Usuario` en lugar de `IdentityUser`.
-        private readonly IHttpClientFactory _clientFactory;
+        _context = context;
+        _userManager = userManager;
+    }
 
-        public FacturacionController(ApplicationDbContext context, UserManager<Usuario> userManager, IHttpClientFactory clientFactory)
+    public async Task<IActionResult> Index(int? convenioId)
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
         {
-            _context = context;
-            _userManager = userManager;
-            _clientFactory = clientFactory;
+            return RedirectToAction("Login", "Account");
         }
 
-        public async Task<IActionResult> Index()
+        var roles = await _userManager.GetRolesAsync(user);
+        var rolUsuario = roles.FirstOrDefault() ?? "Sin rol";
+
+        ViewBag.NombreUsuario = user.UserName;
+        ViewBag.EmailUsuario = user.Email;
+        ViewBag.RolUsuario = rolUsuario;
+
+        // Obtener la lista de convenios y pasarla a la vista
+        ViewBag.Convenios = await _context.Convenios.ToListAsync();
+
+        ConvenioModel convenio = null;
+        if (convenioId.HasValue)
         {
-            // Obtener el usuario autenticado
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                // Redirigir al usuario a la página de inicio de sesión si no está autenticado.
-                return RedirectToAction("Login", "Account");
-            }
-
-            // Pasar información del usuario a la vista usando ViewBag
-            ViewBag.NombreUsuario = user.UserName;
-            ViewBag.EmailUsuario = user.Email;
-            ViewBag.TelefonoUsuario = user.PhoneNumber;
-
-            // Obtener las facturaciones y calcular los valores necesarios
-            var facturaciones = await _context.Facturacion.Include(f => f.Convenios).ToListAsync();
-            var netoUF = CalcularNetoUF(facturaciones);
-            var valorUF = await ObtenerValorUFActual(DateTime.Now);
-            var totalAPagar = CalcularTotalAPagar(netoUF, valorUF);
-
-            // Pasar los valores calculados a la vista
-            ViewBag.NetoUF = netoUF;
-            ViewBag.TotalAPagar = totalAPagar;
-
-            return View(facturaciones);
+            convenio = await _context.Convenios.FirstOrDefaultAsync(c => c.Id_Convenio == convenioId.Value);
         }
 
-        // Resto del controlador se mantiene igual, ajustando el UserManager al modelo `Usuario`
-
-        // Métodos existentes como Details, Create, Edit, etc., no requieren modificaciones adicionales.
-
-        // Calcular Neto UF
-        private decimal CalcularNetoUF(List<FacturacionModel> facturaciones)
+        if (convenio != null)
         {
-            decimal netoUF = 0;
-
-            foreach (var facturacion in facturaciones)
-            {
-                var subtotal = facturacion.NumeroTiempo * facturacion.NumeroAlumnos * facturacion.ValorUFMesPractica;
-                facturacion.Subtotal = subtotal;
-                netoUF += subtotal;
-            }
-
-            return netoUF;
+            ViewBag.RazonSocial = convenio.Nombre;
+            ViewBag.RutConvenio = convenio.Rut;
+            ViewBag.DireccionConvenio = convenio.Direccion;
+            ViewBag.SedeConvenio = convenio.Sede;
+        }
+        else
+        {
+            ViewBag.RazonSocial = "Universidad Central";
+            ViewBag.RutConvenio = "70.995.200-5";
+            ViewBag.DireccionConvenio = "Lord Cochrane 417, Santiago Centro";
+            ViewBag.SedeConvenio = "Santiago Centro";
         }
 
-        // Calcular Total a Pagar
-        private decimal CalcularTotalAPagar(decimal netoUF, decimal valorUF)
+        var facturaciones = await _context.Facturacion.Include(f => f.Convenios).ToListAsync();
+        var netoUF = CalcularNetoUF(facturaciones);
+        var valorUF = await ObtenerValorUFActual(DateTime.Now);
+        var totalAPagar = CalcularTotalAPagar(netoUF, valorUF);
+
+        ViewBag.NetoUF = netoUF;
+        ViewBag.TotalAPagar = totalAPagar;
+
+        return View(facturaciones);
+    }
+
+
+    private decimal CalcularNetoUF(List<FacturacionModel> facturaciones)
+    {
+        decimal netoUF = 0;
+
+        foreach (var facturacion in facturaciones)
         {
-            return netoUF * valorUF;
+            var subtotal = facturacion.NumeroTiempo * facturacion.NumeroAlumnos * facturacion.ValorUFMesPractica;
+            facturacion.Subtotal = subtotal;
+            netoUF += subtotal;
         }
 
-        // Obtener Valor UF Actual
-        public async Task<decimal> ObtenerValorUFActual(DateTime selectedDate)
-        {
-            var valores = await ObtenerValoresUF(selectedDate, selectedDate);
-            return valores.FirstOrDefault();
-        }
+        return netoUF;
+    }
 
-        // Método para obtener valores UF desde una API
-        private async Task<List<decimal>> ObtenerValoresUF(DateTime fechaInicio, DateTime fechaFin)
-        {
-            string url = $"https://si3.bcentral.cl/SieteRestWS/SieteRestWS.ashx?user=Ruben1Ulloa@gmail.com&pass=Benchi12&function=GetSeries&timeseries=F073.UFF.PRE.Z.D&firstdate={fechaInicio:yyyy-MM-dd}&lastdate={fechaFin:yyyy-MM-dd}";
+    private decimal CalcularTotalAPagar(decimal netoUF, decimal valorUF)
+    {
+        return netoUF * valorUF;
+    }
 
-            var client = _clientFactory.CreateClient();
-            try
-            {
-                var response = await client.GetAsync(url);
-                if (response.IsSuccessStatusCode)
-                {
-                    var jsonResponse = await response.Content.ReadAsStringAsync();
-                    var indicador = JsonConvert.DeserializeObject<IndicadorEconomico>(jsonResponse);
-
-                    if (indicador?.Series?.Obs != null && indicador.Series.Obs.Any())
-                    {
-                        return indicador.Series.Obs
-                            .Select(obs => decimal.TryParse(obs.Value, out decimal value) ? value : 0)
-                            .Where(value => value != 0)
-                            .ToList();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                // Log the exception
-                Console.WriteLine($"Error al obtener valores UF: {ex.Message}");
-            }
-
-            return new List<decimal>();
-        }
+    public async Task<decimal> ObtenerValorUFActual(DateTime selectedDate)
+    {
+        // Aquí puedes usar la lógica existente para obtener el valor UF actual.
+        return 30m; // Valor UF simulado; aquí iría la llamada real a un servicio.
     }
 }

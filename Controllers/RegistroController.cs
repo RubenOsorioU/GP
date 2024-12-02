@@ -10,10 +10,10 @@ namespace Gestion_Del_Presupuesto.Controllers
 {
     public class RegistroController : Controller
     {
-        private readonly UserManager<IdentityUser<int>> _userManager;
-        private readonly RoleManager<IdentityRole<int>> _roleManager;
+        private readonly UserManager<Usuario> _userManager;
+        private readonly RoleManager<Rol> _roleManager;
 
-        public RegistroController(UserManager<IdentityUser<int>> userManager, RoleManager<IdentityRole<int>> roleManager)
+        public RegistroController(UserManager<Usuario> userManager, RoleManager<Rol> roleManager)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -36,11 +36,11 @@ namespace Gestion_Del_Presupuesto.Controllers
             }
 
             // Crear el usuario
-            var user = new IdentityUser<int>
+            var user = new Usuario
             {
                 UserName = model.UserName,
                 Email = model.Email,
-  
+                Rut = model.Rut,
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);

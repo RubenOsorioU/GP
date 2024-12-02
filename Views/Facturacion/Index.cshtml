@@ -7,28 +7,33 @@
 
 <div class="row mb-4">
     <div class="col-md-12">
+        <form method="get" class="form-inline mb-4">
+            <label for="convenioId" class="mr-2">Seleccione Convenio</label>
+            <select id="convenioId" name="convenioId" class="form-control mr-3">
+                <option value="">Seleccione un convenio</option>
+                @foreach (var convenio in ViewBag.Convenios)
+                {
+                    <option value="@convenio.Id_Convenio">@convenio.Nombre</option>
+                }
+            </select>
+        </form>
+
         <table class="table table-bordered">
             <tr>
                 <td><strong>Razón Social:</strong></td>
-                <td>Universidad Central</td>
+                <td>@ViewBag.RazonSocial</td>
                 <td><strong>Receptor de Documento:</strong></td>
                 <td>@ViewBag.NombreUsuario</td>
             </tr>
             <tr>
                 <td><strong>RUT:</strong></td>
-                <td>70.995.200-5</td>
+                <td>@ViewBag.RutConvenio</td>
                 <td><strong>Cargo:</strong></td>
-                <td>Directora de Campos Clínicos</td>
-            </tr>
-            <tr>
-                <td><strong>Giro:</strong></td>
-                <td>Educación</td>
-                <td><strong>Teléfono:</strong></td>
-                <td>@ViewBag.TelefonoUsuario</td>
+                <td>@ViewBag.RolUsuario</td>
             </tr>
             <tr>
                 <td><strong>Dirección:</strong></td>
-                <td>Lord Cochrane 417, Santiago Centro</td>
+                <td>@ViewBag.DireccionConvenio</td>
                 <td><strong>Correo Electrónico:</strong></td>
                 <td>@ViewBag.EmailUsuario</td>
             </tr>
@@ -36,11 +41,15 @@
                 <td><strong>Teléfono:</strong></td>
                 <td>02-25826000</td>
                 <td><strong>Sede:</strong></td>
-                <td>Santiago Centro</td>
+                <td>@ViewBag.SedeConvenio</td>
+            </tr>
+            <tr>
+                <td><strong>Giro:</strong></td>
             </tr>
         </table>
     </div>
 </div>
+
 
 <!-- Filtros de Facturación -->
 <div class="row mb-4">
@@ -86,7 +95,7 @@
                     <tr>
                         <td>@item.Carrera</td>
                         <td>@item.NivelFormacion</td>
-                        <td>@item.Convenios.Nombre</td>
+                        <td>@item.Convenios?.Nombre</td>
                         <td>@item.TiempoPractica</td>
                         <td>@item.NumeroTiempo</td>
                         <td>@item.NumeroAlumnos</td>
@@ -103,12 +112,13 @@
         </table>
     </div>
 </div>
+
 <!-- Resultados de Facturación -->
 <div class="row mb-2">
     <div class="col-md-2">
         <div class="card text-white bg-primary">
             <div class="card-body">
-                <h8 class="card-title">Neto UF</h8>
+                <h5 class="card-title">Neto UF</h5>
                 <p class="card-text">@ViewBag.NetoUF</p>
             </div>
         </div>
@@ -116,7 +126,7 @@
     <div class="col-md-2">
         <div class="card text-white bg-success">
             <div class="card-body">
-                <h8 class="card-title">Valor UF </h8>
+                <h5 class="card-title">Valor UF</h5>
                 <p class="card-text">@ViewBag.ValorUFPromedio</p>
             </div>
         </div>
@@ -124,7 +134,7 @@
     <div class="col-md-2">
         <div class="card text-white bg-danger">
             <div class="card-body">
-                <h8 class="card-title">Total a Pagar</h8>
+                <h5 class="card-title">Total a Pagar</h5>
                 <p class="card-text">@ViewBag.TotalAPagar</p>
             </div>
         </div>

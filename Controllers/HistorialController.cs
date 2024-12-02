@@ -4,22 +4,36 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
+using System.Linq;
+using System.Collections.Generic;
+
 [Authorize]
-public class Historial_ActividadController : Controller
+public class HistorialController : Controller
 {
     private readonly ApplicationDbContext _context;
     private readonly UserManager<Usuario> _userManager;
 
-    public Historial_ActividadController(ApplicationDbContext context, UserManager<Usuario> userManager)
+    public HistorialController(ApplicationDbContext context, UserManager<Usuario> userManager)
     {
         _context = context;
         _userManager = userManager;
     }
 
-    // GET: Historial_Actividad
+    // GET: Historial_Actividad para el usuario autenticado
     public async Task<IActionResult> Index()
     {
+        // Obtener el usuario autenticado
+        var user = await _userManager.GetUserAsync(User);
+
+        if (user == null)
+        {
+            return RedirectToAction("Login", "Account");
+        }
+
+        // Filtrar el historial del usuario autenticado
         var historial = await _context.Historial_Actividad
+            .Where(h => h.UsuarioId == user.Id) // Filtrar por el usuario actual
             .Include(h => h.Usuario)
             .OrderByDescending(h => h.Fecha)
             .ToListAsync();
