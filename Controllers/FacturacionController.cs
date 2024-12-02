@@ -3,8 +3,7 @@ using Gestion_Del_Presupuesto.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
-
+using Microsoft.AspNetCore.Mvc.Rendering;
 public class FacturacionController : Controller
 {
     private readonly ApplicationDbContext _context;
@@ -16,6 +15,7 @@ public class FacturacionController : Controller
         _userManager = userManager;
     }
 
+    // Acción para listar facturaciones
     public async Task<IActionResult> Index(int? convenioId)
     {
         var user = await _userManager.GetUserAsync(User);
@@ -66,6 +66,26 @@ public class FacturacionController : Controller
         return View(facturaciones);
     }
 
+    // Acción para crear una nueva facturación
+    public IActionResult Create()
+    {
+        ViewData["ConvenioId"] = new SelectList(_context.Convenios, "Id_Convenio", "Nombre");
+        return View();
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create(FacturacionModel facturacion)
+    {
+        if (ModelState.IsValid)
+        {
+            _context.Add(facturacion);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+        ViewData["ConvenioId"] = new SelectList(_context.Convenios, "Id_Convenio", "Nombre", facturacion.ConvenioId);
+        return View(facturacion);
+    }
 
     private decimal CalcularNetoUF(List<FacturacionModel> facturaciones)
     {

@@ -3,14 +3,13 @@
 <h1>Registrar Nueva Facturación</h1>
 
 <form asp-action="Create" method="post">
-    <!-- Datos del Convenio -->
+
     <div class="form-group">
         <label for="ConvenioId">Convenio</label>
         <select asp-for="ConvenioId" class="form-control" asp-items="ViewBag.ConvenioId"></select>
         <span asp-validation-for="ConvenioId" class="text-danger"></span>
     </div>
 
-    <!-- Datos Automáticos del Usuario -->
     <div class="form-group">
         <label for="ReceptorDocumento">Receptor de Documento</label>
         <input asp-for="ReceptorDocumento" class="form-control" value="@ViewBag.NombreUsuario" readonly />
