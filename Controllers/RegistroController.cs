@@ -40,7 +40,7 @@ namespace Gestion_Del_Presupuesto.Controllers
             {
                 UserName = model.UserName,
                 Email = model.Email,
-                PhoneNumber = model.PhoneNumber
+  
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);

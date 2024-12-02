@@ -42,8 +42,8 @@ namespace Gestion_Del_Presupuesto.Controllers
             {
                 UserName = model.UserName,
                 Email = model.Email,
-                PhoneNumber = model.PhoneNumber,
-                Rut = model.Rut // Suponiendo que tienes un campo RUT en tu ViewModel
+                Rut = model.Rut,
+                EmailConfirmed = false // Inicialmente no confirmado
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
@@ -56,13 +56,14 @@ namespace Gestion_Del_Presupuesto.Controllers
                     await _userManager.AddToRoleAsync(user, model.Rol);
                 }
 
-                // Generar el token de confirmación
+                // Generar el token de confirmación y enviar el correo de verificación
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 var confirmationLink = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, token }, Request.Scheme);
 
-                // Enviar correo
                 EnviarCorreoVerificacion(model.Email, confirmationLink);
 
+                // Redireccionar a una vista informando al usuario que debe confirmar su correo
+                ViewBag.Message = "Por favor, verifica tu correo para confirmar la cuenta.";
                 return RedirectToAction("ConfirmRegistration");
             }
 
@@ -74,21 +75,15 @@ namespace Gestion_Del_Presupuesto.Controllers
             return View(model);
         }
 
-        // GET: Confirmación del registro
-        public IActionResult ConfirmRegistration()
-        {
-            return View();
-        }
-
         // GET: Confirmar correo electrónico
-        public async Task<IActionResult> ConfirmEmail(int userId, string token)
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
         {
-            if (userId == 0 || string.IsNullOrEmpty(token))
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
             {
                 return BadRequest("Error al confirmar el correo electrónico.");
             }
 
-            var user = await _userManager.FindByIdAsync(userId.ToString());
+            var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
                 return NotFound($"No se encontró el usuario con el ID '{userId}'.");
@@ -119,14 +114,38 @@ namespace Gestion_Del_Presupuesto.Controllers
                 return View(model);
             }
 
-            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.Recordarme, lockoutOnFailure: false);
+            // Intentar encontrar al usuario por email
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                ModelState.AddModelError(string.Empty, "Inicio de sesión inválido.");
+                return View(model);
+            }
+
+            // Verificar si el correo está confirmado
+            if (!user.EmailConfirmed)
+            {
+                ModelState.AddModelError(string.Empty, "Por favor, confirma tu correo electrónico antes de iniciar sesión.");
+                return View(model);
+            }
+
+            // Intentar iniciar sesión con el UserName
+            var result = await _signInManager.PasswordSignInAsync(user.UserName, model.Password, model.Recordarme, lockoutOnFailure: false);
 
             if (result.Succeeded)
             {
                 return RedirectToAction("Index", "Home");
             }
 
-            ModelState.AddModelError(string.Empty, "Inicio de sesión inválido.");
+            if (result.IsLockedOut)
+            {
+                ModelState.AddModelError(string.Empty, "La cuenta está bloqueada. Intenta más tarde.");
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Inicio de sesión inválido.");
+            }
+
             return View(model);
         }
 
@@ -137,45 +156,6 @@ namespace Gestion_Del_Presupuesto.Controllers
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
-        }
-
-        // GET: Cambiar contraseña
-        [HttpGet]
-        public IActionResult ChangePassword()
-        {
-            return View();
-        }
-
-        // POST: Cambiar contraseña
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                return RedirectToAction("Login", "Account");
-            }
-
-            var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
-            if (result.Succeeded)
-            {
-                await _signInManager.RefreshSignInAsync(user);
-                ViewBag.Message = "La contraseña ha sido cambiada exitosamente.";
-                return View();
-            }
-
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError(string.Empty, error.Description);
-            }
-
-            return View(model);
         }
 
         // Método para enviar el correo de verificación

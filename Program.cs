@@ -16,36 +16,49 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Configurar Identity con soporte para roles usando los modelos `Usuario` y `Rol`
 builder.Services.AddIdentity<Usuario, Rol>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddDefaultTokenProviders();  // Esto es necesario para manejar la verificación de correos, restablecer contraseñas, etc.
+    .AddDefaultTokenProviders();
+
+// Configurar opciones de contraseña para Identity
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequiredLength = 8;
+});
 
 // Configurar autenticación por cookies
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.LoginPath = "/Account/Login"; // Página de inicio de sesión
-    options.AccessDeniedPath = "/Home/AccessDenied"; // Página de acceso denegado
+    options.LoginPath = "/Account/Login";
+    options.AccessDeniedPath = "/Home/AccessDenied";
 });
 
 // Configurar autorización
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Direccion")); // Política para Dirección
-    options.AddPolicy("UserOnly", policy => policy.RequireRole("User"));   // Política para User
+    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Direccion"));
+    options.AddPolicy("UserOnly", policy => policy.RequireRole("User"));
 });
+
+// Registrar IHttpClientFactory
+builder.Services.AddHttpClient(); // Necesario para HttpClient en FacturacionController
 
 // Agregar servicios para controladores y vistas
 builder.Services.AddControllersWithViews();
-builder.Services.AddDistributedMemoryCache();  // Necesario para las sesiones
+builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(30);  // Tiempo de inactividad
-    options.Cookie.HttpOnly = true;                 // Seguridad
-    options.Cookie.IsEssential = true;              // Cumplir con GDPR si es necesario
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
 });
 
 var app = builder.Build();
 
-// Inicializar roles y usuario administrador
-await InitializeRolesAndAdminAsync(app);
+// Inicializar roles y usuarios
+await InitializeRolesAndUsersAsync(app);
 
 // Configurar el pipeline de solicitud HTTP
 if (!app.Environment.IsDevelopment())
@@ -58,9 +71,9 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseMiddleware<UserActivity>();
-app.UseSession();          // Habilitar el uso de sesiones
-app.UseAuthentication();   // Habilitar autenticación
-app.UseAuthorization();    // Habilitar autorización
+app.UseSession();
+app.UseAuthentication();
+app.UseAuthorization();
 
 // Configurar las rutas predeterminadas de la aplicación
 app.MapControllerRoute(
@@ -69,7 +82,8 @@ app.MapControllerRoute(
 
 app.Run();
 
-async Task InitializeRolesAndAdminAsync(IHost app)
+// Método para inicializar roles y usuarios
+async Task InitializeRolesAndUsersAsync(IHost app)
 {
     using (var scope = app.Services.CreateScope())
     {
@@ -82,15 +96,18 @@ async Task InitializeRolesAndAdminAsync(IHost app)
 
             // Crear usuario administrador inicial
             await CrearUsuarioAdmin(services);
+
+            // Crear usuarios adicionales
+            await CrearOtrosUsuarios(services);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error al crear los roles o usuario admin: {ex.Message}");
+            Console.WriteLine($"Error al crear los roles o usuarios: {ex.Message}");
         }
     }
 }
 
-// Método para crear roles
+// Método para crear roles iniciales
 async Task CrearRoles(IServiceProvider serviceProvider)
 {
     var roleManager = serviceProvider.GetRequiredService<RoleManager<Rol>>();
@@ -110,7 +127,7 @@ async Task CrearRoles(IServiceProvider serviceProvider)
             var identityRole = new Rol
             {
                 Name = role.Name,
-                Descripcion = role.Descripcion // Asignar la descripción
+                Descripcion = role.Descripcion
             };
 
             var result = await roleManager.CreateAsync(identityRole);
@@ -122,17 +139,18 @@ async Task CrearRoles(IServiceProvider serviceProvider)
     }
 }
 
+// Método para crear el usuario administrador
 async Task CrearUsuarioAdmin(IServiceProvider serviceProvider)
 {
     var userManager = serviceProvider.GetRequiredService<UserManager<Usuario>>();
-    var roleManager = serviceProvider.GetRequiredService<RoleManager<Rol>>(); // Agregado para verificar existencia de roles
+    var roleManager = serviceProvider.GetRequiredService<RoleManager<Rol>>();
     var configuration = serviceProvider.GetRequiredService<IConfiguration>();
 
     string name = configuration["AdminUser:Name"];
     string email = configuration["AdminUser:Email"];
-    string password = configuration["AdminUser:Password"];
-    string role = "Dirección de Campos Clínicos";  // Cambiado para coincidir con el rol definido
-    string rut = configuration["AdminUser:Rut"]; // Agrega el RUT desde la configuración o un valor predeterminado
+    string password = Environment.GetEnvironmentVariable("AdminUserPassword") ?? "Password123!";
+    string role = "Direccion";
+    string rut = configuration["AdminUser:Rut"];
 
     if (await userManager.FindByEmailAsync(email) == null)
     {
@@ -141,7 +159,7 @@ async Task CrearUsuarioAdmin(IServiceProvider serviceProvider)
             UserName = name,
             Email = email,
             EmailConfirmed = true,
-            Rut = rut // Proporciona un valor para el RUT
+            Rut = rut
         };
 
         var result = await userManager.CreateAsync(user, password);
@@ -160,6 +178,49 @@ async Task CrearUsuarioAdmin(IServiceProvider serviceProvider)
         else
         {
             throw new Exception($"Error al crear el usuario: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+        }
+    }
+}
+
+// Método para crear otros usuarios
+async Task CrearOtrosUsuarios(IServiceProvider serviceProvider)
+{
+    var userManager = serviceProvider.GetRequiredService<UserManager<Usuario>>();
+    var roleManager = serviceProvider.GetRequiredService<RoleManager<Rol>>();
+    var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+
+    var usuarios = configuration.GetSection("Users").Get<List<dynamic>>();
+
+    foreach (var usuario in usuarios)
+    {
+        if (await userManager.FindByEmailAsync(usuario.Email) == null)
+        {
+            var user = new Usuario
+            {
+                UserName = usuario.UserName,
+                Email = usuario.Email,
+                EmailConfirmed = true,
+                Rut = usuario.Rut
+            };
+
+            var password = Environment.GetEnvironmentVariable("UserPassword") ?? "Password123!";
+            var result = await userManager.CreateAsync(user, password);
+
+            if (result.Succeeded)
+            {
+                if (await roleManager.RoleExistsAsync(usuario.Role))
+                {
+                    await userManager.AddToRoleAsync(user, usuario.Role);
+                }
+                else
+                {
+                    throw new Exception($"El rol '{usuario.Role}' no existe. Asegúrate de que el rol esté creado.");
+                }
+            }
+            else
+            {
+                throw new Exception($"Error al crear el usuario {usuario.UserName}: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+            }
         }
     }
 }

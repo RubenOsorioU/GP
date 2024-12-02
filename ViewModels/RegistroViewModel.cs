@@ -14,10 +14,6 @@ namespace Gestion_Del_Presupuesto.ViewModels
         [Display(Name = "Correo Electrónico")]
         public string Email { get; set; }
 
-        [Phone]
-        [Display(Name = "Teléfono")]
-        public string PhoneNumber { get; set; }
-
         [Required]
         [DataType(DataType.Password)]
         public string Password { get; set; }

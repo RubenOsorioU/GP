@@ -6,8 +6,10 @@ namespace Gestion_Del_Presupuesto.Models
 {
     public class Usuario : IdentityUser<int>
     {
-        [Required]
-        public string Rut { get; set; } // Si es necesario, puedes conservar este campo
+        [Required(ErrorMessage = "El RUT es requerido")]
+        [RegularExpression(@"^\d{1,2}\.\d{3}\.\d{3}[-][0-9kK]{1}$", ErrorMessage = "El formato del RUT no es válido")]
+        public string Rut { get; set; }// Si es necesario, puedes conservar este campo
+
         public virtual ICollection<Historial_Actividad> Historial_Actividades { get; set; } // Relación con Historial_Actividad
     }
 }
