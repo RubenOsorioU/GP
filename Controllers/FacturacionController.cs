@@ -55,7 +55,7 @@ public class FacturacionController : Controller
             ViewBag.SedeConvenio = "Santiago Centro";
         }
 
-        var facturaciones = await _context.Facturacion.Include(f => f.Convenios).ToListAsync();
+        var facturaciones = await _context.Facturacion.Include(f => f.Convenios).Where(f => !f.Eliminado).ToListAsync();
         var netoUF = CalcularNetoUF(facturaciones);
         var valorUF = await ObtenerValorUFActual(DateTime.Now);
         var totalAPagar = CalcularTotalAPagar(netoUF, valorUF);
@@ -87,6 +87,57 @@ public class FacturacionController : Controller
         return View(facturacion);
     }
 
+    // Método para mover una facturación a la papelera
+    [HttpPost]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var facturacion = await _context.Facturacion.FindAsync(id);
+        if (facturacion != null)
+        {
+            facturacion.Eliminado = true; // Marcar la facturación como eliminada
+            _context.Update(facturacion);
+            await _context.SaveChangesAsync();
+        }
+
+        return RedirectToAction(nameof(Index));
+    }
+
+    // Método para mostrar la papelera de facturaciones
+    public async Task<IActionResult> Papelera()
+    {
+        var facturacionesEliminadas = await _context.Facturacion.Where(f => f.Eliminado).ToListAsync();
+        return View(facturacionesEliminadas);
+    }
+
+    // Método para restaurar una facturación desde la papelera
+    [HttpPost]
+    public async Task<IActionResult> Restore(int id)
+    {
+        var facturacion = await _context.Facturacion.FindAsync(id);
+        if (facturacion != null)
+        {
+            facturacion.Eliminado = false; // Restaurar la facturación
+            _context.Update(facturacion);
+            await _context.SaveChangesAsync();
+        }
+
+        return RedirectToAction(nameof(Papelera));
+    }
+
+    // Método para eliminar permanentemente una facturación
+    [HttpPost]
+    public async Task<IActionResult> DeletePermanent(int id)
+    {
+        var facturacion = await _context.Facturacion.FindAsync(id);
+        if (facturacion != null)
+        {
+            _context.Facturacion.Remove(facturacion); // Eliminar permanentemente
+            await _context.SaveChangesAsync();
+        }
+
+        return RedirectToAction(nameof(Papelera));
+    }
+
     private decimal CalcularNetoUF(List<FacturacionModel> facturaciones)
     {
         decimal netoUF = 0;
@@ -110,5 +161,10 @@ public class FacturacionController : Controller
     {
         // Aquí puedes usar la lógica existente para obtener el valor UF actual.
         return 30m; // Valor UF simulado; aquí iría la llamada real a un servicio.
+    }
+
+    public IActionResult RegistroHistoricoFacturacion()
+    {
+        return View();
     }
 }

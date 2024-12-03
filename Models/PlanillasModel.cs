@@ -21,13 +21,10 @@ namespace Gestion_Del_Presupuesto.Models
         public DateTime Año { get; set; }
         public string Observaciones { get; set; }
 
-        // Relación con Estudiante
-        public int Id_Estudiante { get; set; }
-        public virtual Estudiante Estudiante { get; set; }
-
-        // Relación con Carrera
+       // Relación con Carrera
         public int CarreraId { get; set; }
         public virtual CarreraModel Carrera { get; set; }
+        public bool Eliminado { get; set; }
 
         // Relación con Facturación
         public int FacturacionId { get; set; }
@@ -39,6 +36,7 @@ namespace Gestion_Del_Presupuesto.Models
         // Relación con Indicador Económico (ejemplo: valor UF)
         public int Id_IndicadorEco { get; set; }
         public virtual IndicadorEconomico Indicador { get; set; }
+        public ICollection<EstudiantePlanillaModel> EstudiantePlanillas { get; set; }
     }
 
 }

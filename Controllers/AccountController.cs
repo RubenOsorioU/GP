@@ -29,6 +29,7 @@ namespace Gestion_Del_Presupuesto.Controllers
         }
 
         // POST: Registro de usuario
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegistroViewModel model)
@@ -43,7 +44,7 @@ namespace Gestion_Del_Presupuesto.Controllers
                 UserName = model.UserName,
                 Email = model.Email,
                 Rut = model.Rut,
-                EmailConfirmed = false // Inicialmente no confirmado
+                EmailConfirmed = true // Inicialmente no confirmado
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
@@ -62,18 +63,23 @@ namespace Gestion_Del_Presupuesto.Controllers
 
                 EnviarCorreoVerificacion(model.Email, confirmationLink);
 
-                // Redireccionar a una vista informando al usuario que debe confirmar su correo
-                ViewBag.Message = "Por favor, verifica tu correo para confirmar la cuenta.";
-                return RedirectToAction("ConfirmRegistration");
+                // Mensaje de éxito para el usuario
+                TempData["SuccessMessage"] = "Registro exitoso. Por favor, verifica tu correo para confirmar la cuenta.";
+                return RedirectToAction("Register");
             }
 
+            // Manejo de errores
             foreach (var error in result.Errors)
             {
                 ModelState.AddModelError(string.Empty, error.Description);
             }
 
+            // Si hay errores, agregar un mensaje de error
+            TempData["ErrorMessage"] = "Hubo un problema durante el registro. Por favor, revise los errores e intente nuevamente.";
             return View(model);
         }
+
+
 
         // GET: Confirmar correo electrónico
         public async Task<IActionResult> ConfirmEmail(string userId, string token)
@@ -149,6 +155,12 @@ namespace Gestion_Del_Presupuesto.Controllers
             return View(model);
         }
 
+        public IActionResult ConfirmRegistration()
+
+        {
+            return View();
+        }
+
         // POST: Cerrar sesión
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -169,12 +181,12 @@ namespace Gestion_Del_Presupuesto.Controllers
 
             var smtp = new SmtpClient
             {
-                Host = "smtp.example.com",
+                Host = "smtp.gmail.com",  // Cambia esto a tu servidor SMTP
                 Port = 587,
                 EnableSsl = true,
                 DeliveryMethod = SmtpDeliveryMethod.Network,
                 UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
+                Credentials = new NetworkCredential("ruben1ulloa@gmail.com","skpyzmjamikybzxa")
             };
 
             using var message = new MailMessage(fromAddress, toAddress)
@@ -185,6 +197,7 @@ namespace Gestion_Del_Presupuesto.Controllers
             };
             smtp.Send(message);
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
@@ -215,6 +228,5 @@ namespace Gestion_Del_Presupuesto.Controllers
 
             return View(model);
         }
-
     }
 }

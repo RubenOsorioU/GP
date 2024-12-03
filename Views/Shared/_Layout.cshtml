@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body class="page-container">
-    <!-- Header -->
     <header class="header-container">
         <nav class="navbar navbar-expand-lg navbar-dark">
             <button class="btn btn-dark me-2" id="menu-toggle">
@@ -28,8 +27,6 @@
                         var user = await UserManager.GetUserAsync(User);
                         var roles = user != null ? await UserManager.GetRolesAsync(user) : new List<string>();
                         var rolUsuario = roles.FirstOrDefault() ?? "Sin rol";
-
-                        <!-- Mostrar nombre de usuario y rol si está autenticado -->
                         <li class="nav-item d-flex align-items-center">
                             <span class="navbar-text text-white me-3">@User.Identity.Name - (@rolUsuario)</span>
                         </li>
@@ -44,7 +41,6 @@
                     }
                     else
                     {
-                        <!-- Opciones para iniciar sesión, registrarse o cambiar contraseña si no está autenticado -->
                         <li class="nav-item">
                             <a class="nav-link text-white" asp-controller="Account" asp-action="Register">Registrarse</a>
                         </li>
@@ -59,7 +55,6 @@
             </div>
         </nav>
     </header>
-    <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <span class="close-btn text-black" id="close-btn">&times;</span>
         <div class="logo-container text-center py-1" style="margin-top: 15px;">
@@ -85,7 +80,7 @@
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item" asp-controller="Planillas" asp-action="Index">Listado De Estudiantes</a></li>
                     <li><a class="dropdown-item" asp-controller="Planillas" asp-action="Upload">Subir Planilla De Estudiantes</a></li>
-                    <li><a class="dropdown-item" asp-controller="Planillas" asp-action="Upload">Registro Histórico De Estudiantes</a></li>
+                    <li><a class="dropdown-item" asp-controller="Planillas" asp-action="RegistroHistoricoEstudiantes">Registro Histórico De Estudiantes</a></li>
                 </ul>
             </li>
             <li class="nav-item dropdown">
@@ -93,7 +88,8 @@
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item" asp-controller="Facturacion" asp-action="Index">Documentos de Facturación</a></li>
                     <li><a class="dropdown-item" asp-controller="Facturacion" asp-action="Create">Registrar Factura</a></li>
-                    <li><a class="dropdown-item" asp-controller="Facturacion" asp-action="Index">Registro Histórico De Facturaciones</a></li>
+                    <li><a class="dropdown-item" asp-controller="Facturacion" asp-action="RegistroHistoricoFacturacion">Registro Histórico De Facturaciones</a></li>
+
                 </ul>
             </li>
             <li class="nav-item dropdown">
@@ -120,19 +116,14 @@
             </li>
         </ul>
     </div>
-    <!-- Contenido Principal -->
     <main class="content-container" id="main-content">
         <div class="container-fluid mt-4">
             @RenderBody()
         </div>
     </main>
-
-    <!-- Footer -->
     <footer class="footer-container">
         <p>&copy; 2024 - Gestión de Campos Clínicos Universidad Central</p>
     </footer>
-
-    <!-- Scripts -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script>

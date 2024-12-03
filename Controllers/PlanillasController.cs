@@ -9,7 +9,6 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using CsvHelper;
 using System.Globalization;
-using Microsoft.CodeAnalysis.Elfie.Serialization;
 
 namespace Gestion_Del_Presupuesto.Controllers
 {
@@ -25,7 +24,10 @@ namespace Gestion_Del_Presupuesto.Controllers
         // GET: Planillas
         public async Task<IActionResult> Index(string asignatura, string institucion, string carrera, string nombre, string rut)
         {
-            var planillasQuery = _context.Planillas.Include(p => p.Estudiante).AsQueryable();
+            var planillasQuery = _context.Planillas
+                .Include(p => p.EstudiantePlanillas)
+                .ThenInclude(ep => ep.Estudiante)
+                .AsQueryable();
 
             // Aplicar filtros
             if (!string.IsNullOrWhiteSpace(asignatura))
@@ -50,13 +52,13 @@ namespace Gestion_Del_Presupuesto.Controllers
 
             if (!string.IsNullOrWhiteSpace(rut))
             {
-                planillasQuery = planillasQuery.Where(p => p.Rut.ToString().Contains(rut));
+                planillasQuery = planillasQuery
+                    .Where(p => p.EstudiantePlanillas.Any(ep => ep.Estudiante.Rut_Estudiante.Contains(rut)));
             }
 
             var planillas = await planillasQuery.ToListAsync();
             return View(planillas);
         }
-
 
         // GET: Planillas/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -66,13 +68,22 @@ namespace Gestion_Del_Presupuesto.Controllers
                 return NotFound();
             }
 
-            var planilla = await _context.Planillas.Include(p => p.Estudiante).FirstOrDefaultAsync(m => m.Id_Planillas == id);
+            var planilla = await _context.Planillas
+                .Include(p => p.EstudiantePlanillas)
+                .ThenInclude(ep => ep.Estudiante)
+                .FirstOrDefaultAsync(m => m.Id_Planillas == id);
+
             if (planilla == null)
             {
                 return NotFound();
             }
 
             return View(planilla);
+        }
+
+        public IActionResult RegistroHistoricoEstudiantes()
+        {
+            return View();
         }
 
         // GET: Planillas/Create
@@ -84,7 +95,7 @@ namespace Gestion_Del_Presupuesto.Controllers
         // POST: Planillas/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id_Planillas,Nombre_Planilla,Rut,Fecha_Inicio,Fecha_Termino,Institución,CuantasSemanas,ValorUfContrato,TotalCosto,Id_Estudiante")] PlanillasModel planilla)
+        public async Task<IActionResult> Create([Bind("Id_Planillas,Nombre_Planilla,Rut,Fecha_Inicio,Fecha_Termino,Institución,CuantasSemanas,ValorUfContrato,TotalCosto")] PlanillasModel planilla)
         {
             if (ModelState.IsValid)
             {
@@ -103,7 +114,11 @@ namespace Gestion_Del_Presupuesto.Controllers
                 return NotFound();
             }
 
-            var planilla = await _context.Planillas.Include(p => p.Estudiante).FirstOrDefaultAsync(p => p.Id_Planillas == id);
+            var planilla = await _context.Planillas
+                .Include(p => p.EstudiantePlanillas)
+                .ThenInclude(ep => ep.Estudiante)
+                .FirstOrDefaultAsync(p => p.Id_Planillas == id);
+
             if (planilla == null)
             {
                 return NotFound();
@@ -114,7 +129,7 @@ namespace Gestion_Del_Presupuesto.Controllers
         // POST: Planillas/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id_Planillas,Nombre_Planilla,Rut,Fecha_Inicio,Fecha_Termino,Institución,CuantasSemanas,ValorUfContrato,TotalCosto,Id_Estudiante")] PlanillasModel planilla)
+        public async Task<IActionResult> Edit(int id, [Bind("Id_Planillas,Nombre_Planilla,Rut,Fecha_Inicio,Fecha_Termino,Institución,CuantasSemanas,ValorUfContrato,TotalCosto")] PlanillasModel planilla)
         {
             if (id != planilla.Id_Planillas)
             {
@@ -152,7 +167,11 @@ namespace Gestion_Del_Presupuesto.Controllers
                 return NotFound();
             }
 
-            var planilla = await _context.Planillas.Include(p => p.Estudiante).FirstOrDefaultAsync(m => m.Id_Planillas == id);
+            var planilla = await _context.Planillas
+                .Include(p => p.EstudiantePlanillas)
+                .ThenInclude(ep => ep.Estudiante)
+                .FirstOrDefaultAsync(m => m.Id_Planillas == id);
+
             if (planilla == null)
             {
                 return NotFound();
@@ -209,7 +228,7 @@ namespace Gestion_Del_Presupuesto.Controllers
 
             // Lógica para leer el archivo CSV y agregar los datos a la base de datos
             using (var reader = new StreamReader(filePath))
-            using (var csv = new CsvHelper.CsvReader(reader, CultureInfo.InvariantCulture))
+            using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
             {
                 try
                 {

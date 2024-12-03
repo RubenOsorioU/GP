@@ -20,7 +20,7 @@ namespace Gestion_Del_Presupuesto.Models
         public int Id_Convenio { get; set; }
         public virtual ConvenioModel Convenio { get; set; }
 
-        // Relación con Planilla
-        public virtual PlanillasModel Planilla { get; set; }
+
+        public ICollection<EstudiantePlanillaModel> EstudiantePlanillas { get; set; }
     }
 }

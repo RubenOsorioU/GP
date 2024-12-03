@@ -29,7 +29,7 @@ namespace Gestion_Del_Presupuesto.Data
         public DbSet<SeriesData> SerieDatas { get; set; }
         public DbSet<ObsData> ObsDatas { get; set; }
         public DbSet<EncuestaModel> Encuesta { get; set; }
-
+        public DbSet<EstudiantePlanillaModel> EstudiantePlanillas { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder); // Necesario para Identity
@@ -42,11 +42,18 @@ namespace Gestion_Del_Presupuesto.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             // Relación Estudiante → Planilla
-            modelBuilder.Entity<Estudiante>()
-                .HasOne(e => e.Planilla)
-                .WithOne(p => p.Estudiante)
-                .HasForeignKey<PlanillasModel>(p => p.Id_Estudiante)
-                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<EstudiantePlanillaModel>()
+                    .HasKey(ep => new { ep.EstudianteId, ep.PlanillaId });
+
+            modelBuilder.Entity<EstudiantePlanillaModel>()
+                .HasOne(ep => ep.Estudiante)
+                .WithMany(e => e.EstudiantePlanillas)
+                .HasForeignKey(ep => ep.EstudianteId);
+
+            modelBuilder.Entity<EstudiantePlanillaModel>()
+                .HasOne(ep => ep.Planilla)
+                .WithMany(p => p.EstudiantePlanillas)
+                .HasForeignKey(ep => ep.PlanillaId);
 
             // Relación Estudiante → Carrera
             modelBuilder.Entity<Estudiante>()

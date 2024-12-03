@@ -101,8 +101,8 @@ namespace Gestion_Del_Presupuesto.Controllers
             }
 
             // Guardar en la base de datos
-            _context.Convenios.Add(convenio);
-            await _context.SaveChangesAsync();
+            this._context.Convenios.Add(convenio);
+            await this._context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
         }
@@ -115,7 +115,7 @@ namespace Gestion_Del_Presupuesto.Controllers
                 return NotFound();
             }
 
-            var convenio = await _context.Convenios
+            var convenio = await this._context.Convenios
                 .Include(c => c.CentrosDeSalud)
                 .Include(c => c.Retribuciones)
                 .FirstOrDefaultAsync(m => m.Id_Convenio == id);
@@ -263,7 +263,7 @@ namespace Gestion_Del_Presupuesto.Controllers
 
             try
             {
-                await _context.SaveChangesAsync();
+                await this._context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             catch (DbUpdateConcurrencyException)
@@ -276,7 +276,7 @@ namespace Gestion_Del_Presupuesto.Controllers
 
         public async Task<IActionResult> Papelera()
         {
-            var convenios = await _context.Convenios.Where(c => c.Eliminado).ToListAsync();
+            var convenios = await this._context.Convenios.Where(c => c.Eliminado).ToListAsync();
             return View(convenios);
         }
 
@@ -300,33 +300,33 @@ namespace Gestion_Del_Presupuesto.Controllers
             }
 
             // Buscar y eliminar el convenio
-            var convenio = await _context.Convenios.FindAsync(id);
+            var convenio = await this._context.Convenios.FindAsync(id);
             if (convenio != null)
             {
                 convenio.Eliminado = true; // Marca el convenio como eliminado
-                _context.Update(convenio);
-                await _context.SaveChangesAsync();
+                this._context.Update(convenio);
+                await this._context.SaveChangesAsync();
             }
 
-            return RedirectToAction(nameof(Index));
+            return this.RedirectToAction(nameof(this.Index));
         }
 
         public async Task<IActionResult> Restore(int id)
         {
-            var convenio = await _context.Convenios.FindAsync(id);
+            var convenio = await this._context.Convenios.FindAsync(id);
             if (convenio != null)
             {
                 convenio.Eliminado = false;
-                _context.Update(convenio);
-                await _context.SaveChangesAsync();
+                this._context.Update(convenio);
+                await this._context.SaveChangesAsync();
             }
-            return RedirectToAction(nameof(Papelera));
+            return this.RedirectToAction(nameof(Papelera));
         }
 
         // Método para verificar si un convenio existe
         private bool ConvenioExists(int id)
         {
-            return _context.Convenios.Any(e => e.Id_Convenio == id);
+            return this._context.Convenios.Any(e => e.Id_Convenio == id);
         }
 
         // Método auxiliar para cargar datos en ViewBag
@@ -341,10 +341,10 @@ namespace Gestion_Del_Presupuesto.Controllers
                 "Capacitación",
                 "Obras Menores",
                 "Obras Mayores",
-                "Otros Gastos x retribución"
+                "Otros Gastos x retribución",
             };
-
         }
+
         [HttpGet]
         public async Task<IActionResult> DeletePermanent(int id)
         {
@@ -480,7 +480,5 @@ namespace Gestion_Del_Presupuesto.Controllers
                 return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Convenios.xlsx");
             }
         }
-
-
     }
 }

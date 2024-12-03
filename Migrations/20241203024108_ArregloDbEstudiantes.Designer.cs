@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gestion_Del_Presupuesto.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241128234458_AddDescripcionToRoles")]
-    partial class AddDescripcionToRoles
+    [Migration("20241203024108_ArregloDbEstudiantes")]
+    partial class ArregloDbEstudiantes
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -327,6 +327,21 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.ToTable("Estudiantes");
                 });
 
+            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.EstudiantePlanillaModel", b =>
+                {
+                    b.Property<int>("EstudianteId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PlanillaId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("EstudianteId", "PlanillaId");
+
+                    b.HasIndex("PlanillaId");
+
+                    b.ToTable("EstudiantePlanillas");
+                });
+
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.FacturacionModel", b =>
                 {
                     b.Property<int>("Id_Facturacion")
@@ -632,9 +647,6 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.Property<DateTime>("Fecha_Termino")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("Id_Estudiante")
-                        .HasColumnType("integer");
-
                     b.Property<int>("Id_IndicadorEco")
                         .HasColumnType("integer");
 
@@ -661,9 +673,6 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.HasIndex("DevengadoId_Devengado");
 
                     b.HasIndex("FacturacionId");
-
-                    b.HasIndex("Id_Estudiante")
-                        .IsUnique();
 
                     b.HasIndex("Id_IndicadorEco");
 
@@ -957,9 +966,6 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("text");
 
-                    b.Property<int>("ConveniosId_Convenio")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
@@ -1008,8 +1014,6 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ConveniosId_Convenio");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -1189,6 +1193,25 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.Navigation("Convenio");
                 });
 
+            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.EstudiantePlanillaModel", b =>
+                {
+                    b.HasOne("Gestion_Del_Presupuesto.Models.Estudiante", "Estudiante")
+                        .WithMany("EstudiantePlanillas")
+                        .HasForeignKey("EstudianteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gestion_Del_Presupuesto.Models.PlanillasModel", "Planilla")
+                        .WithMany("EstudiantePlanillas")
+                        .HasForeignKey("PlanillaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Estudiante");
+
+                    b.Navigation("Planilla");
+                });
+
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.FacturacionModel", b =>
                 {
                     b.HasOne("Gestion_Del_Presupuesto.Models.CarreraModel", "Carreras")
@@ -1286,12 +1309,6 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Gestion_Del_Presupuesto.Models.Estudiante", "Estudiante")
-                        .WithOne("Planilla")
-                        .HasForeignKey("Gestion_Del_Presupuesto.Models.PlanillasModel", "Id_Estudiante")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Gestion_Del_Presupuesto.Models.IndicadorEconomico", "Indicador")
                         .WithMany()
                         .HasForeignKey("Id_IndicadorEco")
@@ -1301,8 +1318,6 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.Navigation("Carrera");
 
                     b.Navigation("Devengado");
-
-                    b.Navigation("Estudiante");
 
                     b.Navigation("Facturacion");
 
@@ -1348,17 +1363,9 @@ namespace Gestion_Del_Presupuesto.Migrations
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Usuario", b =>
                 {
-                    b.HasOne("Gestion_Del_Presupuesto.Models.ConvenioModel", "Convenios")
-                        .WithMany()
-                        .HasForeignKey("ConveniosId_Convenio")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Gestion_Del_Presupuesto.Models.Rol", null)
                         .WithMany("Usuarios")
                         .HasForeignKey("RolId");
-
-                    b.Navigation("Convenios");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -1439,8 +1446,7 @@ namespace Gestion_Del_Presupuesto.Migrations
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Estudiante", b =>
                 {
-                    b.Navigation("Planilla")
-                        .IsRequired();
+                    b.Navigation("EstudiantePlanillas");
                 });
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.FacturacionModel", b =>
@@ -1451,6 +1457,11 @@ namespace Gestion_Del_Presupuesto.Migrations
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Institucion_Salud", b =>
                 {
                     b.Navigation("Convenios");
+                });
+
+            modelBuilder.Entity("Gestion_Del_Presupuesto.Models.PlanillasModel", b =>
+                {
+                    b.Navigation("EstudiantePlanillas");
                 });
 
             modelBuilder.Entity("Gestion_Del_Presupuesto.Models.Rol", b =>

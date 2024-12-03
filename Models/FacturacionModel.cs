@@ -88,6 +88,7 @@ namespace Gestion_Del_Presupuesto.Models
         public decimal NetoUF { get; set; }
 
         public decimal TotalaPagar { get; set; }
+        public bool Eliminado { get; set; }
 
 
         [ForeignKey("ConvenioModel")]
