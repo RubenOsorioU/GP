@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Mail;
 using Gestion_Del_Presupuesto.Models;
 using Gestion_Del_Presupuesto.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Gestion_Del_Presupuesto.Controllers
 {
@@ -186,7 +187,7 @@ namespace Gestion_Del_Presupuesto.Controllers
                 EnableSsl = true,
                 DeliveryMethod = SmtpDeliveryMethod.Network,
                 UseDefaultCredentials = false,
-                Credentials = new NetworkCredential("ruben1ulloa@gmail.com","skpyzmjamikybzxa")
+                Credentials = new NetworkCredential("Antoniopv7@gmail.com", "icrpkkrxyxmhdmst")
             };
 
             using var message = new MailMessage(fromAddress, toAddress)
@@ -198,33 +199,33 @@ namespace Gestion_Del_Presupuesto.Controllers
             smtp.Send(message);
         }
 
+        [HttpGet]
+        [Authorize]
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
+
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
         {
             if (!ModelState.IsValid)
-            {
                 return View(model);
-            }
 
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
-            {
-                return RedirectToAction("Login", "Account");
-            }
+                return RedirectToAction("Login");
 
             var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
             if (result.Succeeded)
             {
-                await _signInManager.RefreshSignInAsync(user);
-                ViewBag.Message = "La contraseña ha sido cambiada exitosamente.";
-                return View();
+                TempData["Message"] = "Contraseña cambiada exitosamente.";
+                return RedirectToAction("Index", "Home");
             }
 
             foreach (var error in result.Errors)
-            {
                 ModelState.AddModelError(string.Empty, error.Description);
-            }
 
             return View(model);
         }
