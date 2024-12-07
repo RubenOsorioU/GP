@@ -51,25 +51,31 @@
 </div>
 
 
-<!-- Filtros de Facturación -->
 <div class="row mb-4">
     <div class="col-md-12">
         <h4>Filtros de Facturación</h4>
-        <form method="get" class="form-inline d-flex align-items-center">
-            <div class="form-group mb-2 mr-3">
-                <label for="fechaInicio" class="mr-2">Fecha Inicio</label>
-                <input type="date" id="fechaInicio" name="fechaInicio" class="form-control" />
+        <form method="get" class="row g-3 align-items-end">
+            <!-- Campo Fecha Inicio -->
+            <div class="col-auto">
+                <label for="fechaInicio" class="form-label">Fecha Inicio</label>
+                <input type="date" id="fechaInicio" name="fechaInicio" class="form-control">
             </div>
-            <div class="form-group mb-2 mr-3">
-                <label for="fechaFin" class="mr-2">Fecha Fin</label>
-                <input type="date" id="fechaFin" name="fechaFin" class="form-control" />
+
+            <!-- Campo Fecha Fin -->
+            <div class="col-auto">
+                <label for="fechaFin" class="form-label">Fecha Fin</label>
+                <input type="date" id="fechaFin" name="fechaFin" class="form-control">
             </div>
-            <div class="form-group mb-2">
-                <button type="submit" class="btn btn-primary ml-3">Calcular Total a Pagar</button>
+
+            <!-- Botón Calcular -->
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Calcular Total a Pagar</button>
             </div>
         </form>
     </div>
 </div>
+
+
 
 <!-- Lista de Facturaciones -->
 <div class="row">
@@ -114,26 +120,26 @@
 </div>
 
 <!-- Resultados de Facturación -->
-<div class="row mb-2">
-    <div class="col-md-2">
+<div class="row mb-4">
+    <div class="col-md-4">
         <div class="card text-white bg-primary">
-            <div class="card-body">
+            <div class="card-body text-center">
                 <h5 class="card-title">Neto UF</h5>
                 <p class="card-text">@ViewBag.NetoUF</p>
             </div>
         </div>
     </div>
-    <div class="col-md-2">
+    <div class="col-md-4">
         <div class="card text-white bg-success">
-            <div class="card-body">
+            <div class="card-body text-center">
                 <h5 class="card-title">Valor UF</h5>
                 <p class="card-text">@ViewBag.ValorUFPromedio</p>
             </div>
         </div>
     </div>
-    <div class="col-md-2">
+    <div class="col-md-4">
         <div class="card text-white bg-danger">
-            <div class="card-body">
+            <div class="card-body text-center">
                 <h5 class="card-title">Total a Pagar</h5>
                 <p class="card-text">@ViewBag.TotalAPagar</p>
             </div>

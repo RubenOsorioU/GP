@@ -13,14 +13,16 @@ AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", false);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Configurar Identity con soporte para roles usando los modelos `Usuario` y `Rol`
+// Configurar Identity con soporte para roles usando los modelos Usuario y Rol
 builder.Services.AddIdentity<Usuario, Rol>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
 // Configurar opciones de contraseña para Identity
 builder.Services.Configure<IdentityOptions>(options =>
+
 {
+    options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789áéíóúÁÉÍÓÚüÜñÑ ";
     options.Password.RequireDigit = true;
     options.Password.RequireLowercase = true;
     options.Password.RequireUppercase = true;
@@ -38,8 +40,8 @@ builder.Services.ConfigureApplicationCookie(options =>
 // Configurar autorización
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Direccion"));
-    options.AddPolicy("UserOnly", policy => policy.RequireRole("User"));
+    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Dirección"));
+    options.AddPolicy("UserOnly", policy => policy.RequireRole("Apoyo Académico"));
 });
 
 // Registrar IHttpClientFactory
@@ -114,10 +116,10 @@ async Task CrearRoles(IServiceProvider serviceProvider)
 
     var roles = new[]
     {
-        new { Name = "Direccion", Descripcion = "Dirección de Campos Clínicos" },
-        new { Name = "SubDireccion", Descripcion = "Subdirección de Campos Clínicos" },
-        new { Name = "Coordinacion", Descripcion = "Coordinación de Campos Clínicos" },
-        new { Name = "ApoyoAcademico", Descripcion = "Apoyo Académico" }
+        new { Name = "Dirección", Descripcion = "Dirección de Campos Clínicos" },
+        new { Name = "SubDirección", Descripcion = "Subdirección de Campos Clínicos" },
+        new { Name = "Coordinación", Descripcion = "Coordinación de Campos Clínicos" },
+        new { Name = "Apoyo Académico", Descripcion = "Apoyo Académico" }
     };
 
     foreach (var role in roles)
@@ -189,7 +191,11 @@ async Task CrearOtrosUsuarios(IServiceProvider serviceProvider)
     var roleManager = serviceProvider.GetRequiredService<RoleManager<Rol>>();
     var configuration = serviceProvider.GetRequiredService<IConfiguration>();
 
-    var usuarios = configuration.GetSection("Users").Get<List<dynamic>>();
+    var usuarios = configuration.GetSection("Users").Get<List<UsuarioConfig>>();
+    if (usuarios == null || !usuarios.Any())
+    {
+        throw new Exception("No se encontraron usuarios en la configuración.");
+    }
 
     foreach (var usuario in usuarios)
     {
@@ -214,13 +220,23 @@ async Task CrearOtrosUsuarios(IServiceProvider serviceProvider)
                 }
                 else
                 {
-                    throw new Exception($"El rol '{usuario.Role}' no existe. Asegúrate de que el rol esté creado.");
+                    Console.WriteLine($"El rol '{usuario.Role}' no existe. Creándolo...");
+                    var roleResult = await roleManager.CreateAsync(new Rol { Name = usuario.Role });
+                    if (!roleResult.Succeeded)
+                    {
+                        throw new Exception($"Error al crear el rol {usuario.Role}: {string.Join(", ", roleResult.Errors.Select(e => e.Description))}");
+                    }
+                    await userManager.AddToRoleAsync(user, usuario.Role);
                 }
             }
             else
             {
-                throw new Exception($"Error al crear el usuario {usuario.UserName}: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+                Console.WriteLine($"Error al crear el usuario {usuario.UserName}: {string.Join(", ", result.Errors.Select(e => e.Description))}");
             }
+        }
+        else
+        {
+            Console.WriteLine($"El usuario con el correo {usuario.Email} ya existe.");
         }
     }
 }

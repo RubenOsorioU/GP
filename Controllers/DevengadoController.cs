@@ -19,7 +19,6 @@ namespace Gestion_Del_Presupuesto.Controllers
             _context = context;
         }
 
-        // GET: Devengado
         public async Task<IActionResult> Index()
         {
             var devengados = await _context.Devengados.Include(d => d.Convenio).ToListAsync();
