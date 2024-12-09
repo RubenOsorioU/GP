@@ -60,7 +60,7 @@ namespace Gestion_Del_Presupuesto.Controllers
             return View(planillas);
         }
 
-        // GET: Planillas/Details/5
+        // GET: Planillas/Details
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)

@@ -1,4 +1,4 @@
-﻿using Gestion_Del_Presupuesto.Data; // Asegúrate de incluir la directiva de espacio de nombres
+﻿using Gestion_Del_Presupuesto.Data; 
 using Gestion_Del_Presupuesto.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

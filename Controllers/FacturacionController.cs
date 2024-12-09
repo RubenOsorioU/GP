@@ -159,8 +159,8 @@ public class FacturacionController : Controller
 
     public async Task<decimal> ObtenerValorUFActual(DateTime selectedDate)
     {
-        // Aquí puedes usar la lógica existente para obtener el valor UF actual.
-        return 30m; // Valor UF simulado; aquí iría la llamada real a un servicio.
+ 
+        return 30m; // Valor UF simulado
     }
 
     public IActionResult RegistroHistoricoFacturacion()

@@ -25,7 +25,7 @@ namespace Gestion_Del_Presupuesto.Controllers
             return View(devengados);
         }
 
-        // GET: Devengado/Details/5
+        // GET: Devengado/Details
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -67,7 +67,7 @@ namespace Gestion_Del_Presupuesto.Controllers
             return View(devengado);
         }
 
-        // GET: Devengado/Edit/5
+        // GET: Devengado/Edit/
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -84,7 +84,7 @@ namespace Gestion_Del_Presupuesto.Controllers
             return View(devengado);
         }
 
-        // POST: Devengado/Edit/5
+        // POST: Devengado/Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id_Devengado,Carrera,CentroCosto,Itempresupuestario,FechaInicio,FechaFin,CantidadTiempo,GastoTotalComprometidoMonto,CantEstudiantes,ValorUFDevengado,CostoUF,PagosRealizados,SaldoPendiente,Descripcion,TotalGastoDevengadoGeneradoporEstudiantes,ConvenioId")] Devengado devengado)
@@ -118,7 +118,7 @@ namespace Gestion_Del_Presupuesto.Controllers
             return View(devengado);
         }
 
-        // GET: Devengado/Delete/5
+        // GET: Devengado/Delete
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -137,7 +137,7 @@ namespace Gestion_Del_Presupuesto.Controllers
             return View(devengado);
         }
 
-        // POST: Devengado/Delete/5
+        // POST: Devengado/Delete
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

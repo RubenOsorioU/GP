@@ -8,8 +8,6 @@ namespace Gestion_Del_Presupuesto.Controllers
     public class PresupuestoController : Controller
     {
         private static List<PresupuestoModel> presupuestos = new List<PresupuestoModel>();
-
-        // Lista de sedes y carreras por sede
         private static Dictionary<string, List<string>> carrerasPorSede = new Dictionary<string, List<string>>()
         {
             { "Santiago", new List<string> { "Enfermería", "Tecnología Médica", "Terapia Ocupacional", "Nutricion y Dietetica", "Psicologia", "Kinesiologia" } },

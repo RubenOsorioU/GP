@@ -1,4 +1,4 @@
-﻿using Gestion_Del_Presupuesto.Models; // Incluir el espacio de nombres del modelo
+﻿using Gestion_Del_Presupuesto.Models; 
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,14 +17,14 @@ namespace Gestion_Del_Presupuesto.Controllers
             return View(rutificadoras);
         }
 
-        // GET: Rutificadora/Details/5
+        // GET: Rutificadora/Details
         public IActionResult Details(int id)
         {
             // Buscar el registro por su Id en la lista
             var model = rutificadoras.FirstOrDefault(r => r.Id_Rutificadora == id);
             if (model == null)
             {
-                return NotFound(); // Si no se encuentra, devuelve un error 404
+                return NotFound(); // Si no se encuentra, devuelve error 404
             }
             return View(model);
         }
@@ -32,7 +32,6 @@ namespace Gestion_Del_Presupuesto.Controllers
         // GET: Rutificadora/Create
         public IActionResult Create()
         {
-            // Retorna la vista con un modelo vacío para crear un nuevo registro
             return View(new RutificadoraModel());
         }
 
@@ -43,7 +42,7 @@ namespace Gestion_Del_Presupuesto.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Asignar un Id único al nuevo registro
+               
                 model.Id_Rutificadora = rutificadoras.Count + 1;
                 rutificadoras.Add(model); // Agregar el nuevo registro a la lista
                 return RedirectToAction(nameof(Index)); // Redirigir al listado
@@ -68,7 +67,7 @@ namespace Gestion_Del_Presupuesto.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(int id, RutificadoraModel model)
         {
-            var existing = rutificadoras.FirstOrDefault(r => r.Id_Rutificadora == id); // Buscar el registro existente por Id
+            var existing = rutificadoras.FirstOrDefault(r => r.Id_Rutificadora == id); 
             if (existing == null)
             {
                 return NotFound(); // Si no se encuentra, devuelve un error 404

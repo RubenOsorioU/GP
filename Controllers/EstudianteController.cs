@@ -25,7 +25,7 @@ namespace Gestion_Del_Presupuesto.Controllers
             return View(await _context.Estudiantes.ToListAsync());
         }
 
-        // GET: Estudiante/Details/5
+        // GET: Estudiante/Details
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -81,9 +81,7 @@ namespace Gestion_Del_Presupuesto.Controllers
             return View(estudiante);
         }
 
-        // POST: Estudiante/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Estudiante/Edit/
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id_Estudiante,Nombre,Carrera,Id_Convenio")] Estudiante estudiante)

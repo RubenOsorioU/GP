@@ -8,7 +8,7 @@ public class ProvisionController : Controller
     private static decimal PresupuestoTotalInicial = 500000; // Ejemplo de presupuesto inicial
     private static List<ProvisionModel> Provisiones = new List<ProvisionModel>(); // Lista de provisiones en memoria
 
-    // Acción para ver el listado de provisiones
+
     public IActionResult Index()
     {
         ViewBag.PresupuestoTotalInicial = PresupuestoTotalInicial;

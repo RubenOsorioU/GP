@@ -26,7 +26,7 @@ namespace Gestion_Del_Presupuesto.Controllers
             return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: Pagos/Details/5
+        // GET: Pagos/Details
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -53,8 +53,6 @@ namespace Gestion_Del_Presupuesto.Controllers
         }
 
         // POST: Pagos/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id_Pago,Fecha,FechaVencimiento,Monto,Nombre,Estado,Id_Retribucion,Id_Convenio")] Pago pago)
@@ -86,9 +84,7 @@ namespace Gestion_Del_Presupuesto.Controllers
             return View(pago);
         }
 
-        // POST: Pagos/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Pagos/Edit/
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id_Pago,Fecha,FechaVencimiento,Monto,Nombre,Estado,Id_Retribucion,Id_Convenio")] Pago pago)
