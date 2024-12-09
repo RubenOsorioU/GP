@@ -4,6 +4,7 @@ using Gestion_Del_Presupuesto.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Gestion_Del_Presupuesto.Controllers
 {
@@ -18,6 +19,7 @@ namespace Gestion_Del_Presupuesto.Controllers
             _context = context;
         }
 
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             // Contar convenios por sede

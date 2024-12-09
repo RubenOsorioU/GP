@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Gestion_Del_Presupuesto.Models.FacturacionModel>
+﻿ @model IEnumerable<Gestion_Del_Presupuesto.Models.FacturacionModel>
 
 @{
     ViewData["Title"] = "Registro Historico de Facturación";
@@ -23,6 +23,7 @@
         </form>
     </div>
 </div>
+
 <div class="row">
     <div class="col-md-12">
         <h4>Lista de Facturaciones</h4>
@@ -31,13 +32,12 @@
                 <tr>
                     <th>Carrera</th>
                     <th>Nivel Formación</th>
-                    <th>Nombre Convenio</th>
                     <th>Tiempo de Práctica</th>
                     <th>N° mes/día/semana/hora</th>
                     <th>N° Alumnos</th>
                     <th>Valor mes/práctica profesional</th>
                     <th>Subtotal</th>
-                    <th>Acciones</th> 
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -46,7 +46,6 @@
                     <tr>
                         <td>@item.Carrera</td>
                         <td>@item.NivelFormacion</td>
-                        <td>@item.Convenios?.Nombre</td>
                         <td>@item.TiempoPractica</td>
                         <td>@item.NumeroTiempo</td>
                         <td>@item.NumeroAlumnos</td>
@@ -61,31 +60,5 @@
                 }
             </tbody>
         </table>
-    </div>
-</div>
-<div class="row mb-2">
-    <div class="col-md-2">
-        <div class="card text-white bg-primary">
-            <div class="card-body">
-                <h5 class="card-title">Neto UF</h5>
-                <p class="card-text">@ViewBag.NetoUF</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-2">
-        <div class="card text-white bg-success">
-            <div class="card-body">
-                <h5 class="card-title">Valor UF</h5>
-                <p class="card-text">@ViewBag.ValorUFPromedio</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-2">
-        <div class="card text-white bg-danger">
-            <div class="card-body">
-                <h5 class="card-title">Total a Pagar</h5>
-                <p class="card-text">@ViewBag.TotalAPagar</p>
-            </div>
-        </div>
     </div>
 </div>

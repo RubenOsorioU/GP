@@ -1,5 +1,6 @@
 ﻿using Gestion_Del_Presupuesto.Data;
 using Gestion_Del_Presupuesto.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
@@ -69,6 +70,8 @@ namespace Gestion_Del_Presupuesto.Controllers
         }
 
         // Método Create (GET)
+        [HttpGet]
+        [Authorize]
         public IActionResult Create()
         {
             LoadViewData();
@@ -77,6 +80,7 @@ namespace Gestion_Del_Presupuesto.Controllers
 
         // Método Create (POST)
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ConvenioModel convenio, bool renovacionAutomatica)
         {
@@ -129,6 +133,8 @@ namespace Gestion_Del_Presupuesto.Controllers
         }
 
         // Método Edit (GET)
+        [Authorize]
+        [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -148,6 +154,7 @@ namespace Gestion_Del_Presupuesto.Controllers
         }
 
         // Método Edit (POST)
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, ConvenioModel convenio, bool renovacionAutomatica, bool adendum)
@@ -274,6 +281,7 @@ namespace Gestion_Del_Presupuesto.Controllers
             }
         }
 
+        [Authorize]
         public async Task<IActionResult> Papelera()
         {
             var convenios = await this._context.Convenios.Where(c => c.Eliminado).ToListAsync();
@@ -283,6 +291,7 @@ namespace Gestion_Del_Presupuesto.Controllers
 
         // Método Delete
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Delete(int id, IFormFile documentoTermino)
         {
             // Verificar si el archivo se ha subido

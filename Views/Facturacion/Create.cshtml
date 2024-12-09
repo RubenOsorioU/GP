@@ -1,134 +1,93 @@
-﻿@model Gestion_Del_Presupuesto.Models.FacturacionModel
-
-<h1>Registrar Nueva Facturación</h1>
-
-<form asp-action="Create" method="post">
-
-    <div class="form-group">
-        <label for="ConvenioId">Convenio</label>
-        <select asp-for="ConvenioId" class="form-control" asp-items="ViewBag.ConvenioId"></select>
-        <span asp-validation-for="ConvenioId" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label for="ReceptorDocumento">Receptor de Documento</label>
-        <input asp-for="ReceptorDocumento" class="form-control" value="@ViewBag.NombreUsuario" readonly />
-        <span asp-validation-for="ReceptorDocumento" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label for="CorreoElectronico">Correo Electrónico</label>
-        <input asp-for="CorreoElectronico" class="form-control" value="@ViewBag.EmailUsuario" readonly />
-        <span asp-validation-for="CorreoElectronico" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label for="Telefono">Teléfono</label>
-        <input asp-for="Telefono" class="form-control" value="@ViewBag.TelefonoUsuario" readonly />
-        <span asp-validation-for="Telefono" class="text-danger"></span>
-    </div>
-
-    <!-- Datos Manuales -->
-    <div class="form-group">
-        <label for="RazonSocial">Razón Social</label>
-        <input asp-for="RazonSocial" class="form-control" />
-        <span asp-validation-for="RazonSocial" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label for="RUT">RUT</label>
-        <input asp-for="RUT" class="form-control" />
-        <span asp-validation-for="RUT" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label for="Direccion">Dirección</label>
-        <input asp-for="Direccion" class="form-control" />
-        <span asp-validation-for="Direccion" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label for="Cargo">Cargo</label>
-        <input asp-for="Cargo" class="form-control" />
-        <span asp-validation-for="Cargo" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label for="Sede">Sede</label>
-        <input asp-for="Sede" class="form-control" />
-        <span asp-validation-for="Sede" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label for="Carrera">Carrera</label>
-        <input asp-for="Carrera" class="form-control" />
-        <span asp-validation-for="Carrera" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label for="NivelFormacion">Nivel Formación</label>
-        <input asp-for="NivelFormacion" class="form-control" />
-        <span asp-validation-for="NivelFormacion" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label for="TiempoPractica">Tiempo de Práctica</label>
-        <input asp-for="TiempoPractica" class="form-control" />
-        <span asp-validation-for="TiempoPractica" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label for="NumeroTiempo">N° mes/día/semana/hora</label>
-        <input asp-for="NumeroTiempo" class="form-control" />
-        <span asp-validation-for="NumeroTiempo" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label for="NumeroAlumnos">N° Alumnos</label>
-        <input asp-for="NumeroAlumnos" class="form-control" />
-        <span asp-validation-for="NumeroAlumnos" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label for="ValorUFMesPractica">Valor 3 UF mes/práctica profesional</label>
-        <input asp-for="ValorUFMesPractica" class="form-control" />
-        <span asp-validation-for="ValorUFMesPractica" class="text-danger"></span>
-    </div>
-    <!-- Campo para buscar el valor UF -->
-    <form method="get" asp-action="BuscarUF">
-        <div class="form-group">
-            <label for="FechaSeleccionada">Fecha UF Día</label>
-            <input type="date" id="fechaSeleccionada" class="form-control" onchange="obtenerUF(this)" />
+﻿<div class="container">
+    <h2>Registrar Nueva Facturación</h2>
+    <form>
+        <div class="row">
+            <!-- Primera columna -->
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="convenio">Convenio</label>
+                    <input type="text" id="convenio" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="receptor">Receptor de Documento</label>
+                    <input type="text" id="receptor" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="correo">Correo Electrónico</label>
+                    <input type="email" id="correo" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="telefono">Teléfono</label>
+                    <input type="text" id="telefono" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="razon">Razón Social</label>
+                    <input type="text" id="razon" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="rut">RUT</label>
+                    <input type="text" id="rut" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="direccion">Dirección</label>
+                    <input type="text" id="direccion" class="form-control">
+                </div>
+            </div>
+            <!-- Segunda columna -->
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="cargo">Cargo</label>
+                    <input type="text" id="cargo" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="sede">Sede</label>
+                    <input type="text" id="sede" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="carrera">Carrera</label>
+                    <input type="text" id="carrera" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="nivel">Nivel Formación</label>
+                    <input type="text" id="nivel" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="tiempo">Tiempo de Práctica</label>
+                    <input type="text" id="tiempo" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="nAlumnos">N° Alumnos</label>
+                    <input type="text" id="nAlumnos" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="valorUF">Valor UF mes/práctica profesional</label>
+                    <input type="text" id="valorUF" class="form-control">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <!-- Tercera fila -->
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="fechaUF">Fecha UF Día</label>
+                    <input type="date" id="fechaUF" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="valorUF">Valor UF</label>
+                    <input type="text" id="valorUF" class="form-control">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="subtotal">Subtotal</label>
+                    <input type="text" id="subtotal" class="form-control">
+                </div>
+            </div>
+        </div>
+        <!-- Botones -->
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <button type="reset" class="btn btn-secondary">Cancelar</button>
         </div>
     </form>
-    <div class="form-group">
-        <label for="valorUF">Valor UF</label>
-        <input type="text" class="form-control" id="valorUF" placeholder="" readonly />
-    </div>
-    <div class="form-group">
-        <label for="Subtotal">Subtotal</label>
-        <input asp-for="Subtotal" class="form-control" />
-        <span asp-validation-for="Subtotal" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Guardar</button>
-    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
-</form>
-
-<script>
-    async function obtenerUF(fechaInput) {
-        const fechaSeleccionada = fechaInput.value;  // Fecha seleccionada YYYY-MM-DD
-        const valorUFInput = document.getElementById('valorUF');
-
-        if (fechaSeleccionada) {
-            const valorUF = await buscarUF(fechaSeleccionada);
-            valorUFInput.value = valorUF;
-        }
-    }
-
-    async function buscarUF(fechaSeleccionada) {
-        const url = `/Facturacion/BuscarUF?SelectedDate=${fechaSeleccionada}`;
-
-        try {
-            const response = await fetch(url);
-            if (response.ok) {
-                const data = await response.json();
-                return data.valorUF || 0;
-            } else {
-                console.error("Error al obtener el valor de la UF:", response.statusText);
-                return 0;
-            }
-        } catch (error) {
-            console.error("Error de conexión:", error);
-            return 0;
-        }
-    }
-</script>
+</div>
