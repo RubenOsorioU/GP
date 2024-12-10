@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gestion_Del_Presupuesto.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241203024108_ArregloDbEstudiantes")]
-    partial class ArregloDbEstudiantes
+    [Migration("20241210140038_FechasAfacturación")]
+    partial class FechasAfacturación
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -372,6 +372,15 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<bool>("Eliminado")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("FechaInicio")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("FechaTermino")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<DateTime>("FechaUFDia")
                         .HasColumnType("timestamp with time zone");
 
@@ -432,7 +441,7 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("TotalEstudiantes")
+                    b.Property<int?>("TotalEstudiantes")
                         .HasColumnType("integer");
 
                     b.Property<decimal>("TotalaPagar")
@@ -637,6 +646,9 @@ namespace Gestion_Del_Presupuesto.Migrations
 
                     b.Property<int>("DevengadoId_Devengado")
                         .HasColumnType("integer");
+
+                    b.Property<bool>("Eliminado")
+                        .HasColumnType("boolean");
 
                     b.Property<int>("FacturacionId")
                         .HasColumnType("integer");

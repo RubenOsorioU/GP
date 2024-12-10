@@ -11,39 +11,39 @@ namespace Gestion_Del_Presupuesto.Models
         // Nuevos campos agregados
         [Required]
         [Display(Name = "Razón Social")]
-        public string RazonSocial { get; set; }
+        public string? RazonSocial { get; set; }
 
         [Required]
         [Display(Name = "RUT")]
-        public string RUT { get; set; }
+        public string? RUT { get; set; }
 
         [Required]
         [Display(Name = "Giro")]
-        public string Giro { get; set; }
+        public string? Giro { get; set; }
 
         [Required]
         [Display(Name = "Dirección")]
-        public string Direccion { get; set; }
+        public string? Direccion { get; set; }
 
         [Required]
         [Display(Name = "Teléfono")]
-        public string Telefono { get; set; }
+        public string? Telefono { get; set; }
 
         [Required]
         [Display(Name = "Receptor de Documento")]
-        public string ReceptorDocumento { get; set; }
+        public string? ReceptorDocumento { get; set; }
 
         [Required]
         [Display(Name = "Cargo")]
-        public string Cargo { get; set; }
+        public string? Cargo { get; set; }
 
         [Required]
         [Display(Name = "Teléfono de Receptor")]
-        public string TelefonoReceptor { get; set; }
+        public string? TelefonoReceptor { get; set; }
 
         [Required]
         [Display(Name = "Correo Electrónico")]
-        public string CorreoElectronico { get; set; }
+        public string? CorreoElectronico { get; set; }
 
         [Required]
         [Display(Name = "Sede")]
@@ -59,9 +59,10 @@ namespace Gestion_Del_Presupuesto.Models
         public string NivelFormacion { get; set; }
 
 
+
         [Required]
         [Display(Name = "Tiempo de práctica")]
-        public string TiempoPractica { get; set; }
+        public string? TiempoPractica { get; set; }
 
         [Required]
         [Display(Name = "N° mes/día/semana/hora")]
@@ -83,13 +84,15 @@ namespace Gestion_Del_Presupuesto.Models
         [Display(Name = "Subtotal")]
         public decimal Subtotal { get; set; }
 
-        public int TotalEstudiantes { get; set; }
+        public int? TotalEstudiantes { get; set; }
 
         public decimal NetoUF { get; set; }
 
         public decimal TotalaPagar { get; set; }
         public bool Eliminado { get; set; }
 
+        public DateTime FechaInicio { get; set; }
+        public DateTime FechaTermino { get; set; }
 
         [ForeignKey("ConvenioModel")]
         [Required]

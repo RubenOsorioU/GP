@@ -1,9 +1,11 @@
 ﻿using Gestion_Del_Presupuesto.Data;
 using Gestion_Del_Presupuesto.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc.Rendering;
+
+
 public class FacturacionController : Controller
 {
     private readonly ApplicationDbContext _context;
@@ -15,15 +17,16 @@ public class FacturacionController : Controller
         _userManager = userManager;
     }
 
-    // Acción para listar facturaciones
-    public async Task<IActionResult> Index(int? convenioId)
+    public async Task<IActionResult> Index(int? convenioId, DateTime? FechaInicio, DateTime? FechaFin)
     {
+        // Obtener el usuario actual
         var user = await _userManager.GetUserAsync(User);
         if (user == null)
         {
             return RedirectToAction("Login", "Account");
         }
 
+        // Obtener roles y configurar ViewBag
         var roles = await _userManager.GetRolesAsync(user);
         var rolUsuario = roles.FirstOrDefault() ?? "Sin rol";
 
@@ -31,9 +34,17 @@ public class FacturacionController : Controller
         ViewBag.EmailUsuario = user.Email;
         ViewBag.RolUsuario = rolUsuario;
 
-        // Obtener la lista de convenios y pasarla a la vista
+        // Obtener lista de convenios para el filtro
         ViewBag.Convenios = await _context.Convenios.ToListAsync();
 
+        // Opciones del select para facturación
+        ViewBag.DocumentosFacturacion = new List<SelectListItem>
+    {
+        new SelectListItem { Value = "1", Text = "Pago por uso de campos clínicos (Uf/Estudiante/Mes o proporcional)" },
+        new SelectListItem { Value = "2", Text = "Pago por apoyo a la docencia" }
+    };
+
+        // Manejo del convenio seleccionado
         ConvenioModel convenio = null;
         if (convenioId.HasValue)
         {
@@ -55,18 +66,108 @@ public class FacturacionController : Controller
             ViewBag.SedeConvenio = "Santiago Centro";
         }
 
-        var facturaciones = await _context.Facturacion.Include(f => f.Convenios).Where(f => !f.Eliminado).ToListAsync();
-        var netoUF = CalcularNetoUF(facturaciones);
-        var valorUF = await ObtenerValorUFActual(DateTime.Now);
-        var totalAPagar = CalcularTotalAPagar(netoUF, valorUF);
+        // Obtener facturaciones filtradas por fecha
+        var facturacionesQuery = _context.Facturacion
+            .Include(f => f.Convenios) // Cargar relaciones necesarias
+            .Where(f => !f.Eliminado); // Filtrar por facturaciones no eliminadas
 
+        if (FechaInicio.HasValue)
+        {
+            facturacionesQuery = facturacionesQuery.Where(f => FechaInicio >= FechaInicio.Value);
+        }
+
+        if (FechaFin.HasValue)
+        {
+            facturacionesQuery = facturacionesQuery.Where(f => FechaFin <= FechaFin.Value);
+        }
+
+        var facturaciones = await facturacionesQuery.ToListAsync();
+
+        // Calcular datos necesarios
+        var netoUF = CalcularNetoUF(facturaciones, FechaInicio, FechaFin);
+  //      var valorUF = await ObtenerValorUFActual(DateTime.Now);
+ //       var totalAPagar = CalcularTotalAPagar(netoUF, valorUF);
+//
+        // Pasar datos calculados a ViewBag
         ViewBag.NetoUF = netoUF;
-        ViewBag.TotalAPagar = totalAPagar;
+  //      ViewBag.ValorUFPromedio = valorUF;
+ //       ViewBag.TotalAPagar = totalAPagar;
 
-        return View(facturaciones);
+        return View(facturaciones); // Pasar la lista de facturaciones a la vista
     }
 
-    // Acción para crear una nueva facturación
+
+    private decimal CalcularNetoUF(List<FacturacionModel> facturaciones, DateTime? fechaInicio, DateTime? fechaFin)
+    {
+        decimal netoUF = 0;
+
+        foreach (var facturacion in facturaciones)
+        {
+            // Validar si el rango de la facturación está dentro del período solicitado
+            bool dentroDelRango = (!fechaInicio.HasValue || facturacion.FechaInicio >= fechaInicio.Value) &&
+                                  (!fechaFin.HasValue || facturacion.FechaTermino <= fechaFin.Value);
+
+            if (!dentroDelRango)
+            {
+                continue; // Omitir registros fuera del rango
+            }
+
+            // Cálculo del subtotal
+            var numeroTiempo = facturacion.NumeroTiempo > 0 ? facturacion.NumeroTiempo : 0;
+            var numeroAlumnos = facturacion.NumeroAlumnos > 0 ? facturacion.NumeroAlumnos : 0;
+            var valorUF = facturacion.ValorUFMesPractica > 0 ? facturacion.ValorUFMesPractica : 0;
+
+            var subtotal = numeroTiempo * numeroAlumnos * valorUF;
+            facturacion.Subtotal = subtotal;
+            netoUF += subtotal;
+        }
+
+        return netoUF;
+    }
+
+
+
+    private decimal CalcularTotalAPagar(decimal netoUF, decimal valorUF)
+    {
+        return netoUF * valorUF;
+    }
+
+    //public async Task<decimal> ObtenerValorUFActual(DateTime selectedDate)
+    //{
+    //    //    using (var client = new HttpClient())
+    //    //    {
+    //    //        // Base URL de la API (reemplázala con la URL real que estás usando en Postman)
+    //    //        var baseUrl = "https://api.tuurl.com/indicadores/uf";
+    //    //        var requestUrl = $"{baseUrl}?fecha={selectedDate:yyyy-MM-dd}";
+
+    //    //        // Realizar la solicitud HTTP GET
+    //    //        var response = await client.GetAsync(requestUrl);
+
+    //    //        if (response.IsSuccessStatusCode)
+    //    //        {
+    //    //            // Leer el contenido de la respuesta como string
+    //    //            var jsonResponse = await response.Content.ReadAsStringAsync();
+
+    //    //            // Deserializar el JSON en el modelo
+    //    //            var indicador = System.Text.Json.JsonSerializer.Deserialize<IndicadorEconomico>(jsonResponse);
+
+    //    //            // Navegar en la estructura para obtener el valor de la UF
+    //    //            var valorUF = indicador.Series.Obs.FirstOrDefault()?.Value;
+
+    //    //            // Intentar convertir el valor a decimal
+    //    //            if (decimal.TryParse(valorUF, out var ufDecimal))
+    //    //            {
+    //    //                return ufDecimal;
+    //    //            }
+    //    //        }
+
+    //    //        // En caso de error, lanzar una excepción o devolver un valor predeterminado
+    //    //        throw new Exception("No se pudo obtener el valor de la UF desde la API.");
+    //    //    }
+    //    return ;
+    //}
+
+
     public IActionResult Create()
     {
         ViewData["ConvenioId"] = new SelectList(_context.Convenios, "Id_Convenio", "Nombre");
@@ -86,83 +187,6 @@ public class FacturacionController : Controller
         ViewData["ConvenioId"] = new SelectList(_context.Convenios, "Id_Convenio", "Nombre", facturacion.ConvenioId);
         return View(facturacion);
     }
-
-    // Método para mover una facturación a la papelera
-    [HttpPost]
-    public async Task<IActionResult> Delete(int id)
-    {
-        var facturacion = await _context.Facturacion.FindAsync(id);
-        if (facturacion != null)
-        {
-            facturacion.Eliminado = true; // Marcar la facturación como eliminada
-            _context.Update(facturacion);
-            await _context.SaveChangesAsync();
-        }
-
-        return RedirectToAction(nameof(Index));
-    }
-
-    // Método para mostrar la papelera de facturaciones
-    public async Task<IActionResult> Papelera()
-    {
-        var facturacionesEliminadas = await _context.Facturacion.Where(f => f.Eliminado).ToListAsync();
-        return View(facturacionesEliminadas);
-    }
-
-    // Método para restaurar una facturación desde la papelera
-    [HttpPost]
-    public async Task<IActionResult> Restore(int id)
-    {
-        var facturacion = await _context.Facturacion.FindAsync(id);
-        if (facturacion != null)
-        {
-            facturacion.Eliminado = false; // Restaurar la facturación
-            _context.Update(facturacion);
-            await _context.SaveChangesAsync();
-        }
-
-        return RedirectToAction(nameof(Papelera));
-    }
-
-    // Método para eliminar permanentemente una facturación
-    [HttpPost]
-    public async Task<IActionResult> DeletePermanent(int id)
-    {
-        var facturacion = await _context.Facturacion.FindAsync(id);
-        if (facturacion != null)
-        {
-            _context.Facturacion.Remove(facturacion); // Eliminar permanentemente
-            await _context.SaveChangesAsync();
-        }
-
-        return RedirectToAction(nameof(Papelera));
-    }
-
-    private decimal CalcularNetoUF(List<FacturacionModel> facturaciones)
-    {
-        decimal netoUF = 0;
-
-        foreach (var facturacion in facturaciones)
-        {
-            var subtotal = facturacion.NumeroTiempo * facturacion.NumeroAlumnos * facturacion.ValorUFMesPractica;
-            facturacion.Subtotal = subtotal;
-            netoUF += subtotal;
-        }
-
-        return netoUF;
-    }
-
-    private decimal CalcularTotalAPagar(decimal netoUF, decimal valorUF)
-    {
-        return netoUF * valorUF;
-    }
-
-    public async Task<decimal> ObtenerValorUFActual(DateTime selectedDate)
-    {
- 
-        return 30m; // Valor UF simulado
-    }
-
     public IActionResult RegistroHistoricoFacturacion()
     {
         return View();

@@ -200,14 +200,12 @@ namespace Gestion_Del_Presupuesto.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         public IActionResult ChangePassword()
         {
             return View();
         }
 
         [HttpPost]
-        [Authorize]
         public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
         {
             if (!ModelState.IsValid)

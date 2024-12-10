@@ -1,89 +1,150 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Gestión de Campos Clínicos";
 }
 
-<div class="container mt-5">
-    <h1 class="display-4 text-center">Gestión de Campos Clínicos</h1>
-    <p class="text-center mb-5">Bienvenido a la plataforma de gestión de campos clínicos. Aquí puedes visualizar información general de las actividades y presupuesto de campos clínicos.</p>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
 
-    <!-- Sección de tarjetas de dashboard -->
-    <div class="row mb-4">
-        <div class="col-md-3 mb-4">
-            <div class="card">
-                <div class="card-body text-center">
-                    <h5 class="card-title">Total Convenios Activos</h5>
-                    <p class="card-text display-6">@ViewBag.TotalConvenios</p>
-                    <small>En todos los departamentos</small>
-                </div>
-            </div>
-        </div>
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
 
-        <!-- Tarjeta de Convenios Activos en Santiago -->
-        <div class="col-md-3 mb-4">
-            <div class="card">
-                <div class="card-body text-center">
-                    <h5 class="card-title">Convenios Activos en Santiago</h5>
-                    <p class="card-text display-6">@ViewBag.ConveniosSantiago</p>
+        h1 {
+            text-align: center;
+            color: #0044cc; /* Azul */
+        }
+
+        p.text-center {
+            text-align: center;
+            color: #555;
+        }
+
+        .grid {
+            display: grid;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .grid-convenios {
+            grid-template-columns: 1fr 2fr;
+        }
+
+        .grid-presupuesto {
+            grid-template-columns: 2fr 1fr;
+        }
+
+        .card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+            .card h5 {
+                color: #0044cc; /* Azul */
+                margin-bottom: 10px;
+            }
+
+            .card p {
+                font-size: 24px;
+                font-weight: bold;
+                color: #ff6600; /* Naranja */
+                margin: 5px 0;
+            }
+
+            .card small {
+                font-size: 14px;
+                color: #555;
+            }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Gestión de Campos Clínicos</h1>
+        <p class="text-center">Bienvenido a la plataforma de gestión de campos clínicos. Aquí puedes visualizar información general de las actividades y presupuesto de campos clínicos.</p>
+
+        <!-- Sección Convenios -->
+        <div class="grid grid-convenios">
+            <!-- Columna izquierda -->
+            <div>
+                <div class="card">
+                    <h5>Convenios Activos en Santiago</h5>
+                    <p>@ViewBag.ConveniosSantiago</p>
                     <small>Convenios en la sede de Santiago</small>
                 </div>
-            </div>
-        </div>
-
-        <!-- Tarjeta de Convenios Activos en Coquimbo -->
-        <div class="col-md-3 mb-4">
-            <div class="card">
-                <div class="card-body text-center">
-                    <h5 class="card-title">Convenios Activos en Coquimbo</h5>
-                    <p class="card-text display-6">@ViewBag.ConveniosCoquimbo</p>
+                <div class="card">
+                    <h5>Convenios Activos en Coquimbo</h5>
+                    <p>@ViewBag.ConveniosCoquimbo</p>
                     <small>Convenios en la sede de Coquimbo</small>
                 </div>
+                <div class="card">
+                    <h5>Convenios Activos en Ambas Sedes</h5>
+                    <p>@ViewBag.ConveniosAmbas</p>
+                    <small>Convenios aplicables a ambas sedes</small>
+                </div>
+            </div>
+            <!-- Columna derecha -->
+            <div class="card">
+                <h5>Total Convenios Activos</h5>
+                <p>@ViewBag.TotalConvenios</p>
+                <small>En todos los departamentos</small>
             </div>
         </div>
 
-        <!-- Tarjeta de Convenios Activos en Ambas Sedes -->
-        <div class="col-md-3 mb-4">
+        <!-- Sección Presupuesto -->
+        <div class="grid grid-presupuesto">
+            <!-- Columna izquierda -->
             <div class="card">
-                <div class="card-body text-center">
-                    <h5 class="card-title">Convenios Activos en Ambas Sedes</h5>
-                    <p class="card-text display-6">@ViewBag.ConvenisAmbas</p>
-                    <small>Convenios aplicables a ambas sedes</small>
+                <h5>Presupuesto Total</h5>
+                <p>$@ViewBag.PresupuestoTotal</p>
+                <small>Presupuesto total asignado</small>
+            </div>
+            <!-- Columna derecha -->
+            <div>
+                <div class="card">
+                    <h5>Presupuesto Total Santiago</h5>
+                    <p>$@ViewBag.PresupuestoSantiago</p>
+                    <small>Presupuesto en la sede de Santiago</small>
+                </div>
+                <div class="card">
+                    <h5>Presupuesto Total Coquimbo</h5>
+                    <p>$@ViewBag.PresupuestoCoquimbo</p>
+                    <small>Presupuesto en la sede de Coquimbo</small>
+                </div>
+                <div class="card">
+                    <h5>Provisión</h5>
+                    <p>@ViewBag.Provision</p>
+                    <small>Presupuesto en provisión</small>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Sección de Actividad Reciente y Próximos Vencimientos -->
-
-    <div class="row">
-        <div class="col-md-3 mb-4">
-            <div class="card">
-                <div class="card-body text-center">
-                    <h5 class="card-title">Presupuesto Total</h5>
-                    <p class="card-text display-6 text-success">$1,234,567</p>
-                    <h5 class="card-title">Presupuesto Gastado</h5>
-                    <p class="card-text display-6 text-success">$2000</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 mb-4">
-            <div class="card">
-                <div class="card-body text-center">
-                    <h5 class="card-title">Presupuesto Total Santiago</h5>
-                    <p class="card-text display-6 text-success">$1,234,567</p>
-                    <h5 class="card-title">Presupuesto Gastado</h5>
-                    <p class="card-text display-6 text-success">$2000</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 mb-4">
-            <div class="card">
-                <div class="card-body text-center">
-                    <h5 class="card-title">Presupuesto Total Coquimbo</h5>
-                    <p class="card-text display-6 text-success">$1,234,567</p>
-                    <h5 class="card-title">Presupuesto Gastado</h5>
-                    <p class="card-text display-6 text-success">$2000</p>
-                </div>
-            </div>
-        </div>
-   </div>
-</div>
+    <div class="footer">
+        <p>&copy; 2024 Universidad Central. Todos los derechos reservados.</p>
+    </div>
+</body>
+</html>

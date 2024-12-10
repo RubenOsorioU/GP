@@ -1,64 +1,48 @@
-﻿ @model IEnumerable<Gestion_Del_Presupuesto.Models.FacturacionModel>
+﻿@model IEnumerable<Gestion_Del_Presupuesto.Models.FacturacionModel>
 
 @{
-    ViewData["Title"] = "Registro Historico de Facturación";
+    ViewData["Title"] = "Registro Histórico de Facturación";
 }
 
-<h1>Registro Historico de Facturación</h1>
-<div class="row mb-4">
-    <div class="col-md-12">
-        <h4>Filtros de Facturación</h4>
-        <form method="get" class="form-inline d-flex align-items-center">
-            <div class="form-group mb-2 mr-3">
-                <label for="fechaInicio" class="mr-2">Fecha Inicio</label>
-                <input type="date" id="fechaInicio" name="fechaInicio" class="form-control" />
-            </div>
-            <div class="form-group mb-2 mr-3">
-                <label for="fechaFin" class="mr-2">Fecha Fin</label>
-                <input type="date" id="fechaFin" name="fechaFin" class="form-control" />
-            </div>
-            <div class="form-group mb-2">
-                <button type="submit" class="btn btn-primary ml-3">Calcular Total a Pagar</button>
-            </div>
-        </form>
-    </div>
-</div>
+<h1>Registro Histórico de Facturación</h1>
 
-<div class="row">
-    <div class="col-md-12">
-        <h4>Lista de Facturaciones</h4>
-        <table class="table table-striped">
-            <thead>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id_Facturación</th>
+            <th>Número Tiempo</th>
+            <th>Número Alumnos</th>
+            <th>Cargo</th>
+            <th>Total a Pagar</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            foreach (var facturacionModel in Model)
+            {
                 <tr>
-                    <th>Carrera</th>
-                    <th>Nivel Formación</th>
-                    <th>Tiempo de Práctica</th>
-                    <th>N° mes/día/semana/hora</th>
-                    <th>N° Alumnos</th>
-                    <th>Valor mes/práctica profesional</th>
-                    <th>Subtotal</th>
-                    <th>Acciones</th>
+                    <td>@facturacionModel.Id_Facturacion</td>
+                    <td>@facturacionModel.NumeroTiempo</td>
+                    <td>@facturacionModel.NumeroAlumnos</td>
+                    <td>@(facturacionModel.Cargo ?? "Sin cargo")</td>
+                    <td>@facturacionModel.TotalaPagar</td>
+                    <td>
+                        <!-- Botón para restaurar -->
+                        <a asp-action="Restore" asp-route-id="@facturacionModel.Id_Facturacion" class="btn btn-primary btn-sm">Restaurar</a>
+
+                        <!-- Botón para eliminar permanentemente -->
+                        <button class="btn btn-danger btn-sm" onclick="openDeleteModal('@Url.Action("DeletePermanent", "Facturacion", new { id = facturacionModel.Id_Facturacion })')">Eliminar Definitivamente</button>
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>@item.Carrera</td>
-                        <td>@item.NivelFormacion</td>
-                        <td>@item.TiempoPractica</td>
-                        <td>@item.NumeroTiempo</td>
-                        <td>@item.NumeroAlumnos</td>
-                        <td>@item.ValorUFMesPractica</td>
-                        <td>@item.Subtotal</td>
-                        <td>
-                            <a asp-action="Edit" asp-route-id="@item.Id_Facturacion" class="btn btn-warning btn-sm">Editar</a>
-                            <a asp-action="Details" asp-route-id="@item.Id_Facturacion" class="btn btn-info btn-sm">Detalles</a>
-                            <a asp-action="Delete" asp-route-id="@item.Id_Facturacion" class="btn btn-danger btn-sm">Eliminar</a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-</div>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="6">No hay registros disponibles.</td>
+            </tr>
+        }
+    </tbody>
+</table>

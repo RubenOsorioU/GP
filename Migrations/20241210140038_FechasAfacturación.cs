@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gestion_Del_Presupuesto.Migrations
 {
     /// <inheritdoc />
-    public partial class ArregloDbEstudiantes : Migration
+    public partial class FechasAfacturación : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -521,9 +521,12 @@ namespace Gestion_Del_Presupuesto.Migrations
                     FechaUFDia = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ValorUF = table.Column<decimal>(type: "numeric", nullable: false),
                     Subtotal = table.Column<decimal>(type: "numeric", nullable: false),
-                    TotalEstudiantes = table.Column<int>(type: "integer", nullable: false),
+                    TotalEstudiantes = table.Column<int>(type: "integer", nullable: true),
                     NetoUF = table.Column<decimal>(type: "numeric", nullable: false),
                     TotalaPagar = table.Column<decimal>(type: "numeric", nullable: false),
+                    Eliminado = table.Column<bool>(type: "boolean", nullable: false),
+                    FechaInicio = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    FechaTermino = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ConvenioId = table.Column<int>(type: "integer", nullable: false),
                     Id_IndicadorEco = table.Column<int>(type: "integer", nullable: false),
                     CarrerasId_Carrera = table.Column<int>(type: "integer", nullable: true),
@@ -669,6 +672,7 @@ namespace Gestion_Del_Presupuesto.Migrations
                     Año = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Observaciones = table.Column<string>(type: "text", nullable: false),
                     CarreraId = table.Column<int>(type: "integer", nullable: false),
+                    Eliminado = table.Column<bool>(type: "boolean", nullable: false),
                     FacturacionId = table.Column<int>(type: "integer", nullable: false),
                     DevengadoId_Devengado = table.Column<int>(type: "integer", nullable: false),
                     Id_IndicadorEco = table.Column<int>(type: "integer", nullable: false)

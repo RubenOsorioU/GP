@@ -104,12 +104,25 @@ namespace Gestion_Del_Presupuesto.Controllers
                 convenio.Fecha_Termino = convenio.Fecha_Inicio.AddYears(1);
             }
 
+            // Asignar el nombre del convenio a los centros asociados sin nombre
+            if (convenio.CentrosDeSalud != null && convenio.CentrosDeSalud.Any())
+            {
+                foreach (var centro in convenio.CentrosDeSalud)
+                {
+                    if (string.IsNullOrWhiteSpace(centro.NombreCentro))
+                    {
+                        centro.NombreCentro = convenio.Nombre;
+                    }
+                }
+            }
+
             // Guardar en la base de datos
-            this._context.Convenios.Add(convenio);
-            await this._context.SaveChangesAsync();
+            _context.Convenios.Add(convenio);
+            await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
         }
+
 
         // Método Details
         public async Task<IActionResult> Details(int? id)
@@ -154,8 +167,8 @@ namespace Gestion_Del_Presupuesto.Controllers
         }
 
         // Método Edit (POST)
-        [Authorize]
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, ConvenioModel convenio, bool renovacionAutomatica, bool adendum)
         {
@@ -176,101 +189,55 @@ namespace Gestion_Del_Presupuesto.Controllers
             if (convenioExistente == null)
                 return NotFound();
 
-            // Crear nueva versión si el adendum está activado y se modifica la fecha o la observación del adendum
-            if (adendum &&
-                (convenioExistente.FechaAdendum != convenio.FechaAdendum ||
-                 convenioExistente.ObservacionAdendum != convenio.ObservacionAdendum))
+            // Limpia listas relacionadas antes de asignar los nuevos valores
+            convenioExistente.Retribuciones.Clear();
+            convenioExistente.CentrosDeSalud.Clear();
+
+            // Actualiza las propiedades principales del convenio existente
+            convenioExistente.Nombre = convenio.Nombre;
+            convenioExistente.Tipo_Convenio = convenio.Tipo_Convenio;
+            convenioExistente.Sede = convenio.Sede;
+            convenioExistente.Rut = convenio.Rut;
+            convenioExistente.Direccion = convenio.Direccion;
+            convenioExistente.ContactoPrincipal = convenio.ContactoPrincipal;
+            convenioExistente.Telefono = convenio.Telefono;
+            convenioExistente.Fecha_Inicio = DateTime.SpecifyKind(convenio.Fecha_Inicio, DateTimeKind.Utc);
+
+            if (renovacionAutomatica)
+                convenioExistente.Fecha_Termino = DateTime.SpecifyKind(convenio.Fecha_Inicio.AddYears(1), DateTimeKind.Utc);
+            else if (convenio.Fecha_Termino.HasValue)
+                convenioExistente.Fecha_Termino = DateTime.SpecifyKind(convenio.Fecha_Termino.Value, DateTimeKind.Utc);
+
+            convenioExistente.RenovacionAutomatica = renovacionAutomatica;
+            convenioExistente.Adendum = adendum;
+            convenioExistente.FechaAdendum = convenio.FechaAdendum;
+            convenioExistente.ObservacionAdendum = convenio.ObservacionAdendum;
+
+            // Reasignar relaciones
+            if (convenio.Retribuciones != null)
             {
-                var nuevoConvenio = new ConvenioModel
+                foreach (var retribucion in convenio.Retribuciones)
                 {
-                    Nombre = convenioExistente.Nombre,
-                    Tipo_Convenio = convenioExistente.Tipo_Convenio,
-                    Sede = convenioExistente.Sede,
-                    Rut = convenioExistente.Rut,
-                    Direccion = convenioExistente.Direccion,
-                    ContactoPrincipal = convenioExistente.ContactoPrincipal,
-                    Telefono = convenioExistente.Telefono,
-                    Fecha_Inicio = DateTime.SpecifyKind(convenio.Fecha_Inicio, DateTimeKind.Utc),
-                    Fecha_Termino = convenio.Fecha_Termino,
-                    RenovacionAutomatica = renovacionAutomatica,
-                    Adendum = adendum,
-                    FechaAdendum = convenio.FechaAdendum,
-                    ObservacionAdendum = convenio.ObservacionAdendum,
-                    ValorUF = convenioExistente.ValorUF,
-                    Eliminado = convenioExistente.Eliminado,
-                    Version = convenioExistente.Version + 1, // Incrementar versión
-                    Retribuciones = convenioExistente.Retribuciones.Select(r => new RetribucionModel
-                    {
-                        Tipo_Retribucion = r.Tipo_Retribucion,
-                        Monto = r.Monto,
-                        CantPesos = r.CantPesos,
-                        Periodo = r.Periodo,
-                        Tipo_Practica = r.Tipo_Practica,
-                        FechaRetribucion = r.FechaRetribucion
-                    }).ToList(),
-                    CentrosDeSalud = convenioExistente.CentrosDeSalud.Select(cs => new CentroSaludModel
-                    {
-                        NombreCentro = cs.NombreCentro,
-                        Direccion = cs.Direccion,
-                        NombrecargocentroAso = cs.NombrecargocentroAso,
-                        CorreoPersonaCargo = cs.CorreoPersonaCargo,
-                        Telefono_CentroAso = cs.Telefono_CentroAso
-                    }).ToList(),
-                    Devengados = convenioExistente.Devengados.ToList(),
-                    Facturacion = convenioExistente.Facturacion.ToList()
-                };
-
-                // Agregar el nuevo convenio a la base de datos
-                _context.Convenios.Add(nuevoConvenio);
-            }
-            else
-            {
-                // Limpia listas relacionadas antes de asignar los nuevos valores
-                convenioExistente.Retribuciones.Clear();
-                convenioExistente.CentrosDeSalud.Clear();
-
-                // Actualiza las propiedades principales del convenio existente
-                convenioExistente.Nombre = convenio.Nombre;
-                convenioExistente.Tipo_Convenio = convenio.Tipo_Convenio;
-                convenioExistente.Sede = convenio.Sede;
-                convenioExistente.Rut = convenio.Rut;
-                convenioExistente.Direccion = convenio.Direccion;
-                convenioExistente.ContactoPrincipal = convenio.ContactoPrincipal;
-                convenioExistente.Telefono = convenio.Telefono;
-                convenioExistente.Fecha_Inicio = DateTime.SpecifyKind(convenio.Fecha_Inicio, DateTimeKind.Utc);
-
-                if (renovacionAutomatica)
-                    convenioExistente.Fecha_Termino = DateTime.SpecifyKind(convenio.Fecha_Inicio.AddYears(1), DateTimeKind.Utc);
-                else if (convenio.Fecha_Termino.HasValue)
-                    convenioExistente.Fecha_Termino = DateTime.SpecifyKind(convenio.Fecha_Termino.Value, DateTimeKind.Utc);
-
-                convenioExistente.RenovacionAutomatica = renovacionAutomatica;
-                convenioExistente.Adendum = adendum;
-                convenioExistente.FechaAdendum = convenio.FechaAdendum;
-                convenioExistente.ObservacionAdendum = convenio.ObservacionAdendum;
-
-                // Reasignar relaciones
-                if (convenio.Retribuciones != null)
-                {
-                    foreach (var retribucion in convenio.Retribuciones)
-                    {
-                        retribucion.FechaRetribucion = DateTime.SpecifyKind(retribucion.FechaRetribucion, DateTimeKind.Utc);
-                        convenioExistente.Retribuciones.Add(retribucion);
-                    }
+                    retribucion.FechaRetribucion = DateTime.SpecifyKind(retribucion.FechaRetribucion, DateTimeKind.Utc);
+                    convenioExistente.Retribuciones.Add(retribucion);
                 }
+            }
 
-                if (convenio.CentrosDeSalud != null)
+            if (convenio.CentrosDeSalud != null)
+            {
+                foreach (var centro in convenio.CentrosDeSalud)
                 {
-                    foreach (var centro in convenio.CentrosDeSalud)
+                    if (string.IsNullOrWhiteSpace(centro.NombreCentro))
                     {
-                        convenioExistente.CentrosDeSalud.Add(centro);
+                        centro.NombreCentro = convenio.Nombre; // Asignar nombre del convenio
                     }
+                    convenioExistente.CentrosDeSalud.Add(centro);
                 }
             }
 
             try
             {
-                await this._context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             catch (DbUpdateConcurrencyException)
@@ -280,6 +247,7 @@ namespace Gestion_Del_Presupuesto.Controllers
                 throw;
             }
         }
+
 
         [Authorize]
         public async Task<IActionResult> Papelera()
