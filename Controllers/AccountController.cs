@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Mail;
 using Gestion_Del_Presupuesto.Models;
 using Gestion_Del_Presupuesto.ViewModels;
+
 using Microsoft.AspNetCore.Authorization;
 
 namespace Gestion_Del_Presupuesto.Controllers
@@ -206,24 +207,33 @@ namespace Gestion_Del_Presupuesto.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
         {
             if (!ModelState.IsValid)
+            {
                 return View(model);
+            }
 
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
-                return RedirectToAction("Login");
+            {
+                return NotFound("No se encontró el usuario");
+            }
 
             var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+
             if (result.Succeeded)
             {
+                await _signInManager.SignOutAsync();
                 TempData["Message"] = "Contraseña cambiada exitosamente.";
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction(nameof(Login));
             }
 
             foreach (var error in result.Errors)
+            {
                 ModelState.AddModelError(string.Empty, error.Description);
+            }
 
             return View(model);
         }
