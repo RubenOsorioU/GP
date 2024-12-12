@@ -110,7 +110,8 @@
                 <a class="nav-link" href="#">Evaluación CE <span class="dropdown-toggle-icon">▼</span></a>
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item" asp-controller="Encuesta" asp-action="Index">Evaluaciones</a></li>
-                    <li><a class="dropdown-item" asp-controller="Encuesta" asp-action="Create">Crear Evaluación</a></li>
+                    <li><a class="dropdown-item" asp-controller="Encuesta" asp-action="Create">Subir Encuestas</a></li>
+                    <li><a class="dropdown-item" asp-controller="Encuesta" asp-action="Analisis">Análisis de Encuestas</a></li>  <!-- Enlace para Análisis -->
                 </ul>
             </li>
         </ul>
@@ -140,22 +141,15 @@
             sidebar.classList.remove("show");
             content.classList.remove("shifted");
         });
-        document.querySelectorAll('.nav-item.dropdown').forEach(item => {
-            item.addEventListener('mouseenter', function () {
-                this.querySelector('.dropdown-menu').style.display = 'block';
-            });
-            item.addEventListener('mouseleave', function () {
-                this.querySelector('.dropdown-menu').style.display = 'none';
-            });
-            const dropdownMenu = item.querySelector('.dropdown-menu');
-            dropdownMenu.addEventListener('mouseenter', function () {
-                this.style.display = 'block';
-            });
-            dropdownMenu.addEventListener('mouseleave', function () {
-                this.style.display = 'none';
+        document.querySelectorAll('.nav-item.dropdown > a').forEach(item => {
+            item.addEventListener('click', function (e) {
+                var submenu = this.nextElementSibling;
+                if (submenu && submenu.classList.contains('dropdown-menu')) {
+                    e.preventDefault();
+                    submenu.classList.toggle('show');
+                }
             });
         });
     </script>
-    @RenderSection("Scripts", required: false)
 </body>
 </html>

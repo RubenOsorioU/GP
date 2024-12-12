@@ -11,8 +11,8 @@
         <thead>
             <tr>
                 <th>Tipo</th>
+                <th>Archivo</th>
                 <th>Puntuación</th>
-                <th>Comentarios</th>
                 <th>Fecha</th>
             </tr>
         </thead>
@@ -21,8 +21,15 @@
             {
                 <tr>
                     <td>@encuesta.Tipo</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(encuesta.ArchivoRuta))
+                        {
+                            var fileName = encuesta.ArchivoRuta.Split('/').Last();
+                              <!-- Aquí extraemos el nombre del archivo -->
+                            <a href="@Url.Content("~/uploads/" + fileName)" target="_blank">Ver/Descargar</a>
+                        }
+                    </td>
                     <td>@encuesta.Puntuacion</td>
-                    <td>@encuesta.Comentarios</td>
                     <td>@encuesta.Fecha.ToString("dd/MM/yyyy")</td>
                 </tr>
             }
