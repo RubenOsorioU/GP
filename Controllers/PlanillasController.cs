@@ -22,45 +22,54 @@ namespace Gestion_Del_Presupuesto.Controllers
         }
 
         // GET: Planillas
-        public async Task<IActionResult> Index(string asignatura, string institucion, string carrera, string nombre, string rut)
+        public async Task<IActionResult> Index(string institucion, string servicio, string tipoPrograma,
+            string nombreEstudiante, string runEstudiante, DateTime? fechaInicio, DateTime? fechaTermino)
         {
             var planillasQuery = _context.Planillas
-                .Include(p => p.EstudiantePlanillas)
-                .ThenInclude(ep => ep.Estudiante)
+                .Where(p => !p.Eliminado)
                 .AsQueryable();
 
             // Aplicar filtros
-            if (!string.IsNullOrWhiteSpace(asignatura))
-            {
-                planillasQuery = planillasQuery.Where(p => p.Asignatura.Contains(asignatura));
-            }
-
             if (!string.IsNullOrWhiteSpace(institucion))
             {
-                planillasQuery = planillasQuery.Where(p => p.Institución.Contains(institucion));
+                planillasQuery = planillasQuery.Where(p => p.Institucion.Contains(institucion));
             }
 
-            if (!string.IsNullOrWhiteSpace(carrera))
+            if (!string.IsNullOrWhiteSpace(servicio))
             {
-                planillasQuery = planillasQuery.Where(p => p.Carrera.Nombre.Contains(carrera));
+                planillasQuery = planillasQuery.Where(p => p.Servicio.Contains(servicio));
             }
 
-            if (!string.IsNullOrWhiteSpace(nombre))
+            if (!string.IsNullOrWhiteSpace(tipoPrograma))
             {
-                planillasQuery = planillasQuery.Where(p => p.Nombre.Contains(nombre));
+                planillasQuery = planillasQuery.Where(p => p.TipoPrograma == tipoPrograma);
             }
 
-            if (!string.IsNullOrWhiteSpace(rut))
+            if (!string.IsNullOrWhiteSpace(nombreEstudiante))
             {
-                planillasQuery = planillasQuery
-                    .Where(p => p.EstudiantePlanillas.Any(ep => ep.Estudiante.Rut_Estudiante.Contains(rut)));
+                planillasQuery = planillasQuery.Where(p => p.NombresApellidosEstudiante.Contains(nombreEstudiante));
+            }
+
+            if (!string.IsNullOrWhiteSpace(runEstudiante))
+            {
+                planillasQuery = planillasQuery.Where(p => p.RunEstudiante.Contains(runEstudiante));
+            }
+
+            if (fechaInicio.HasValue)
+            {
+                planillasQuery = planillasQuery.Where(p => p.FechaInicioPractica >= fechaInicio.Value);
+            }
+
+            if (fechaTermino.HasValue)
+            {
+                planillasQuery = planillasQuery.Where(p => p.FechaTerminoPractica <= fechaTermino.Value);
             }
 
             var planillas = await planillasQuery.ToListAsync();
             return View(planillas);
         }
 
-        // GET: Planillas/Details
+        // GET: Planillas/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -69,8 +78,6 @@ namespace Gestion_Del_Presupuesto.Controllers
             }
 
             var planilla = await _context.Planillas
-                .Include(p => p.EstudiantePlanillas)
-                .ThenInclude(ep => ep.Estudiante)
                 .FirstOrDefaultAsync(m => m.Id_Planillas == id);
 
             if (planilla == null)
@@ -79,11 +86,6 @@ namespace Gestion_Del_Presupuesto.Controllers
             }
 
             return View(planilla);
-        }
-
-        public IActionResult RegistroHistoricoEstudiantes()
-        {
-            return View();
         }
 
         // GET: Planillas/Create
@@ -95,10 +97,11 @@ namespace Gestion_Del_Presupuesto.Controllers
         // POST: Planillas/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id_Planillas,Nombre_Planilla,Rut,Fecha_Inicio,Fecha_Termino,Institución,CuantasSemanas,ValorUfContrato,TotalCosto")] PlanillasModel planilla)
+        public async Task<IActionResult> Create(PlanillasModel planilla)
         {
             if (ModelState.IsValid)
             {
+                planilla.Eliminado = false; // Asegurar que no esté marcado como eliminado
                 _context.Add(planilla);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -114,11 +117,7 @@ namespace Gestion_Del_Presupuesto.Controllers
                 return NotFound();
             }
 
-            var planilla = await _context.Planillas
-                .Include(p => p.EstudiantePlanillas)
-                .ThenInclude(ep => ep.Estudiante)
-                .FirstOrDefaultAsync(p => p.Id_Planillas == id);
-
+            var planilla = await _context.Planillas.FindAsync(id);
             if (planilla == null)
             {
                 return NotFound();
@@ -129,7 +128,7 @@ namespace Gestion_Del_Presupuesto.Controllers
         // POST: Planillas/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id_Planillas,Nombre_Planilla,Rut,Fecha_Inicio,Fecha_Termino,Institución,CuantasSemanas,ValorUfContrato,TotalCosto")] PlanillasModel planilla)
+        public async Task<IActionResult> Edit(int id, PlanillasModel planilla)
         {
             if (id != planilla.Id_Planillas)
             {
@@ -159,7 +158,7 @@ namespace Gestion_Del_Presupuesto.Controllers
             return View(planilla);
         }
 
-        // GET: Planillas/Delete/5
+        // Soft Delete
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -168,8 +167,6 @@ namespace Gestion_Del_Presupuesto.Controllers
             }
 
             var planilla = await _context.Planillas
-                .Include(p => p.EstudiantePlanillas)
-                .ThenInclude(ep => ep.Estudiante)
                 .FirstOrDefaultAsync(m => m.Id_Planillas == id);
 
             if (planilla == null)
@@ -180,29 +177,57 @@ namespace Gestion_Del_Presupuesto.Controllers
             return View(planilla);
         }
 
-        // POST: Planillas/Delete/5
+        // Soft Delete Confirmation
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var planilla = await _context.Planillas.FindAsync(id);
-            _context.Planillas.Remove(planilla);
+            planilla.Eliminado = true;
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool PlanillaExists(int id)
+        // Registro Histórico (Mostrar elementos eliminados)
+        public async Task<IActionResult> RegistroHistoricoEstudiantes()
         {
-            return _context.Planillas.Any(e => e.Id_Planillas == id);
+            var planillasEliminadas = await _context.Planillas
+                .Where(p => p.Eliminado)
+                .ToListAsync();
+            return View(planillasEliminadas);
         }
 
-        // GET: Planillas/Upload
+        // Restaurar Planilla
+        public async Task<IActionResult> Restore(int id)
+        {
+            var planilla = await _context.Planillas.FindAsync(id);
+            if (planilla != null)
+            {
+                planilla.Eliminado = false;
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(RegistroHistoricoEstudiantes));
+        }
+
+        // Eliminar Permanentemente
+        public async Task<IActionResult> DeletePermanent(int id)
+        {
+            var planilla = await _context.Planillas.FindAsync(id);
+            if (planilla != null)
+            {
+                _context.Planillas.Remove(planilla);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(RegistroHistoricoEstudiantes));
+        }
+
+        // Subir Planillas desde CSV
+        [HttpGet]
         public IActionResult Upload()
         {
             return View();
         }
 
-        // POST: Planillas/Upload
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Upload(IFormFile file)
@@ -213,37 +238,60 @@ namespace Gestion_Del_Presupuesto.Controllers
                 return View();
             }
 
-            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
-            if (!Directory.Exists(uploadsFolder))
+            // Validar la extensión del archivo
+            var fileExtension = Path.GetExtension(file.FileName);
+            if (fileExtension != ".csv")
             {
-                Directory.CreateDirectory(uploadsFolder);
+                ViewBag.Message = "Por favor, sube un archivo CSV válido.";
+                return View();
             }
+
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
+            Directory.CreateDirectory(uploadsFolder);
 
             var filePath = Path.Combine(uploadsFolder, file.FileName);
 
-            using (var stream = new FileStream(filePath, FileMode.Create))
+            try
             {
-                await file.CopyToAsync(stream);
-            }
+                // Guardar el archivo en el servidor
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
 
-            // Lógica para leer el archivo CSV y agregar los datos a la base de datos
-            using (var reader = new StreamReader(filePath))
-            using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
-            {
-                try
+                using (var reader = new StreamReader(filePath))
+                using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
                 {
                     var records = csv.GetRecords<PlanillasModel>().ToList();
-                    _context.Planillas.AddRange(records);
-                    await _context.SaveChangesAsync();
-                    ViewBag.Message = "Archivo subido y procesado correctamente.";
+
+                    // Validar si los registros son correctos antes de agregar
+                    if (records.Any())
+                    {
+                        // Marcar como no eliminados al importar
+                        records.ForEach(r => r.Eliminado = false);
+
+                        _context.Planillas.AddRange(records);
+                        await _context.SaveChangesAsync();
+
+                        ViewBag.Message = "Archivo subido y procesado correctamente.";
+                    }
+                    else
+                    {
+                        ViewBag.Message = "El archivo CSV está vacío o no tiene registros válidos.";
+                    }
                 }
-                catch (Exception ex)
-                {
-                    ViewBag.Message = $"Error procesando el archivo: {ex.Message}";
-                }
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Message = $"Error procesando el archivo: {ex.Message}";
             }
 
             return RedirectToAction(nameof(Index));
+        }
+
+        private bool PlanillaExists(int id)
+        {
+            return _context.Planillas.Any(e => e.Id_Planillas == id && !e.Eliminado);
         }
     }
 }

@@ -226,7 +226,7 @@ namespace Gestion_Del_Presupuesto.Controllers
             if (result.Succeeded)
             {
                 await _signInManager.SignOutAsync();
-                TempData["Message"] = "Contraseña cambiada exitosamente.";
+                TempData["Message"] = "¡Contraseña cambiada exitosamente! Por favor, inicia sesión nuevamente.";
                 return RedirectToAction(nameof(Login));
             }
 
@@ -237,5 +237,6 @@ namespace Gestion_Del_Presupuesto.Controllers
 
             return View(model);
         }
+
     }
 }
