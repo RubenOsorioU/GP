@@ -4,69 +4,36 @@
 <table class="table">
     <thead>
         <tr>
-            <th>Asignatura</th>
             <th>Institución</th>
-            <th>Carrera</th>
+            <th>Servicio</th>
+            <th>Tipo Programa</th>
             <th>Nombre</th>
             <th>Rut</th>
             <th>Fecha Inicio</th>
             <th>Fecha Término</th>
-            <th>Cantidad de Horas</th>
-            <th>Cantidad de Días</th>
-            <th>Cantidad de Meses</th>
-            <th>Año</th>
+            <th>Horas Mensuales</th>
             <th>Observaciones</th>
-            <th>Acciones</th> 
+            <th>Acciones</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
             <tr>
-                <td>@item.Asignatura</td>
-                <td>@item.Institución</td>
-                <td>@item.Carrera?.Nombre</td>
-                <td>@item.Nombre</td>
-                <td>@item.Rut</td>
-                <td>@item.Fecha_Inicio.ToShortDateString()</td>
-                <td>@item.Fecha_Termino.ToShortDateString()</td>
-                <td>@item.CantidadHoras</td>
-                <td>@item.CantDias</td>
-                <td>@item.CantMeses</td>
-                <td>@item.Año</td>
-                <td>@item.Observaciones</td>
+                <td>@item.Institucion</td>
+                <td>@item.Servicio</td>
+                <td>@item.TipoPrograma</td>
+                <td>@item.NombresApellidosEstudiante</td>
+                <td>@item.RunEstudiante</td>
+                <td>@item.FechaInicioPractica.ToShortDateString()</td>
+                <td>@item.FechaTerminoPractica.ToShortDateString()</td>
+                <td>@item.HorasMensuales</td>
+                <td>@item.Descripcion</td>
                 <td>
                     <a asp-action="Restore" asp-route-id="@item.Id_Planillas" class="btn btn-success btn-sm">Restaurar</a>
-
-
                     <button class="btn btn-danger btn-sm" onclick="openDeleteModal('@Url.Action("DeletePermanent", "Planillas", new { id = item.Id_Planillas })')">Eliminar Definitivamente</button>
                 </td>
             </tr>
         }
     </tbody>
 </table>
-<div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="confirmDeleteModalLabel">Eliminar Estudiante</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                ¿Está seguro que desea eliminar definitivamente este estudiante? Esta acción no se puede deshacer.
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                <a id="deleteConfirmButton" class="btn btn-danger">Eliminar</a>
-            </div>
-        </div>
-    </div>
-</div>
-<script>
-    function openDeleteModal(deleteUrl) {
-        document.getElementById('deleteConfirmButton').setAttribute('href', deleteUrl);
-        $('#confirmDeleteModal').modal('show');
-    }
-</script>

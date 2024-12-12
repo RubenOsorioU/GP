@@ -7,96 +7,75 @@
     <form method="get" asp-action="Index">
         <div class="row mb-3">
             <div class="col-md-2">
-                <label for="institucion">Convenio/Institución</label>
+                <label for="institucion">Institución</label>
                 <input type="text" id="institucion" name="institucion" value="@ViewBag.Institucion" class="form-control" />
             </div>
             <div class="col-md-2">
-                <label for="centroasociado">Centro Asociado</label>
-                <input type="text" id="centroasociado" name="centroasociado" value="@ViewBag.centroasociado" class="form-control" />
+                <label for="servicio">Servicio</label>
+                <input type="text" id="servicio" name="servicio" value="@ViewBag.Servicio" class="form-control" />
             </div>
             <div class="col-md-2">
-                <label for="sede">Sede</label>
-                <input type="text" id="asignatura" name="asignatura" value="@ViewBag.Sede" class="form-control" />
+                <label for="tipoPrograma">Tipo de Programa</label>
+                <input type="text" id="tipoPrograma" name="tipoPrograma" value="@ViewBag.TipoPrograma" class="form-control" />
             </div>
             <div class="col-md-2">
-                <label for="carrera">Carrera</label>
-                <input type="text" id="carrera" name="carrera" value="@ViewBag.Carrera" class="form-control" />
+                <label for="nombreEstudiante">Nombre Estudiante</label>
+                <input type="text" id="nombreEstudiante" name="nombreEstudiante" value="@ViewBag.NombreEstudiante" class="form-control" />
             </div>
             <div class="col-md-2">
-                <label for="asignatura">Asignatura</label>
-                <input type="text" id="asignatura" name="asignatura" value="@ViewBag.Asignatura" class="form-control" />
+                <label for="runEstudiante">Rut Estudiante</label>
+                <input type="text" id="runEstudiante" name="runEstudiante" value="@ViewBag.RunEstudiante" class="form-control" />
             </div>
             <div class="col-md-2">
-                <label for="nombre">Nombre Estudiante</label>
-                <input type="text" id="nombre" name="nombre" value="@ViewBag.Nombre" class="form-control" />
+                <label for="fechaInicio">Fecha Inicio</label>
+                <input type="date" id="fechaInicio" name="fechaInicio" value="@ViewBag.FechaInicio" class="form-control" />
             </div>
             <div class="col-md-2">
-                <label for="rut">Rut Estudiante</label>
-                <input type="text" id="rut" name="rut" value="@ViewBag.Rut" class="form-control" />
-            </div>
-            <div class="col-md-2">
-                <label for="año">Año</label>
-                <input type="date" id="año" name="año" value="@ViewBag.Año" class="form-control" />
+                <label for="fechaTermino">Fecha Término</label>
+                <input type="date" id="fechaTermino" name="fechaTermino" value="@ViewBag.FechaTermino" class="form-control" />
             </div>
             <div class="col-md-2 d-flex align-items-end">
                 <button type="submit" class="btn btn-primary">Filtrar</button>
             </div>
-
         </div>
-    </form>
-</div>
-<div>
-    <form method="get">
-        <p>
-            <a asp-action="Upload" class="btn btn-secondary">Subir Planillas</a>
-            <div class="col-md-2 d-flex align-items-end">
-                <button type="submit" class="btn btn-success">Exportar Año</button>
-            </div>
-        </p
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Institución</th>
+                    <th>Servicio</th>
+                    <th>Tipo Programa</th>
+                    <th>Nombre</th>
+                    <th>Rut</th>
+                    <th>Fecha Inicio</th>
+                    <th>Fecha Término</th>
+                    <th>Horas Mensuales</th>
+                    <th>Observaciones</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Institucion</td>
+                        <td>@item.Servicio</td>
+                        <td>@item.TipoPrograma</td>
+                        <td>@item.NombresApellidosEstudiante</td>
+                        <td>@item.RunEstudiante</td>
+                        <td>@item.FechaInicioPractica.ToShortDateString()</td>
+                        <td>@item.FechaTerminoPractica.ToShortDateString()</td>
+                        <td>@item.HorasMensuales</td>
+                        <td>@item.Descripcion</td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.Id_Planillas" class="btn btn-warning">Editar</a>
+                            <a asp-action="Details" asp-route-id="@item.Id_Planillas" class="btn btn-info">Detalles</a>
+                            <a asp-action="Delete" asp-route-id="@item.Id_Planillas" class="btn btn-danger">Eliminar</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
 
     </form>
 
 </div>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Asignatura</th>
-            <th>Institución</th>
-            <th>Carrera</th>
-            <th>Nombre</th>
-            <th>Rut</th>
-            <th>Fecha Inicio</th>
-            <th>Fecha Término</th>
-            <th>Cantidad de Horas</th>
-            <th>Cantidad de Días</th>
-            <th>Cantidad de Meses</th>
-            <th>Año</th>
-            <th>Observaciones</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Asignatura</td>
-                <td>@item.Institución</td>
-                <td>@item.Carrera.Nombre</td>
-                <td>@item.Nombre</td>
-                <td>@item.Rut</td>
-                <td>@item.Fecha_Inicio.ToShortDateString()</td>
-                <td>@item.Fecha_Termino.ToShortDateString()</td>
-                <td>@item.CantidadHoras</td>
-                <td>@item.CantDias</td>
-                <td>@item.CantMeses</td>
-                <td>@item.Año</td>
-                <td>@item.Observaciones</td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id_Planillas" class="btn btn-warning">Editar</a>
-                    <a asp-action="Details" asp-route-id="@item.Id_Planillas" class="btn btn-info">Detalles</a>
-                    <a asp-action="Delete" asp-route-id="@item.Id_Planillas" class="btn btn-danger">Eliminar</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>

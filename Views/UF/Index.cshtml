@@ -1,0 +1,48 @@
+﻿@{
+    var valoresUF = ViewData["ValoresUF"] as List<Gestion_Del_Presupuesto.Controllers.UFModel>;
+    var totalUF = ViewData["TotalUF"];
+}
+
+<h2>Valores de la UF</h2>
+
+<!-- Formulario para seleccionar las fechas -->
+<form method="post" asp-action="CalcularUF">
+    <div>
+        <label for="fechaInicio">Fecha de Inicio:</label>
+        <input type="date" id="fechaInicio" name="fechaInicio" required />
+    </div>
+
+    <div>
+        <label for="fechaFin">Fecha de Fin:</label>
+        <input type="date" id="fechaFin" name="fechaFin" required />
+    </div>
+
+    <button type="submit">Calcular UF</button>
+</form>
+
+@if (valoresUF != null && valoresUF.Any())
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Valor</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var uf in valoresUF)
+            {
+                <tr>
+                    <td>@uf.Fecha.ToString("yyyy-MM-dd")</td> <!-- Formato de fecha -->
+                    <td>@uf.Valor.ToString("C0")</td> <!-- Formato de moneda -->
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h3>Total UF: @((decimal)totalUF).ToString("C0")</h3> <!-- Formato de moneda -->
+}
+else
+{
+    <p>No se encontraron valores para las fechas seleccionadas.</p>
+}
