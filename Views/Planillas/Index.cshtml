@@ -1,81 +1,113 @@
 ﻿@model IEnumerable<Gestion_Del_Presupuesto.Models.PlanillasModel>
 
-<h1>Listado De Estudiantes</h1>
+<h1>Listado Completo de Planillas</h1>
 
 <div>
-    <!-- Filtros para las primeras 5 columnas -->
+    <!-- Filtros básicos -->
     <form method="get" asp-action="Index">
         <div class="row mb-3">
+            <div class="col-md-2">
+                <label for="nombre">Nombre Estudiante</label>
+                <input type="text" id="nombre" name="nombre" value="@ViewBag.Nombre" class="form-control" />
+            </div>
+            <div class="col-md-2">
+                <label for="rut">RUT Estudiante</label>
+                <input type="text" id="rut" name="rut" value="@ViewBag.Rut" class="form-control" />
+            </div>
             <div class="col-md-2">
                 <label for="institucion">Institución</label>
                 <input type="text" id="institucion" name="institucion" value="@ViewBag.Institucion" class="form-control" />
             </div>
             <div class="col-md-2">
-                <label for="servicio">Servicio</label>
+                <label for="servicio">Servicio/Área</label>
                 <input type="text" id="servicio" name="servicio" value="@ViewBag.Servicio" class="form-control" />
-            </div>
-            <div class="col-md-2">
-                <label for="tipoPrograma">Tipo de Programa</label>
-                <input type="text" id="tipoPrograma" name="tipoPrograma" value="@ViewBag.TipoPrograma" class="form-control" />
-            </div>
-            <div class="col-md-2">
-                <label for="nombreEstudiante">Nombre Estudiante</label>
-                <input type="text" id="nombreEstudiante" name="nombreEstudiante" value="@ViewBag.NombreEstudiante" class="form-control" />
-            </div>
-            <div class="col-md-2">
-                <label for="runEstudiante">Rut Estudiante</label>
-                <input type="text" id="runEstudiante" name="runEstudiante" value="@ViewBag.RunEstudiante" class="form-control" />
-            </div>
-            <div class="col-md-2">
-                <label for="fechaInicio">Fecha Inicio</label>
-                <input type="date" id="fechaInicio" name="fechaInicio" value="@ViewBag.FechaInicio" class="form-control" />
-            </div>
-            <div class="col-md-2">
-                <label for="fechaTermino">Fecha Término</label>
-                <input type="date" id="fechaTermino" name="fechaTermino" value="@ViewBag.FechaTermino" class="form-control" />
             </div>
             <div class="col-md-2 d-flex align-items-end">
                 <button type="submit" class="btn btn-primary">Filtrar</button>
             </div>
         </div>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Institución</th>
-                    <th>Servicio</th>
-                    <th>Tipo Programa</th>
-                    <th>Nombre</th>
-                    <th>Rut</th>
-                    <th>Fecha Inicio</th>
-                    <th>Fecha Término</th>
-                    <th>Horas Mensuales</th>
-                    <th>Observaciones</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>@item.Institucion</td>
-                        <td>@item.Servicio</td>
-                        <td>@item.TipoPrograma</td>
-                        <td>@item.NombresApellidosEstudiante</td>
-                        <td>@item.RunEstudiante</td>
-                        <td>@item.FechaInicioPractica.ToShortDateString()</td>
-                        <td>@item.FechaTerminoPractica.ToShortDateString()</td>
-                        <td>@item.HorasMensuales</td>
-                        <td>@item.Descripcion</td>
-                        <td>
-                            <a asp-action="Edit" asp-route-id="@item.Id_Planillas" class="btn btn-warning">Editar</a>
-                            <a asp-action="Details" asp-route-id="@item.Id_Planillas" class="btn btn-info">Detalles</a>
-                            <a asp-action="Delete" asp-route-id="@item.Id_Planillas" class="btn btn-danger">Eliminar</a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-
     </form>
-
 </div>
+
+<div class="mb-3">
+    <a asp-action="Upload" class="btn btn-secondary">Subir Planillas</a>
+    <a asp-action="Export" class="btn btn-success">Exportar Año</a>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nombres y Apellidos</th>
+            <th>RUN Estudiante</th>
+            <th>Fecha Inicio</th>
+            <th>Fecha Término</th>
+            <th>Institución</th>
+            <th>Servicio/Área</th>
+            <th>Nivel</th>
+            <th>Tipo Turno</th>
+            <th>Número de Semanas</th>
+            <th>Horas por Rotación</th>
+            <th>Valor UF/Mes</th>
+            <th>Valor UF/Semana</th>
+            <th>Valor Total UF</th>
+            <th>Valor Pesos</th>
+            <th>RUN Docente Clínico</th>
+            <th>DV Docente Clínico</th>
+            <th>Nombre Docente Clínico</th>
+            <th>Código Nivel</th>
+            <th>Código Centro Costo</th>
+            <th>Código Asignatura</th>
+            <th>Tipo Programa</th>
+            <th>Sección</th>
+            <th>Inscritos Sección</th>
+            <th>Tipo Sección</th>
+            <th>Horas Mensuales</th>
+            <th>Monto Mensual</th>
+            <th>Item Presupuestario</th>
+            <th>Cohorte</th>
+            <th>Descripción</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.NombresApellidosEstudiante</td>
+                <td>@item.RunEstudiante</td>
+                <td>@item.FechaInicioPractica.ToShortDateString()</td>
+                <td>@item.FechaTerminoPractica.ToShortDateString()</td>
+                <td>@item.Institucion</td>
+                <td>@item.Servicio</td>
+                <td>@item.Nivel</td>
+                <td>@item.TipoTurno</td>
+                <td>@item.NumeroSemanas</td>
+                <td>@item.HorasMensuales</td>
+                <td>@item.ValorUFMes</td>
+                <td>@item.ValorUFSemana</td>
+                <td>@item.ValorTotalUF</td>
+                <td>@item.ValorPesos</td>
+                <td>@item.RunDocenteClinico</td>
+                <td>@item.DVDocenteClinico</td>
+                <td>@item.NombreDocenteClinico</td>
+                <td>@item.CodigoNivel</td>
+                <td>@item.CodigoCentroCosto</td>
+                <td>@item.CodigoAsignatura</td>
+                <td>@item.TipoPrograma</td>
+                <td>@item.Seccion</td>
+                <td>@item.InscritosSeccion</td>
+                <td>@item.TipoSeccion</td>
+                <td>@item.HorasMensuales</td>
+                <td>@item.MontoMensual</td>
+                <td>@item.ItemPresupuestario</td>
+                <td>@item.Cohorte</td>
+                <td>@item.Descripcion</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id_Planillas" class="btn btn-warning">Editar</a>
+                    <a asp-action="Details" asp-route-id="@item.Id_Planillas" class="btn btn-info">Detalles</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id_Planillas" class="btn btn-danger">Eliminar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

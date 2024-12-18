@@ -71,34 +71,5 @@ namespace Gestion_Del_Presupuesto.Models
         public virtual IndicadorEconomico Indicador { get; set; }
         public ICollection<EstudiantePlanillaModel> EstudiantePlanillas { get; set; }
     }
-
-    // Enumeraciones para facilitar la selección de códigos
-    public static class CodigosNivel
-    {
-        public const string PROFESOR_ASOCIADO_DOCENTE = "ASD";
-        public const string PROFESOR_ASOCIADO_REGULAR = "ASR";
-        public const string PROFESOR_ASISTENTE_DOCENTE = "ATD";
-        public const string PROFESOR_ASISTENTE_REGULAR = "ATR";
-        public const string PROFESOR_INSTRUCTOR = "INS";
-        public const string INSTRUCTOR_DOCENTE = "INSD";
-        public const string OTRO = "O";
-        public const string PROFESOR_TITULAR_DOCENTE = "TID";
-        public const string PROFESOR_TITULAR_REGULAR = "TIR";
-    }
-
-    public static class TiposProgramas
-    {
-        public const string PREGRADO = "PSC";
-        public const string POSTGRADO = "TCL";
-        public const string MAESTRIA = "EP";
-        public const string DOCTORADO = "DOC";
-    }
-
-    public static class TiposSecciones
-    {
-        public const string TEORIA = "TEO";
-        public const string LABORATORIO = "LAB";
-        public const string EJERCICIO = "EJE";
-        public const string SIN_TIPO = "SIN";
-    }
+    
 }

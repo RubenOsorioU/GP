@@ -1,6 +1,5 @@
 ﻿namespace Gestion_Del_Presupuesto.Models
 {
-    using Microsoft.EntityFrameworkCore.Metadata.Internal;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
@@ -12,8 +11,9 @@
         public int Codigo { get; set; }
         public DateTime? SelectedDate { get; set; } = DateTime.Now;
         public string Descripcion { get; set; }
-        public SeriesData Series { get; set; }
 
+        // Cambiar a un solo objeto (no una lista)
+        public SeriesData Series { get; set; } // Cambio aquí
     }
 
     public class SeriesData
@@ -23,7 +23,7 @@
         public string DescripEsp { get; set; }
         public string DescripIng { get; set; }
         public string SeriesId { get; set; }
-        public List<ObsData> Obs { get; set; }
+        public List<ObsData> Obs { get; set; } = new List<ObsData>();
     }
 
     public class ObsData
@@ -33,5 +33,4 @@
         public string Value { get; set; }
         public string StatusCode { get; set; }
     }
-
 }

@@ -2,7 +2,7 @@
 
 namespace Gestion_Del_Presupuesto.Models
 {
-    public class ChangePasswordViewModel
+    public class ChangePasswordViewModels
     {
         [Required(ErrorMessage = "La contraseña actual es requerida.")]
         [DataType(DataType.Password)]

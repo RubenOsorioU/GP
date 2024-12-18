@@ -3,21 +3,11 @@
     ViewData["Title"] = "Gestión de Facturación";
 }
 
-<h1>Gestión de Facturación</h1>
+<h1>Documento de Facturación</h1>
 
+<!-- Información General -->
 <div class="row mb-4">
     <div class="col-md-12">
-        <form method="get" class="form-inline mb-4">
-            <label for="convenioId" class="mr-2">Seleccione Convenio</label>
-            <select id="convenioId" name="convenioId" class="form-control mr-3">
-                <option value="">Seleccione un convenio</option>
-                @foreach (var convenio in ViewBag.Convenios)
-                {
-                    <option value="@convenio.Id_Convenio">@convenio.Nombre</option>
-                }
-            </select>
-        </form>
-
         <table class="table table-bordered">
             <tr>
                 <td><strong>Razón Social:</strong></td>
@@ -43,46 +33,52 @@
                 <td><strong>Sede:</strong></td>
                 <td>@ViewBag.SedeConvenio</td>
             </tr>
-            <tr>
-                <td><strong>Giro:</strong></td>
-            </tr>
         </table>
     </div>
 </div>
-@*Pago por uso de campos clinicos(Uf/Estudiante/Mes o su proporsional
- Pago por apoyo a la docencia
-*@
-<div>
-    <form method="get" class="form-inline mb-4">
-        <label for="documentoId" class="mr-2">Seleccione documento para la facturación</label>
-        <select id="documentoId" name="documentoId" class="form-control mr-3">
-            <option value="">Seleccione documento para la facturación</option>
-            @foreach (var documento in ViewBag.DocumentosFacturacion)
-            {
-                <option value="@documento.Value">@documento.Text</option>
-            }
-        </select>
-        <button type="submit" class="btn btn-primary">Enviar</button>
-    </form>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <h4>Valorización</h4>
+
+        <table class="table table-bordered text-center">
+            <thead class="bg-primary text-white">
+                <tr>
+                    <th colspan="2">Valorización</th>
+                </tr>
+            </thead>
+            <form method="post" asp-action="Index">
+                <div class="input-group mb-3">
+                    <label for="FechaUFDia" class="form-label me-2">Seleccione Fecha:</label>
+                    <input type="date" id="FechaUFDia" name="FechaUFDia" class="form-control"
+                           value="@ViewBag.FechaUFDia" required />
+                    <button type="submit" class="btn btn-primary">Calcular</button>
+                </div>
+            </form>
+            <tbody>
+                <tr>
+                    <th class="text-left">Valor UF</th>
+                    <td class="text-right"><strong>@ViewBag.ValorUF</strong></td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
 </div>
 
+<!-- Filtros de Facturación -->
 <div class="row mb-4">
     <div class="col-md-12">
         <h4>Filtros de Facturación</h4>
         <form method="get" class="row g-3 align-items-end">
-            <!-- Campo Fecha Inicio -->
             <div class="col-auto">
                 <label for="fechaInicio" class="form-label">Fecha Inicio</label>
                 <input type="date" id="fechaInicio" name="fechaInicio" class="form-control">
             </div>
-
-            <!-- Campo Fecha Fin -->
             <div class="col-auto">
                 <label for="fechaFin" class="form-label">Fecha Fin</label>
                 <input type="date" id="fechaFin" name="fechaFin" class="form-control">
             </div>
-
-            <!-- Botón Calcular -->
             <div class="col-auto">
                 <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Calcular Total a Pagar</button>
             </div>
@@ -90,73 +86,72 @@
     </div>
 </div>
 
-
-
 <!-- Lista de Facturaciones -->
-<div class="row">
+<div class="row mb-4">
     <div class="col-md-12">
         <h4>Lista de Facturaciones</h4>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Carrera</th>
-                    <th>Nivel Formación</th>
-                    <th>Nombre Convenio</th>
-                    <th>Tiempo de Práctica</th>
-                    <th>N° mes/día/semana/hora</th>
-                    <th>N° Alumnos</th>
-                    <th>Valor 3 UF mes/práctica profesional</th>
-                    <th>Subtotal</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
+        <form method="post" asp-action="Index">
+            <table class="table table-striped">
+                <thead>
                     <tr>
-                        <td>@item.Carrera</td>
-                        <td>@item.NivelFormacion</td>
-                        <td>@item.Convenios?.Nombre</td>
-                        <td>@item.TiempoPractica</td>
-                        <td>@item.NumeroTiempo</td>
-                        <td>@item.NumeroAlumnos</td>
-                        <td>@item.ValorUFMesPractica</td>
-                        <td>@item.Subtotal</td>
-                        <td>
-                            <a asp-action="Edit" asp-route-id="@item.Id_Facturacion" class="btn btn-warning btn-sm">Editar</a>
-                            <a asp-action="Details" asp-route-id="@item.Id_Facturacion" class="btn btn-info btn-sm">Detalles</a>
-                            <a asp-action="Delete" asp-route-id="@item.Id_Facturacion" class="btn btn-danger btn-sm">Eliminar</a>
-                        </td>
+                        <th>Seleccionar</th>
+                        <th>Carrera</th>
+                        <th>Nivel Formación</th>
+                        <th>Nombre Convenio</th>
+                        <th>Tiempo de Práctica</th>
+                        <th>N° mes/día/semana/hora</th>
+                        <th>N° Alumnos</th>
+                        <th>Valor 3 UF mes/práctica profesional</th>
+                        <th>Subtotal</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.Count(); i++)
+                    {
+                        var item = Model.ElementAt(i);
+                        <tr>
+                            <td>
+                                <input type="checkbox" name="facturacionesSeleccionadas[@i].Seleccionado" value="true" />
+                                <input type="hidden" name="facturacionesSeleccionadas[@i].Id_Facturacion" value="@item.Id_Facturacion" />
+                                <input type="hidden" name="facturacionesSeleccionadas[@i].NumeroTiempo" value="@item.NumeroTiempo" />
+                                <input type="hidden" name="facturacionesSeleccionadas[@i].NumeroAlumnos" value="@item.NumeroAlumnos" />
+                                <input type="hidden" name="facturacionesSeleccionadas[@i].ValorUFMesPractica" value="@item.ValorUFMesPractica" />
+                            </td>
+                            <td>@item.Carrera</td>
+                            <td>@item.NivelFormacion</td>
+                            <td>@item.Convenios?.Nombre</td>
+                            <td>@item.TiempoPractica</td>
+                            <td>@item.NumeroTiempo</td>
+                            <td>@item.NumeroAlumnos</td>
+                            <td>@item.ValorUFMesPractica</td>
+                            <td>@item.Subtotal</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <button type="submit" class="btn btn-success">Calcular Total Seleccionado</button>
+        </form>
     </div>
 </div>
 
-<!-- Resultados de Facturación -->
-<div class="row mb-4">
-    <div class="col-md-4">
-        <div class="card text-white bg-primary">
-            <div class="card-body text-center">
-                <h5 class="card-title">Neto UF</h5>
-                <p class="card-text">@ViewBag.NetoUF</p>
+<!-- Resultados Totales -->
+<div class="row mb-2">
+    <!-- Neto UF -->
+    <div class="col-6 col-sm-4 col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body text-center p-2">
+                <h6 class="card-title mb-1">Neto UF</h6>
+                <p class="card-text mb-0">@ViewBag.NetoUF.ToString("N2")</p>
             </div>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="card text-white bg-success">
-            <div class="card-body text-center">
-                <h5 class="card-title">Valor UF</h5>
-                <p class="card-text">@ViewBag.ValorUFPromedio</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card text-white bg-danger">
-            <div class="card-body text-center">
-                <h5 class="card-title">Total a Pagar</h5>
-                <p class="card-text">@ViewBag.TotalAPagar</p>
+
+    <!-- Total a Pagar -->
+    <div class="col-6 col-sm-4 col-md-3">
+        <div class="card bg-danger text-white">
+            <div class="card-body text-center p-2">
+                <h6 class="card-title mb-1">Total a Pagar</h6>
+                <p class="card-text mb-0">@ViewBag.TotalAPagar.ToString("N2")</p>
             </div>
         </div>
     </div>
