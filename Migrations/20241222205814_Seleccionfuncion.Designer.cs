@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gestion_Del_Presupuesto.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241210140038_FechasAfacturación")]
-    partial class FechasAfacturación
+    [Migration("20241222205814_Seleccionfuncion")]
+    partial class Seleccionfuncion
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -273,10 +273,9 @@ namespace Gestion_Del_Presupuesto.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Comentarios")
+                    b.Property<string>("ArchivoRuta")
                         .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("timestamp with time zone");
@@ -375,6 +374,9 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.Property<bool>("Eliminado")
                         .HasColumnType("boolean");
 
+                    b.Property<bool>("FacturacionSeleccionada")
+                        .HasColumnType("boolean");
+
                     b.Property<DateTime>("FechaInicio")
                         .HasColumnType("timestamp with time zone");
 
@@ -401,10 +403,12 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("NumeroAlumnos")
+                    b.Property<int?>("NumeroAlumnos")
+                        .IsRequired()
                         .HasColumnType("integer");
 
-                    b.Property<int>("NumeroTiempo")
+                    b.Property<int?>("NumeroTiempo")
+                        .IsRequired()
                         .HasColumnType("integer");
 
                     b.Property<string>("ObsvalorUFIndexDateString")
@@ -450,7 +454,8 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.Property<decimal>("ValorUF")
                         .HasColumnType("numeric");
 
-                    b.Property<decimal>("ValorUFMesPractica")
+                    b.Property<decimal?>("ValorUFMesPractica")
+                        .IsRequired()
                         .HasColumnType("numeric");
 
                     b.HasKey("Id_Facturacion");
@@ -625,24 +630,36 @@ namespace Gestion_Del_Presupuesto.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id_Planillas"));
 
-                    b.Property<string>("Asignatura")
+                    b.Property<string>("Area")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("Año")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("CantDias")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("CantMeses")
-                        .HasColumnType("integer");
-
-                    b.Property<double>("CantidadHoras")
-                        .HasColumnType("double precision");
-
                     b.Property<int>("CarreraId")
                         .HasColumnType("integer");
+
+                    b.Property<string>("CodigoAsignatura")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("CodigoCentroCosto")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("CodigoNivel")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Cohorte")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("DVDocenteClinico")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<int>("DevengadoId_Devengado")
                         .HasColumnType("integer");
@@ -653,30 +670,86 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.Property<int>("FacturacionId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("Fecha_Inicio")
+                    b.Property<DateTime>("FechaInicioPractica")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("Fecha_Termino")
+                    b.Property<DateTime>("FechaTerminoPractica")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<double>("HorasMensuales")
+                        .HasColumnType("double precision");
 
                     b.Property<int>("Id_IndicadorEco")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Institución")
+                    b.Property<int>("InscritosSeccion")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Institucion")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Nombre")
+                    b.Property<string>("ItemPresupuestario")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Observaciones")
+                    b.Property<decimal>("MontoMensual")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("Nivel")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Rut")
+                    b.Property<string>("NombreDocenteClinico")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<string>("NombresApellidosEstudiante")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("NumeroSemanas")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("RunDocenteClinico")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("RunEstudiante")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Seccion")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Servicio")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("TipoPrograma")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("TipoSeccion")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("TipoTurno")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("ValorPesos")
+                        .HasColumnType("numeric");
+
+                    b.Property<double>("ValorTotalUF")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("ValorUFMes")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("ValorUFSemana")
+                        .HasColumnType("double precision");
 
                     b.HasKey("Id_Planillas");
 

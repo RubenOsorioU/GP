@@ -66,15 +66,15 @@ namespace Gestion_Del_Presupuesto.Models
 
         [Required]
         [Display(Name = "N° mes/día/semana/hora")]
-        public int NumeroTiempo { get; set; }
+        public int? NumeroTiempo { get; set; }
 
         [Required]
         [Display(Name = "N° Alumnos")]
-        public int NumeroAlumnos { get; set; }
+        public int? NumeroAlumnos { get; set; }
 
         [Required]
         [Display(Name = "Valor 3 UF mes/práctica profesional")]
-        public decimal ValorUFMesPractica { get; set; } 
+        public decimal? ValorUFMesPractica { get; set; } 
         public DateTime FechaUFDia { get; set; } = DateTime.Now;
 
         [Required]
@@ -99,6 +99,8 @@ namespace Gestion_Del_Presupuesto.Models
         public int ConvenioId { get; set; }
 
         public int Id_IndicadorEco { get; set; }
+
+        public bool FacturacionSeleccionada { get; set; }
         public ConvenioModel? Convenios { get; set; }
 
         public CarreraModel? Carreras { get; set; }

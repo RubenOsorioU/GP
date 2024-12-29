@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 using System.Net.Http;
 using System.Text.Json;
-using System.Linq;
 
 public class FacturacionController : Controller
 {
@@ -22,17 +21,23 @@ public class FacturacionController : Controller
     // GET: Index
     public async Task<IActionResult> Index(DateTime? FechaInicio, DateTime? FechaFin)
     {
+        // Obtener usuario actual
         var user = await _userManager.GetUserAsync(User);
         if (user == null) return RedirectToAction("Login", "Account");
 
-        // Obtener lista de convenios y enviar a la vista
+        // Obtener roles del usuario
+        var roles = await _userManager.GetRolesAsync(user);
+        ViewBag.RolUsuario = roles.FirstOrDefault() ?? "Sin Rol";
+
+        // Obtener lista de convenios
         ViewBag.Convenios = await _context.Convenios.ToListAsync();
 
-        // Consulta para filtrar facturaciones por fecha
+        // Consulta base de facturaciones
         var facturacionesQuery = _context.Facturacion
             .Include(f => f.Convenios)
             .Where(f => !f.Eliminado);
 
+        // Filtrar por fechas
         if (FechaInicio.HasValue)
             facturacionesQuery = facturacionesQuery.Where(f => f.FechaInicio >= FechaInicio.Value);
 
@@ -41,23 +46,28 @@ public class FacturacionController : Controller
 
         var facturaciones = await facturacionesQuery.ToListAsync();
 
-        // Calcular Subtotal
+        // Calcular subtotal
         foreach (var item in facturaciones)
         {
-            item.Subtotal = item.NumeroTiempo * item.NumeroAlumnos * item.ValorUFMesPractica;
+            item.Subtotal = (item.NumeroTiempo ?? 0) * (item.NumeroAlumnos ?? 0) * (item.ValorUFMesPractica ?? 0);
         }
 
-        // Obtener valor UF del día
+        // Obtener detalles del primer convenio (puedes ajustar para múltiples convenios)
+        var convenio = await _context.Convenios.FirstOrDefaultAsync();
+        string direccionConvenio = convenio?.Direccion ?? "Sin Dirección";
+        string rutConvenio = convenio?.Rut ?? "Sin RUT";
+        string sedeConvenio = convenio?.Sede ?? "Santiago";
+
+        // Obtener valor UF actual
         var valorUF = await ObtenerValorUFActual(DateTime.Now);
 
         // Asignar valores a ViewBag
         ViewBag.RazonSocial = "Universidad Central";
         ViewBag.NombreUsuario = user.UserName ?? "Usuario Desconocido";
-        ViewBag.RutConvenio = "70.995.200-5";
-        ViewBag.DireccionConvenio = "Lord Cochrane 417, Santiago Centro";
-        ViewBag.RolUsuario = "Administrador";
+        ViewBag.RutConvenio = rutConvenio;
+        ViewBag.DireccionConvenio = direccionConvenio;
         ViewBag.EmailUsuario = user.Email ?? "Sin Email";
-        ViewBag.SedeConvenio = "Santiago Centro";
+        ViewBag.SedeConvenio = sedeConvenio;
         ViewBag.ValorUF = valorUF;
         ViewBag.NetoUF = 0;
         ViewBag.TotalAPagar = 0;
@@ -67,45 +77,57 @@ public class FacturacionController : Controller
 
     // POST: Index (Calcular totales seleccionados)
     [HttpPost]
-    public async Task<IActionResult> Index(DateTime? FechaUFDia)
+    public async Task<IActionResult> Index(DateTime? FechaUFDia, List<FacturacionModel> facturacionesSeleccionadas)
     {
-        decimal valorUF = 0;
-
-        // Si no hay fecha seleccionada, usar la fecha de hoy
+        // Obtener valor UF según la fecha seleccionada o usar la fecha actual
         DateTime fechaSeleccionada = FechaUFDia ?? DateTime.Now;
+        var valorUF = await ObtenerValorUFActual(fechaSeleccionada);
 
-        // Obtener el valor UF desde la API
-        valorUF = await ObtenerValorUFActual(fechaSeleccionada);
+        // Inicializar variables para totales
+        decimal netoUF = 0;
+        decimal totalAPagar = 0;
 
-        // Inicializar la lista de facturaciones (evitar null)
+        // Procesar las facturaciones seleccionadas
+        foreach (var seleccion in facturacionesSeleccionadas)
+        {
+            if (seleccion.FacturacionSeleccionada)
+            {
+                netoUF += (seleccion.NumeroTiempo ?? 0) * (seleccion.NumeroAlumnos ?? 0) * (seleccion.ValorUFMesPractica ?? 0);
+            }
+        }
+
+        // Calcular el total a pagar en pesos según el valor UF
+        totalAPagar = netoUF * valorUF;
+
+        // Asignar valores a ViewBag
+        ViewBag.ValorUF = valorUF.ToString("N2", new CultureInfo("es-CL"));
+        ViewBag.FechaUFDia = fechaSeleccionada.ToString("yyyy-MM-dd");
+        ViewBag.NetoUF = netoUF;
+        ViewBag.TotalAPagar = totalAPagar;
+
+        // Obtener usuario actual para mostrar su información
+        var user = await _userManager.GetUserAsync(User);
+        var roles = await _userManager.GetRolesAsync(user);
+        ViewBag.RolUsuario = roles.FirstOrDefault() ?? "Sin Rol";
+        ViewBag.NombreUsuario = user?.UserName ?? "Usuario Desconocido";
+        ViewBag.EmailUsuario = user?.Email ?? "Sin Email";
+
+        // Obtener detalles del convenio para mostrar en la tabla
+        var convenio = await _context.Convenios.FirstOrDefaultAsync();
+        ViewBag.RutConvenio = convenio?.Rut ?? "Sin RUT";
+        ViewBag.DireccionConvenio = convenio?.Direccion ?? "Sin Dirección";
+        ViewBag.SedeConvenio = convenio?.Sede ?? "Sin Sede";
+
+        // Devolver las facturaciones para renderizar la tabla
         var facturaciones = await _context.Facturacion
             .Include(f => f.Convenios)
             .Where(f => !f.Eliminado)
             .ToListAsync();
 
-        // Calcular Subtotal
-        foreach (var item in facturaciones)
-        {
-            item.Subtotal = item.NumeroTiempo * item.NumeroAlumnos * item.ValorUFMesPractica;
-        }
-
-        // Asignar valores a ViewBag
-        ViewBag.ValorUF = valorUF.ToString("N2", new CultureInfo("es-CL")); // Formato chileno
-        ViewBag.FechaUFDia = fechaSeleccionada.ToString("yyyy-MM-dd");
-        ViewBag.RazonSocial = "Universidad Central";
-        ViewBag.NombreUsuario = "Administrador";
-        ViewBag.RutConvenio = "70.995.200-5";
-        ViewBag.DireccionConvenio = "Lord Cochrane 417, Santiago Centro";
-        ViewBag.RolUsuario = "Administrador";
-        ViewBag.EmailUsuario = "Sin Email";
-        ViewBag.SedeConvenio = "Santiago Centro";
-        ViewBag.NetoUF = 0;
-        ViewBag.TotalAPagar = 0;
-
-        // Devolver la vista con el modelo
         return View(facturaciones);
     }
 
+    // Método para obtener el valor UF actual
     public async Task<decimal> ObtenerValorUFActual(DateTime selectedDate)
     {
         using (var client = new HttpClient())
@@ -124,19 +146,16 @@ public class FacturacionController : Controller
                     PropertyNameCaseInsensitive = true
                 });
 
-                var valorUFString = data?.Series?.Obs?.FirstOrDefault()?.Value;  // Usar la propiedad 'Obs' correctamente
+                var valorUFString = data?.Series?.Obs?.FirstOrDefault()?.Value;
 
-                if (!string.IsNullOrEmpty(valorUFString))
+                if (!string.IsNullOrEmpty(valorUFString) &&
+                    decimal.TryParse(valorUFString, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out var valorUF))
                 {
-                    if (decimal.TryParse(valorUFString, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out var valorUF))
-                    {
-                        return valorUF;
-                    }
+                    return valorUF;
                 }
             }
 
             return 0; // En caso de error
         }
     }
-
 }

@@ -119,7 +119,7 @@ async Task CrearRoles(IServiceProvider serviceProvider)
         new { Name = "Dirección", Descripcion = "Dirección de Campos Clínicos" },
         new { Name = "SubDirección", Descripcion = "Subdirección de Campos Clínicos" },
         new { Name = "Coordinación", Descripcion = "Coordinación de Campos Clínicos" },
-        new { Name = "Apoyo Académico", Descripcion = "Apoyo Académico" }
+        new { Name = "Apoyo Académico", Descripcion = "Apoyo Académico"},
     };
 
     foreach (var role in roles)

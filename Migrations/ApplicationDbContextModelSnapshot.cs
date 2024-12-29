@@ -371,6 +371,9 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.Property<bool>("Eliminado")
                         .HasColumnType("boolean");
 
+                    b.Property<bool>("FacturacionSeleccionada")
+                        .HasColumnType("boolean");
+
                     b.Property<DateTime>("FechaInicio")
                         .HasColumnType("timestamp with time zone");
 
@@ -397,10 +400,12 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("NumeroAlumnos")
+                    b.Property<int?>("NumeroAlumnos")
+                        .IsRequired()
                         .HasColumnType("integer");
 
-                    b.Property<int>("NumeroTiempo")
+                    b.Property<int?>("NumeroTiempo")
+                        .IsRequired()
                         .HasColumnType("integer");
 
                     b.Property<string>("ObsvalorUFIndexDateString")
@@ -446,7 +451,8 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.Property<decimal>("ValorUF")
                         .HasColumnType("numeric");
 
-                    b.Property<decimal>("ValorUFMesPractica")
+                    b.Property<decimal?>("ValorUFMesPractica")
+                        .IsRequired()
                         .HasColumnType("numeric");
 
                     b.HasKey("Id_Facturacion");

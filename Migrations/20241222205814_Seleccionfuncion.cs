@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gestion_Del_Presupuesto.Migrations
 {
     /// <inheritdoc />
-    public partial class FechasAfacturación : Migration
+    public partial class Seleccionfuncion : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -51,7 +51,7 @@ namespace Gestion_Del_Presupuesto.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Tipo = table.Column<string>(type: "text", nullable: false),
-                    Comentarios = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
+                    ArchivoRuta = table.Column<string>(type: "text", nullable: false),
                     Puntuacion = table.Column<int>(type: "integer", nullable: false),
                     Fecha = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -529,6 +529,7 @@ namespace Gestion_Del_Presupuesto.Migrations
                     FechaTermino = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ConvenioId = table.Column<int>(type: "integer", nullable: false),
                     Id_IndicadorEco = table.Column<int>(type: "integer", nullable: false),
+                    FacturacionSeleccionada = table.Column<bool>(type: "boolean", nullable: false),
                     CarrerasId_Carrera = table.Column<int>(type: "integer", nullable: true),
                     ObsvalorUFIndexDateString = table.Column<string>(type: "text", nullable: true),
                     IndicadorId_IndicadorEco = table.Column<int>(type: "integer", nullable: true)
@@ -660,17 +661,35 @@ namespace Gestion_Del_Presupuesto.Migrations
                 {
                     Id_Planillas = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Asignatura = table.Column<string>(type: "text", nullable: false),
-                    Institución = table.Column<string>(type: "text", nullable: false),
-                    Nombre = table.Column<string>(type: "text", nullable: false),
-                    Rut = table.Column<string>(type: "text", nullable: false),
-                    Fecha_Inicio = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Fecha_Termino = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CantidadHoras = table.Column<double>(type: "double precision", nullable: false),
-                    CantDias = table.Column<int>(type: "integer", nullable: false),
-                    CantMeses = table.Column<int>(type: "integer", nullable: false),
-                    Año = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Observaciones = table.Column<string>(type: "text", nullable: false),
+                    NombresApellidosEstudiante = table.Column<string>(type: "text", nullable: false),
+                    RunEstudiante = table.Column<string>(type: "text", nullable: false),
+                    FechaInicioPractica = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    FechaTerminoPractica = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Institucion = table.Column<string>(type: "text", nullable: false),
+                    Servicio = table.Column<string>(type: "text", nullable: false),
+                    Area = table.Column<string>(type: "text", nullable: false),
+                    Nivel = table.Column<string>(type: "text", nullable: false),
+                    CodigoNivel = table.Column<string>(type: "text", nullable: false),
+                    TipoPrograma = table.Column<string>(type: "text", nullable: false),
+                    TipoSeccion = table.Column<string>(type: "text", nullable: false),
+                    Seccion = table.Column<string>(type: "text", nullable: false),
+                    InscritosSeccion = table.Column<int>(type: "integer", nullable: false),
+                    TipoTurno = table.Column<string>(type: "text", nullable: false),
+                    NumeroSemanas = table.Column<int>(type: "integer", nullable: false),
+                    HorasMensuales = table.Column<double>(type: "double precision", nullable: false),
+                    ValorUFMes = table.Column<double>(type: "double precision", nullable: false),
+                    ValorUFSemana = table.Column<double>(type: "double precision", nullable: false),
+                    ValorTotalUF = table.Column<double>(type: "double precision", nullable: false),
+                    ValorPesos = table.Column<decimal>(type: "numeric", nullable: false),
+                    MontoMensual = table.Column<decimal>(type: "numeric", nullable: false),
+                    RunDocenteClinico = table.Column<string>(type: "text", nullable: false),
+                    DVDocenteClinico = table.Column<string>(type: "text", nullable: false),
+                    NombreDocenteClinico = table.Column<string>(type: "text", nullable: false),
+                    CodigoCentroCosto = table.Column<string>(type: "text", nullable: false),
+                    CodigoAsignatura = table.Column<string>(type: "text", nullable: false),
+                    ItemPresupuestario = table.Column<string>(type: "text", nullable: false),
+                    Cohorte = table.Column<string>(type: "text", nullable: false),
+                    Descripcion = table.Column<string>(type: "text", nullable: false),
                     CarreraId = table.Column<int>(type: "integer", nullable: false),
                     Eliminado = table.Column<bool>(type: "boolean", nullable: false),
                     FacturacionId = table.Column<int>(type: "integer", nullable: false),

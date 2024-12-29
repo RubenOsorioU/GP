@@ -5,7 +5,20 @@
 
 <h1>Documento de Facturación</h1>
 
-<!-- Información General -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <form method="get" class="form-inline mb-4">
+            <label for="convenioId" class="mr-2">Seleccione Convenio</label>
+            <select id="convenioId" name="convenioId" class="form-control mr-3">
+                <option value="">Seleccione un convenio</option>
+                @foreach (var convenio in ViewBag.Convenios)
+                {
+                    <option value="@convenio.Id_Convenio">@convenio.Nombre</option>
+                }
+            </select>
+        </form>
+    </div>
+</div>
 <div class="row mb-4">
     <div class="col-md-12">
         <table class="table table-bordered">
