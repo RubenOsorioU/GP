@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gestion_Del_Presupuesto.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241222205814_Seleccionfuncion")]
-    partial class Seleccionfuncion
+    [Migration("20250106125000_Base")]
+    partial class Base
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

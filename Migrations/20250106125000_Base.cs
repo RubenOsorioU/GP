@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gestion_Del_Presupuesto.Migrations
 {
     /// <inheritdoc />
-    public partial class Seleccionfuncion : Migration
+    public partial class Base : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

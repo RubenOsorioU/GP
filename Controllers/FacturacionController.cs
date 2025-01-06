@@ -126,6 +126,11 @@ public class FacturacionController : Controller
 
         return View(facturaciones);
     }
+    public async Task<IActionResult> Create()
+
+    {
+        return View();
+    }
 
     // Método para obtener el valor UF actual
     public async Task<decimal> ObtenerValorUFActual(DateTime selectedDate)
@@ -158,4 +163,5 @@ public class FacturacionController : Controller
             return 0; // En caso de error
         }
     }
+
 }
