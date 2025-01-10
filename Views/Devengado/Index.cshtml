@@ -1,19 +1,17 @@
 ﻿@model IEnumerable<Gestion_Del_Presupuesto.Models.Devengado>
 
 <h1>Lista de Devengados</h1>
+
 <p>
     <a asp-action="Create" class="btn btn-primary">Registrar Nuevo Devengado</a>
 </p>
-<form asp-action="CalcularDevengado" method="post">
-    <input type="hidden" name="id" value="Id_Devengado" />
-    <button type="submit" class="btn btn-primary">Calcular Devengado</button>
-</form>
+
 <table class="table">
     <thead>
         <tr>
-            <th>Carrera</th>
-            <th>Centro de Costo</th>
-            <th>Ítem Presupuestario</th>
+            <th>Convenio</th>
+            <th>Cantidad de Estudiantes</th>
+            <th>Gasto Proyectado</th>
             <th>Fecha Inicio</th>
             <th>Fecha Fin</th>
             <th>Acciones</th>
@@ -23,11 +21,11 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>@item.Carrera</td>
-                <td>@item.CentroCosto</td>
-                <td>@item.Itempresupuestario</td>
-                <td>@item.FechaInicio.ToShortDateString()</td>
-                <td>@item.FechaFin.ToShortDateString()</td>
+                <td>@item.Convenio?.Nombre</td> <!-- Nombre del convenio -->
+                <td>@item.CantEstudiantes</td> <!-- Cantidad de estudiantes asociados -->
+                <td>@item.GastoTotalComprometidoMonto.ToString("C")</td> <!-- Gasto proyectado en formato de moneda -->
+                <td>@item.FechaInicio.ToShortDateString()</td> <!-- Fecha de inicio -->
+                <td>@item.FechaFin.ToShortDateString()</td> <!-- Fecha de fin -->
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id_Devengado" class="btn btn-warning">Editar</a>
                     <a asp-action="Details" asp-route-id="@item.Id_Devengado" class="btn btn-info">Detalles</a>

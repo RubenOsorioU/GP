@@ -1,0 +1,67 @@
+﻿@model Gestion_Del_Presupuesto.Models.DevengadoViewModel
+
+<h1>Filtrar Devengados</h1>
+
+<form asp-action="Filter" method="get" class="mb-4">
+    <div class="row">
+        <div class="col-md-3">
+            <label for="convenioNombre">Convenio</label>
+            <input type="text" name="convenioNombre" class="form-control" placeholder="Nombre del convenio" value="@ViewContext.HttpContext.Request.Query["convenioNombre"]" />
+        </div>
+        <div class="col-md-2">
+            <label for="estudiantes">Estudiantes</label>
+            <input type="number" name="estudiantes" class="form-control" placeholder="Cantidad" value="@ViewContext.HttpContext.Request.Query["estudiantes"]" />
+        </div>
+        <div class="col-md-3">
+            <label for="fechaInicio">Fecha Inicio</label>
+            <input type="date" name="fechaInicio" class="form-control" value="@Model.FechaInicio.ToString("yyyy-MM-dd")" />
+        </div>
+        <div class="col-md-3">
+            <label for="fechaFin">Fecha Fin</label>
+            <input type="date" name="fechaFin" class="form-control" value="@Model.FechaFin.ToString("yyyy-MM-dd")" />
+        </div>
+        <div class="col-md-1 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary">Filtrar</button>
+        </div>
+    </div>
+</form>
+
+@if (Model.Devengados != null && Model.Devengados.Any())
+{
+    <h2>Resultados Filtrados</h2>
+    <form asp-action="CalcularDevengadoFiltrado" method="post">
+        <input type="hidden" name="convenioNombre" value="@ViewContext.HttpContext.Request.Query["convenioNombre"]" />
+        <input type="hidden" name="estudiantes" value="@ViewContext.HttpContext.Request.Query["estudiantes"]" />
+        <input type="hidden" name="fechaInicio" value="@ViewContext.HttpContext.Request.Query["fechaInicio"]" />
+        <input type="hidden" name="fechaFin" value="@ViewContext.HttpContext.Request.Query["fechaFin"]" />
+        <button type="submit" class="btn btn-primary mb-3">Calcular Devengado para Resultados</button>
+    </form>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Convenio</th>
+                <th>Cantidad de Estudiantes</th>
+                <th>Gasto Proyectado</th>
+                <th>Fecha Inicio</th>
+                <th>Fecha Fin</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Devengados)
+            {
+                <tr>
+                    <td>@item.Convenio?.Nombre</td>
+                    <td>@item.CantEstudiantes</td>
+                    <td>@item.GastoTotalComprometidoMonto.ToString("C")</td>
+                    <td>@item.FechaInicio.ToShortDateString()</td>
+                    <td>@item.FechaFin.ToShortDateString()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No se encontraron resultados.</p>
+}

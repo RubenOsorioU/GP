@@ -172,5 +172,76 @@ namespace Gestion_Del_Presupuesto.Controllers
 
             return RedirectToAction("Index");
         }
+        public async Task<IActionResult> Filter(string convenioNombre, int? estudiantes, DateTime? fechaInicio, DateTime? fechaFin)
+        {
+            var query = _context.Devengados.Include(d => d.Convenio).AsQueryable();
+
+            if (!string.IsNullOrEmpty(convenioNombre))
+            {
+                query = query.Where(d => d.Convenio.Nombre.Contains(convenioNombre));
+            }
+            if (estudiantes.HasValue)
+            {
+                query = query.Where(d => d.CantEstudiantes == estudiantes.Value);
+            }
+            if (fechaInicio.HasValue)
+            {
+                query = query.Where(d => d.FechaInicio >= fechaInicio.Value);
+            }
+            if (fechaFin.HasValue)
+            {
+                query = query.Where(d => d.FechaFin <= fechaFin.Value);
+            }
+
+            var viewModel = new DevengadoViewModel
+            {
+                FechaInicio = fechaInicio ?? DateTime.Now,
+                FechaFin = fechaFin ?? DateTime.Now,
+                Devengados = await query.ToListAsync()
+            };
+
+            ViewData["ConvenioNombre"] = convenioNombre;
+            ViewData["Estudiantes"] = estudiantes;
+            return View(viewModel);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> CalcularDevengadoFiltrado(string convenioNombre, int? estudiantes, DateTime? fechaInicio, DateTime? fechaFin)
+        {
+            var query = _context.Devengados.Include(d => d.Convenio).AsQueryable();
+
+            // Aplicar filtros condicionales
+            if (!string.IsNullOrEmpty(convenioNombre))
+            {
+                query = query.Where(d => d.Convenio.Nombre.Contains(convenioNombre));
+            }
+            if (estudiantes.HasValue)
+            {
+                query = query.Where(d => d.CantEstudiantes == estudiantes.Value);
+            }
+            if (fechaInicio.HasValue)
+            {
+                query = query.Where(d => d.FechaInicio >= fechaInicio.Value);
+            }
+            if (fechaFin.HasValue)
+            {
+                query = query.Where(d => d.FechaFin <= fechaFin.Value);
+            }
+
+            var devengadosFiltrados = await query.ToListAsync();
+
+            // Realizar cálculo para los devengados filtrados
+            foreach (var devengado in devengadosFiltrados)
+            {
+                devengado.TotalGastoDevengadoGeneradoporEstudiantes = devengado.CalcularDevengado();
+                _context.Update(devengado);
+            }
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Filter", new { convenioNombre, estudiantes, fechaInicio, fechaFin });
+        }
+
     }
 }
