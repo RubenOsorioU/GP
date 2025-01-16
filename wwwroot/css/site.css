@@ -102,11 +102,11 @@ body {
 .content-container {
     transition: margin-left 0.3s ease;
     margin-left: 0;
-    padding: 20px;
+    padding: 20px;*/
     background-color: #f8f9fa;
-    height: calc(100vh - 60px); /* Altura completa menos la altura del navbar */
+    height: calc(100vh - 20px); 
     overflow-y: auto;
-    margin-top: 60px; /* Ajuste para evitar la superposición del navbar */
+    margin-top: 20px;
 }
 
     .content-container.shifted {

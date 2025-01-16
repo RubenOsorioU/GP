@@ -1,7 +1,5 @@
 ﻿@model IEnumerable<ConvenioModel>
-
-<h1>Convenios</h1>
-
+<h1>Registro de Convenios</h1>
 <table class="table">
     <thead>
         <tr>
@@ -26,7 +24,7 @@
                     <!-- Botón Detalles -->
                     <a asp-action="Details" asp-route-id="@convenio.Id_Convenio" class="btn btn-info">Detalles</a>
                     <!-- Botón Eliminar que abre el modal -->
-                    <button class="btn btn-danger" onclick="openDeleteModal('@Url.Action("Delete", "Convenio", new { id = convenio.Id_Convenio })')">Eliminar</button>
+                    <button class="btn btn-danger" onclick="openDeleteModal('@convenio.Id_Convenio')">Eliminar</button>
                 </td>
             </tr>
         }
@@ -39,12 +37,10 @@
 <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
-            <form asp-action="Delete" method="post" enctype="multipart/form-data">
+            <form id="deleteForm" asp-controller="Convenio" asp-action="Delete" method="post" enctype="multipart/form-data">
                 <div class="modal-header">
                     <h5 class="modal-title" id="confirmDeleteModalLabel">Eliminar Convenio</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <p>¿Está seguro que desea eliminar este convenio? Debe adjuntar un documento de término para continuar.</p>
@@ -55,7 +51,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                     <button type="submit" class="btn btn-danger">Eliminar</button>
                 </div>
             </form>
@@ -64,9 +60,11 @@
 </div>
 
 <script>
-    function openDeleteModal(deleteUrl) {
-        // Establecer la acción del formulario
-        document.getElementById('deleteConvenioId').value = deleteUrl.split('/').pop();
-        $('#confirmDeleteModal').modal('show');
-    }
+    function openDeleteModal(convenioId) {
+        // Establecer el id del convenio en el campo oculto
+        document.getElementById('deleteConvenioId').value = convenioId;
+        // Mostrar el modal
+        var deleteModal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+            deleteModal.show();
+        }
 </script>

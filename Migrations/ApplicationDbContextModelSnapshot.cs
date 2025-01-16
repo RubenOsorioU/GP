@@ -112,11 +112,9 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("ContactoPrincipal")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Direccion")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<bool>("Eliminado")
@@ -148,15 +146,12 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("Rut")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Sede")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Telefono")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Tipo_Convenio")
@@ -165,7 +160,7 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.Property<decimal>("ValorUF")
                         .HasColumnType("numeric");
 
-                    b.Property<int>("Version")
+                    b.Property<int?>("Version")
                         .HasColumnType("integer");
 
                     b.HasKey("Id_Convenio");
@@ -357,7 +352,8 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.Property<int?>("CarrerasId_Carrera")
                         .HasColumnType("integer");
 
-                    b.Property<int>("ConvenioId")
+                    b.Property<int?>("ConvenioId")
+                        .IsRequired()
                         .HasColumnType("integer");
 
                     b.Property<string>("CorreoElectronico")
@@ -387,13 +383,13 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("Id_IndicadorEco")
+                    b.Property<int?>("Id_IndicadorEco")
                         .HasColumnType("integer");
 
                     b.Property<int?>("IndicadorId_IndicadorEco")
                         .HasColumnType("integer");
 
-                    b.Property<decimal>("NetoUF")
+                    b.Property<decimal?>("NetoUF")
                         .HasColumnType("numeric");
 
                     b.Property<string>("NivelFormacion")
@@ -427,7 +423,8 @@ namespace Gestion_Del_Presupuesto.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<decimal>("Subtotal")
+                    b.Property<decimal?>("Subtotal")
+                        .IsRequired()
                         .HasColumnType("numeric");
 
                     b.Property<string>("Telefono")
@@ -445,10 +442,11 @@ namespace Gestion_Del_Presupuesto.Migrations
                     b.Property<int?>("TotalEstudiantes")
                         .HasColumnType("integer");
 
-                    b.Property<decimal>("TotalaPagar")
+                    b.Property<decimal?>("TotalaPagar")
                         .HasColumnType("numeric");
 
-                    b.Property<decimal>("ValorUF")
+                    b.Property<decimal?>("ValorUF")
+                        .IsRequired()
                         .HasColumnType("numeric");
 
                     b.Property<decimal?>("ValorUFMesPractica")
@@ -486,6 +484,10 @@ namespace Gestion_Del_Presupuesto.Migrations
 
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("NombreUsuario")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<int>("UsuarioId")
                         .HasColumnType("integer");

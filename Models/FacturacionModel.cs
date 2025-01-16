@@ -52,11 +52,11 @@ namespace Gestion_Del_Presupuesto.Models
         // Campos anteriores
         [Required]
         [Display(Name = "Carrera")]
-        public string Carrera { get; set; }
+        public string? Carrera { get; set; }
 
         [Required]
         [Display(Name = "Nivel Formación")]
-        public string NivelFormacion { get; set; }
+        public string? NivelFormacion { get; set; }
 
 
 
@@ -78,17 +78,17 @@ namespace Gestion_Del_Presupuesto.Models
         public DateTime FechaUFDia { get; set; } = DateTime.Now;
 
         [Required]
-        public decimal ValorUF { get; set; }
+        public decimal? ValorUF { get; set; }
 
         [Required]
         [Display(Name = "Subtotal")]
-        public decimal Subtotal { get; set; }
+        public decimal? Subtotal { get; set; }
 
         public int? TotalEstudiantes { get; set; }
 
-        public decimal NetoUF { get; set; }
+        public decimal? NetoUF { get; set; }
 
-        public decimal TotalaPagar { get; set; }
+        public decimal? TotalaPagar { get; set; }
         public bool Eliminado { get; set; }
 
         public DateTime FechaInicio { get; set; }
@@ -96,9 +96,9 @@ namespace Gestion_Del_Presupuesto.Models
 
         [ForeignKey("ConvenioModel")]
         [Required]
-        public int ConvenioId { get; set; }
+        public int? ConvenioId { get; set; }
 
-        public int Id_IndicadorEco { get; set; }
+        public int? Id_IndicadorEco { get; set; }
 
         public bool FacturacionSeleccionada { get; set; }
         public ConvenioModel? Convenios { get; set; }

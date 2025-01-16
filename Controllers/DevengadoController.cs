@@ -48,24 +48,23 @@ namespace Gestion_Del_Presupuesto.Controllers
         // GET: Devengado/Create
         public IActionResult Create()
         {
-            ViewData["ConvenioId"] = new SelectList(_context.Convenios, "Id", "Nombre");
             return View();
         }
 
         // POST: Devengado/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id_Devengado,Carrera,CentroCosto,Itempresupuestario,FechaInicio,FechaFin,CantidadTiempo,GastoTotalComprometidoMonto,CantEstudiantes,ValorUFDevengado,CostoUF,PagosRealizados,SaldoPendiente,Descripcion,TotalGastoDevengadoGeneradoporEstudiantes,ConvenioId")] Devengado devengado)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(devengado);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["ConvenioId"] = new SelectList(_context.Convenios, "Id", "Nombre", devengado.ConvenioId);
-            return View(devengado);
-        }
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Create([Bind("Id_Devengado,Carrera,CentroCosto,Itempresupuestario,FechaInicio,FechaFin,CantidadTiempo,GastoTotalComprometidoMonto,CantEstudiantes,ValorUFDevengado,CostoUF,PagosRealizados,SaldoPendiente,Descripcion,TotalGastoDevengadoGeneradoporEstudiantes,ConvenioId")] Devengado devengado)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        _context.Add(devengado);
+        //        await _context.SaveChangesAsync();
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    ViewData["ConvenioId"] = new SelectList(_context.Convenios, "Id", "Nombre", devengado.ConvenioId);
+        //    return View(devengado);
+        //}
 
         // GET: Devengado/Edit/
         public async Task<IActionResult> Edit(int? id)

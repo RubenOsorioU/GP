@@ -1,5 +1,6 @@
 ﻿using Gestion_Del_Presupuesto.Data;
 using Gestion_Del_Presupuesto.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -29,8 +30,8 @@ public class FacturacionController : Controller
         var roles = await _userManager.GetRolesAsync(user);
         ViewBag.RolUsuario = roles.FirstOrDefault() ?? "Sin Rol";
 
-        // Obtener lista de convenios
-        ViewBag.Convenios = await _context.Convenios.ToListAsync();
+        // Obtener lista de convenios (con inicialización en caso de que no haya datos)
+        ViewBag.Convenios = await _context.Convenios.ToListAsync() ?? new List<ConvenioModel>();
 
         // Consulta base de facturaciones
         var facturacionesQuery = _context.Facturacion
@@ -44,7 +45,7 @@ public class FacturacionController : Controller
         if (FechaFin.HasValue)
             facturacionesQuery = facturacionesQuery.Where(f => f.FechaTermino <= FechaFin.Value);
 
-        var facturaciones = await facturacionesQuery.ToListAsync();
+        var facturaciones = await facturacionesQuery.ToListAsync() ?? new List<FacturacionModel>();
 
         // Calcular subtotal
         foreach (var item in facturaciones)
@@ -52,7 +53,7 @@ public class FacturacionController : Controller
             item.Subtotal = (item.NumeroTiempo ?? 0) * (item.NumeroAlumnos ?? 0) * (item.ValorUFMesPractica ?? 0);
         }
 
-        // Obtener detalles del primer convenio (puedes ajustar para múltiples convenios)
+        // Obtener detalles del primer convenio (manejo de valores nulos)
         var convenio = await _context.Convenios.FirstOrDefaultAsync();
         string direccionConvenio = convenio?.Direccion ?? "Sin Dirección";
         string rutConvenio = convenio?.Rut ?? "Sin RUT";
@@ -61,14 +62,14 @@ public class FacturacionController : Controller
         // Obtener valor UF actual
         var valorUF = await ObtenerValorUFActual(DateTime.Now);
 
-        // Asignar valores a ViewBag
+        // Asignar valores a ViewBag con validación para evitar nulos
         ViewBag.RazonSocial = "Universidad Central";
         ViewBag.NombreUsuario = user.UserName ?? "Usuario Desconocido";
         ViewBag.RutConvenio = rutConvenio;
         ViewBag.DireccionConvenio = direccionConvenio;
         ViewBag.EmailUsuario = user.Email ?? "Sin Email";
         ViewBag.SedeConvenio = sedeConvenio;
-        ViewBag.ValorUF = valorUF;
+        ViewBag.ValorUF = valorUF > 0 ? valorUF : 0.00m;
         ViewBag.NetoUF = 0;
         ViewBag.TotalAPagar = 0;
 
@@ -88,18 +89,21 @@ public class FacturacionController : Controller
         decimal totalAPagar = 0;
 
         // Procesar las facturaciones seleccionadas
-        foreach (var seleccion in facturacionesSeleccionadas)
+        if (facturacionesSeleccionadas != null)
         {
-            if (seleccion.FacturacionSeleccionada)
+            foreach (var seleccion in facturacionesSeleccionadas)
             {
-                netoUF += (seleccion.NumeroTiempo ?? 0) * (seleccion.NumeroAlumnos ?? 0) * (seleccion.ValorUFMesPractica ?? 0);
+                if (seleccion.FacturacionSeleccionada)
+                {
+                    netoUF += (seleccion.NumeroTiempo ?? 0) * (seleccion.NumeroAlumnos ?? 0) * (seleccion.ValorUFMesPractica ?? 0);
+                }
             }
         }
 
         // Calcular el total a pagar en pesos según el valor UF
         totalAPagar = netoUF * valorUF;
 
-        // Asignar valores a ViewBag
+        // Asignar valores a ViewBag con validaciones para evitar nulos
         ViewBag.ValorUF = valorUF.ToString("N2", new CultureInfo("es-CL"));
         ViewBag.FechaUFDia = fechaSeleccionada.ToString("yyyy-MM-dd");
         ViewBag.NetoUF = netoUF;
@@ -122,14 +126,9 @@ public class FacturacionController : Controller
         var facturaciones = await _context.Facturacion
             .Include(f => f.Convenios)
             .Where(f => !f.Eliminado)
-            .ToListAsync();
+            .ToListAsync() ?? new List<FacturacionModel>();
 
         return View(facturaciones);
-    }
-    public async Task<IActionResult> Create()
-
-    {
-        return View();
     }
 
     // Método para obtener el valor UF actual
@@ -163,5 +162,13 @@ public class FacturacionController : Controller
             return 0; // En caso de error
         }
     }
+    public IActionResult Create()
+    {
+        return View();
+    }
 
+    public IActionResult RegistroHistoricoFacturacion()
+    {
+        return View();
+    }
 }

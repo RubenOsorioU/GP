@@ -31,14 +31,31 @@ public class HistorialController : Controller
             return RedirectToAction("Login", "Account");
         }
 
-        // Filtrar el historial del usuario autenticado
+        // Filtrar el historial por el nombre del usuario autenticado
         var historial = await _context.Historial_Actividad
-            .Where(h => h.UsuarioId == user.Id) // Filtrar por el usuario actual
-            .Include(h => h.Usuario)
+            .Where(h => h.NombreUsuario == user.UserName) // Filtra por nombre
             .OrderByDescending(h => h.Fecha)
             .ToListAsync();
 
         return View(historial);
+    }
+    public async Task RegistrarActividad(string accion, string detalles)
+    {
+        var user = await _userManager.GetUserAsync(User);
+
+        if (user != null)
+        {
+            var actividad = new Historial_Actividad
+            {
+                NombreUsuario=user.UserName,
+                Fecha = DateTime.Now,
+                Detalles = detalles,
+                Accion = accion,
+            };
+
+            _context.Historial_Actividad.Add(actividad);
+            await _context.SaveChangesAsync();
+        }
     }
 
     // GET: Confirmar eliminación

@@ -9,6 +9,7 @@
 <table class="table table-striped">
     <thead>
         <tr>
+            <th>Usuario</th>
             <th>Fecha</th>
             <th>Acción Realizada</th>
             <th>Detalles</th>
@@ -18,9 +19,11 @@
         @foreach (var item in Model)
         {
             <tr>
+                <td>@item.Usuario.UserName</td>
                 <td>@item.Fecha.ToString("dd/MM/yyyy HH:mm:ss")</td>
-                <td>@item.Accion</td>
                 <td>@item.Detalles</td>
+                <td>@item.Accion</td>
+                
             </tr>
         }
     </tbody>

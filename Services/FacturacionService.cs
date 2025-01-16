@@ -15,7 +15,7 @@ namespace Gestion_Del_Presupuesto.Services
 
         public decimal CalcularNetoUF(List<FacturacionModel> facturacionesSeleccionadas)
         {
-            return facturacionesSeleccionadas.Sum(f => f.Subtotal);
+            return (decimal)facturacionesSeleccionadas.Sum(f => f.Subtotal);
         }
 
         public decimal CalcularTotalAPagar(decimal netoUF, decimal valorUF)

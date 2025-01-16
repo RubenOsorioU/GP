@@ -8,7 +8,7 @@ namespace Gestion_Del_Presupuesto.Models
     {
         [Key]
         public int Id_Historial_Actividad { get; set; }  // Clave primaria de Historial_Actividad
-        
+        public string NombreUsuario {  get; set; }
         public string Accion { get; set; }
         public DateTime Fecha { get; set; }
         public string Detalles { get; set; }
